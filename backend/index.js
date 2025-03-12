@@ -8,16 +8,16 @@ dotenv.config();
 const app = express();
 
 
-app.use(cors()); // السماح بالوصول من مختلف المصادر
-app.use(express.json()); // لقراءة البيانات بتنسيق JSON من الطلبات
+app.use(cors()); 
+app.use(express.json()); 
 
-// استيراد المسارات
+
 const userRouter = require("./routers/userRouter");
 
-// ربط المسارات
+
 app.use("/api/users", userRouter);
 
-// استماع على المنفذ المحدد
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
