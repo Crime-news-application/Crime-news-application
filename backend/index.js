@@ -9,11 +9,19 @@ const app = express();
 
 connectDB();
 
-app.use(cors()); // السماح بالوصول من مختلف المصادر
-app.use(express.json()); // لقراءة البيانات بتنسيق JSON من الطلبات
+app.use(cors()); 
+app.use(express.json()); 
 
 
-// استماع على المنفذ المحدد
+<<<<<<< HEAD
+const userRouter = require("./routers/userRouter");
+
+
+app.use("/api/users", userRouter);
+=======
+>>>>>>> 576aa232c7d87e0c61e12f3f9a5ba0c8ef79f397
+
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
