@@ -1,15 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 import SubscriptionCardDisplay from "./pages/Subscription/SubscriptionCardDisplay";
+import Navbar from "./Component/Navbar";
 function App() {
   return (
     <>
-    <Router>
+          {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Navbar />}
       <Routes>
-        <Route path="/" element={<SubscriptionCardDisplay/>} />
+      <Route path="/" element={<SubscriptionCardDisplay/>} />
       </Routes>
-    </Router>
- </> 
+      {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
+    </>
  );
 }
 
