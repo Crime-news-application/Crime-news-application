@@ -58,7 +58,7 @@ const SubscriptionCard = ({ plan }) => {
 
 const SubscriptionCardDisplay = () => {
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center p-4">
+    <div className="min-h-screen flex flex-col items-center p-4">
       <h1 className="text-3xl font-bold text-red-500 mb-8 animate-bounce">
         Exclusive Subscription Plans
       </h1>
@@ -72,3 +72,143 @@ const SubscriptionCardDisplay = () => {
 };
 
 export default SubscriptionCardDisplay;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from 'react';
+
+// const AdminSubscriptionCreationForm = () => {
+//   const [planTitle, setPlanTitle] = useState('');
+//   const [planDescription, setPlanDescription] = useState('');
+//   const [planPrice, setPlanPrice] = useState('');
+//   const [planDuration, setPlanDuration] = useState('');
+//   const [planFeatures, setPlanFeatures] = useState('');
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     const subscriptionPlan = {
+//       title: planTitle,
+//       description: planDescription,
+//       price: planPrice,
+//       duration: planDuration,
+//       features: planFeatures.split('\n').filter(feature => feature.trim() !== ''),
+//     };
+
+//     console.log('Subscription Plan:', subscriptionPlan);
+//     // Here you can send the data to an API using fetch or axios
+//   };
+
+//   return (
+//     <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+//       <h2 className="text-2xl font-bold mb-6 text-center">Create New Subscription Plan</h2>
+//       <form onSubmit={handleSubmit} className="space-y-5">
+//         {/* Plan Title */}
+//         <div>
+//           <label htmlFor="planTitle" className="block mb-2 text-sm font-medium text-gray-700">
+//             Plan Title:
+//           </label>
+//           <input
+//             type="text"
+//             id="planTitle"
+//             name="planTitle"
+//             value={planTitle}
+//             onChange={(e) => setPlanTitle(e.target.value)}
+//             required
+//             placeholder="Enter plan title"
+//             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+//           />
+//         </div>
+
+//         {/* Plan Description */}
+//         <div>
+//           <label htmlFor="planDescription" className="block mb-2 text-sm font-medium text-gray-700">
+//             Plan Description:
+//           </label>
+//           <textarea
+//             id="planDescription"
+//             name="planDescription"
+//             value={planDescription}
+//             onChange={(e) => setPlanDescription(e.target.value)}
+//             required
+//             placeholder="Enter plan description"
+//             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+//           ></textarea>
+//         </div>
+
+//         {/* Plan Price */}
+//         <div>
+//           <label htmlFor="planPrice" className="block mb-2 text-sm font-medium text-gray-700">
+//             Price (in USD):
+//           </label>
+//           <input
+//             type="number"
+//             id="planPrice"
+//             name="planPrice"
+//             value={planPrice}
+//             onChange={(e) => setPlanPrice(e.target.value)}
+//             required
+//             placeholder="Enter plan price"
+//             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+//           />
+//         </div>
+
+//         {/* Plan Duration */}
+//         <div>
+//           <label htmlFor="planDuration" className="block mb-2 text-sm font-medium text-gray-700">
+//             Duration (in months):
+//           </label>
+//           <input
+//             type="number"
+//             id="planDuration"
+//             name="planDuration"
+//             value={planDuration}
+//             onChange={(e) => setPlanDuration(e.target.value)}
+//             required
+//             placeholder="Enter duration of subscription"
+//             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+//           />
+//         </div>
+
+//         {/* Plan Features */}
+//         <div>
+//           <label htmlFor="planFeatures" className="block mb-2 text-sm font-medium text-gray-700">
+//             Features:
+//           </label>
+//           <textarea
+//             id="planFeatures"
+//             name="planFeatures"
+//             value={planFeatures}
+//             onChange={(e) => setPlanFeatures(e.target.value)}
+//             placeholder="Enter features (each feature on a new line)"
+//             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+//           ></textarea>
+//         </div>
+
+//         {/* Submit Button */}
+//         <button
+//           type="submit"
+//           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition duration-300"
+//         >
+//           Create Plan
+//         </button>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default AdminSubscriptionCreationForm;
