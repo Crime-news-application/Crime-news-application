@@ -31,7 +31,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import React from "react";
 import SubscriptionCardDisplay from "./pages/Subscription/SubscriptionCardDisplay";
 import Navbar from "./Component/Navbar";
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
 
 
@@ -44,7 +44,7 @@ import UserProfile from "./pages/UserProfile";
 import AForm from "./pages/Articles-Form/AForm";
 
 function App() {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const location = useLocation(); 
 
   return (
