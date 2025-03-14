@@ -34,8 +34,12 @@ import {
 import React from "react";
 import SubscriptionCardDisplay from "./pages/Subscription/SubscriptionCardDisplay";
 import Navbar from "./Component/Navbar";
+import Footer from "./Component/Footer";
+
 import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
+import AboutUs from "../src/pages/AboutUs";
+import Home from "./pages/Home";
 
 import SidebarDoners from "./Component/AdminDashbord/SidebarDoners";
 import ArticlesPage from "./pages/ArticlesPage";
@@ -43,11 +47,15 @@ import ContactUs from "./pages/contact";
 import Login from "./pages/LogIn";
 import Signup from "./pages/SignUp";
 import UserProfile from "./pages/UserProfile";
-import AForm from "./pages/Articles-Form/AForm";
+// import AForm from "./pages/Articles-Form/AForm";
 import AdminDashbord from "./pages/AdminDashbord";
 import Overview from "./Component/AdminDashbord/overview";
 import FormDetails from "./Component/AdminDashbord/ArticalCards";
 // import Footer from "./Component/Footer"; // أضفت الـ Footer
+
+import PaymentPage from "./pages/Subscription/Payment";
+
+import Footer1 from "./Component/Footer";
 
 function App() {
   const { t } = useTranslation();
@@ -59,31 +67,48 @@ function App() {
       {![
         "/login",
         "/dashboard",
-        "/dashboard/subform",
-        "/dashboard/articlescards",
+        "/subformDash",
+        "/articlescardsDash",
       ].includes(location.pathname) && <Navbar />}
 
       {/* عرض SidebarDoners في صفحات الداشبورد */}
       {[
         "/dashboard",
-        "/dashboard/subform",
-        "/dashboard/articlescards",
+        "/articlescardsDash",
+        "/subformDash",
       ].includes(location.pathname) && <SidebarDoners />}
 
       <Routes>
-        <Route path="/" element={<SubscriptionCardDisplay />} />
-        <Route path="/dashboard" element={<AdminDashbord />} />
-        <Route path="/dashboard" element={<Overview />} />
-        <Route path="/dashboard/articlescards" element={<FormDetails />} />
-        <Route path="/dashboard/subform" element={<SubscriptionCardForm />} />
-        <Route path="/a" element={<SubscriptionCardForm />} />
-        <Route path="/articles" element={<ArticlesPage />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/AboutUs" element={<AboutUs />} />
+        <Route
+          path="/SubscriptionCardDisplay"
+          element={<SubscriptionCardDisplay />}
+        />
+        <Route
+          path="/SubscriptionCardForm"
+          element={<SubscriptionCardForm />}
+        />
+        {/* <Route path="/aa" element={<ArticlesPage />} /> */}
+        <Route path="login" element={<Login />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/userprofile" element={<UserProfile />} />
-        <Route path="/aform" element={<AForm />} />
+        {/* <Route path="/aform" element={<AForm/>} /> */}
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/dashboard" element={<Overview />} />
+        <Route path="/articlescardsDash" element={<FormDetails />} />
+        <Route path="/subformDash" element={<SubscriptionCardForm />} />
       </Routes>
+
+      {![
+        "/login",
+        "/dashboard",
+        "/subformDash",
+        "/articlescardsDash",
+      ].includes(location.pathname) && (
+        <Footer1 />
+      )}
 
       {/* عرض الـ Footer في الصفحات المناسبة */}
       {/* {!["/login", "/dashboard"].includes(location.pathname) && <Footer />} */}

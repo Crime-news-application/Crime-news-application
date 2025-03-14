@@ -31,7 +31,7 @@ const articleSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["Rejected", "Pending", "Published"],
-      default: "draft",
+      default: "Pending",
     },
     publishDate: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },

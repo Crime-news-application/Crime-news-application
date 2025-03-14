@@ -23,12 +23,12 @@ const SidebarDoners = () => {
     },
     {
       name: "Subscription Card Form",
-      path: "/dashboard/subform",
+      path: "/subformDash",
       icon: <UserCircleIcon className="w-5 h-5" />,
     },
     {
       name: "Articls Cards",
-      path: "/dashboard/articlescards",
+      path: "/articlescardsDash",
       icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
     },
   ];
