@@ -1,8 +1,14 @@
 @import "tailwindcss";
+
+
+
 @layer base {
   :root {
     --screen-red: #61090b;
     --screen-dark: #000000;
+    --primary-color: #61090b;
+    --background-color: #000000;
+    --text-color: #ffffff;
     --primary-color: #61090b;
     --background-color: #ffffff; /* تم تغيير الخلفية إلى اللون الأبيض */
     --text-color: #000000; /* تم تغيير لون النص إلى الأسود */
@@ -17,20 +23,22 @@
   background-color: var(--screen-dark);
 }
 
-/* الوضع الفاتح */
+
+/* الوضع الفاتح /
 .light-mode {
   --primary-color: #61090b;
   --background-color: #ffffff;
   --text-color: #000000;
 }
 
-/* الوضع الداكن */
+/ الوضع الداكن /
 .dark-mode {
   --primary-color: #61090b;
   --background-color: #000000;
   --text-color: #ffffff;
 }
 
+/ استخدام المتغيرات */
 /* استخدام المتغيرات */
 body {
   background-color: var(--background-color);
