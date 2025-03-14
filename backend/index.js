@@ -3,7 +3,13 @@ const cors = require("cors");
 
 const connectDB = require("./config/db");
 require("dotenv").config();
+
+
+const subscriptionRoutes = require("./routers/subscriptionRoutes");
+const paymentRoutes = require("./routers/paymentRoutes");
+
 const userRoutes = require("./routers/userRoutes");
+
 
 const app = express();
 
@@ -32,6 +38,10 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 
 
+app.use("/api", subscriptionRoutes);
+app.use("/api", paymentRoutes);
+
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
@@ -42,6 +52,7 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Internal Server Error" });
 });
+
 
 // Start the server
 const PORT = process.env.PORT || 4000;
