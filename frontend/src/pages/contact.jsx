@@ -20,7 +20,7 @@ export default function ContactUs() {
     setLoading(true);
 
     try {
-      const res = await axios.post(
+        await axios.post(
         "http://localhost:5000/app/message",
         formdata
       );
