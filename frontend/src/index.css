@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@tailwind base;
 
 
 
@@ -8,11 +9,14 @@
     --screen-dark: #000000;
     --primary-color: #61090b;
     --background-color: #000000;
-    --text-color: #ffffff;
-    --primary-color: #61090b;
-    --background-color: #ffffff; /* تم تغيير الخلفية إلى اللون الأبيض */
-    --text-color: #000000; /* تم تغيير لون النص إلى الأسود */
-    /* --text-color: #ffffff; */
+
+    --text-color: #ffffff; /* لون النصوص */
+    --bg-color: #ffffff; /* خلفية الأقسام */
+    --button-hover: #8b0d11; /* لون زر الهوفر */
+    --overlay-color: rgba(0, 0, 0, 0.5); /* تغطية للفيديو */
+
+
+
   }
 }
 
