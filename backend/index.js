@@ -1,8 +1,14 @@
+//the library :
 const express = require("express");
 const cors = require("cors");
 
 const connectDB = require("./config/db");
 require("dotenv").config();
+//the routes :
+const articleRoutes = require("./routers/articleRoutes");
+
+
+
 
 
 const subscriptionRoutes = require("./routers/subscriptionRoutes");
@@ -16,6 +22,8 @@ const app = express();
 connectDB();
 
 
+//the paths of routes
+app.use("/api/articles", articleRoutes);
 
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
