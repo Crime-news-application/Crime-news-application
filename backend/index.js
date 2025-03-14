@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
+const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 require("dotenv").config();
 const userRoutes = require("./routers/userRoutes");
@@ -27,9 +27,11 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
+
 
 // 
-app.use("/api/users", userRoutes);
+app.use("/api/users", require("./routers/userRoutes"));
 
 
 // 404 handler

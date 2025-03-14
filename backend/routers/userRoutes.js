@@ -1,11 +1,14 @@
+// routes/userRoutes.js
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
 const {
   createUser,
   getAllUsers,
   getUserById,
   editUser,
   deleteUser,
+  getUserProfile,
   verifyOtp,
   loginUser,
   googleLogin,
@@ -26,8 +29,8 @@ router.post("/verify-otp", verifyOtp);
 // Get all users
 router.get("/", getAllUsers);
 
-// Get a single user by ID
-router.get("/:id", getUserById);
+// ✅ GET USER PROFILE (Protected)
+router.get("/profile", authMiddleware, getUserProfile);
 
 // Edit user details
 router.patch("/:id", editUser);
