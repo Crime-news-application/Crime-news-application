@@ -35,13 +35,16 @@ import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
 
 
-import ArticlesPage from "./pages/ArticlesPage";
+// import ArticlesPage from "./pages/ArticlesPage";
 import ContactUs from "./pages/contact";
 
 import Login from "./pages/LogIn";
 import Signup from "./pages/SignUp";
 import UserProfile from "./pages/UserProfile";
-import AForm from "./pages/Articles-Form/AForm";
+
+import PaymentPage from "./pages/Subscription/Payment";
+import Footer from "./Component/Footer";
+
 
 function App() {
   const { t } = useTranslation();
@@ -54,14 +57,15 @@ function App() {
       <Routes>
         <Route path="/" element={<SubscriptionCardDisplay />} />
         <Route path="/a" element={<SubscriptionCardForm />} />
-         <Route path="/" element={<ArticlesPage />} />
+         {/* <Route path="/aa" element={<ArticlesPage />} /> */}
           <Route path="login" element={<Login />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/userprofile" element={<UserProfile />} />
-          <Route path="/aform" element={<AForm/>} />
+          {/* <Route path="/aform" element={<AForm/>} /> */}
+          <Route path="/payment" element={<PaymentPage/>} />
       </Routes>
-      {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
+      {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Footer/>}
 
      
     </>
