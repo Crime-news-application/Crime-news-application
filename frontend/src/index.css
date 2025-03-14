@@ -12,6 +12,7 @@
     --primary-color: #61090b;
     --background-color: #ffffff; /* تم تغيير الخلفية إلى اللون الأبيض */
     --text-color: #000000; /* تم تغيير لون النص إلى الأسود */
+    /* --text-color: #ffffff; */
   }
 }
 
