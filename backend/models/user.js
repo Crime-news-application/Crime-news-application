@@ -26,13 +26,14 @@ const userSchema = new mongoose.Schema(
     },
     subscriptionPlan: {type: String, default: ""},
     subscriptionExpiry: {type: Date,default: null },
-    profilePicture: { type: String }, // رابط الصورة المرفوعة
+    profilePicture: { type: String }, 
     savedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
     readingHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
-    articles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }], // ✅ مقالات الصحفي
+    articles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", userSchema);
+// module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.models.User || mongoose.model("User", userSchema);

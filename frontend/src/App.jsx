@@ -39,6 +39,7 @@ import ArticlesPage from "./pages/ArticlesPage";
 import Login from "./pages/LogIn";
 import Signup from "./pages/SignUp";
 import UserProfile from "./pages/UserProfile";
+import AForm from "./pages/Articles-Form/AForm";
 
 function App() {
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ function App() {
   return (
     <>
 
-      {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Navbar />}
+      {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Navbar />}
       <Routes>
         <Route path="/" element={<SubscriptionCardDisplay />} />
         <Route path="/a" element={<SubscriptionCardForm />} />
@@ -55,8 +56,9 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/userprofile" element={<UserProfile />} />
+          <Route path="/aform" element={<AForm/>} />
       </Routes>
-      {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />}
+      {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
 
      
     </>

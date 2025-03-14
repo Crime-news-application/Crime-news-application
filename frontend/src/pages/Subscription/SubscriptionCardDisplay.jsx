@@ -158,7 +158,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-// مكون بطاقة الاشتراك
+
 const SubscriptionCard = ({ plan }) => {
   return (
     <div className="bg-screen-dark text-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 animate-fadeIn">
@@ -193,7 +193,7 @@ const SubscriptionCardDisplay = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // تأكد من تغيير الرابط إذا كان الباك إند يعمل على نطاق أو بورت مختلف
+   
     fetch("http://localhost:5000/api/subscription")
       .then((res) => res.json())
       .then((data) => {
