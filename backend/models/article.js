@@ -15,7 +15,7 @@ const articleSchema = new mongoose.Schema(
     media: [{ type: String }], // روابط صور أو فيديوهات أخرى
     status: {
       type: String,
-      enum: ["draft", "pending", "published"],
+      enum: ["Rejected", "Pending", "Published"],
       default: "draft",
     },
     publishDate: { type: Date, default: Date.now },
@@ -25,10 +25,6 @@ const articleSchema = new mongoose.Schema(
     location: {
       city: { type: String },
       country: { type: String },
-      coordinates: {
-        lat: { type: Number },
-        long: { type: Number },
-      },
     }, // location كـ embedded document
   },
   { timestamps: true }

@@ -1,7 +1,13 @@
+//the library :
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 require("dotenv").config();
+//the routes :
+const articleRoutes = require("./routers/articleRoutes");
+
+
+
 
 
 
@@ -12,6 +18,8 @@ connectDB();
 app.use(cors()); 
 app.use(express.json()); 
 
+//the paths of routes
+app.use("/api/articles", articleRoutes);
 
 
 
