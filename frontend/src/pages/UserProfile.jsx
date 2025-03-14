@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 import {
   Container,
   Typography,
@@ -23,594 +21,664 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Box,
+  Divider,
+  Badge,
 } from "@mui/material";
 import {
   Edit as EditIcon,
-  Restaurant as RestaurantIcon,
   Delete as DeleteIcon,
+  Bloodtype as BloodIcon,
+  History as HistoryIcon,
+  BookmarkAdded as BookmarkIcon,
+  Comment as CommentIcon,
+  Fingerprint as FingerprintIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/system";
-
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { motion } from "framer-motion";
 
-// Custom styled components
-const StyledCard = styled(Card)(({ theme }) => ({
-  backgroundColor: "#E8F5E9",
-  borderRadius: "16px",
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-  transition: "transform 0.3s ease-in-out",
-  "&:hover": {
-    transform: "translateY(-8px)",
-  },
-}));
-
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: 120,
-  height: 120,
-  border: `4px solid ${theme.palette.primary.main}`,
-  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  borderRadius: "25px",
-  padding: "10px 20px",
-  fontWeight: "bold",
-  textTransform: "none",
-  transition: "all 0.3s ease",
-  "&:hover": {
-    transform: "scale(1.05)",
-  },
-}));
-
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#E8F5E9",
-  borderRadius: "16px",
-  padding: theme.spacing(3),
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-}));
-
-const StyledListItem = styled(ListItem)(({ theme }) => ({
-  backgroundColor: "#fff",
-  borderRadius: "12px",
-  marginBottom: theme.spacing(2),
-  padding: theme.spacing(2),
-  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-  transition: "transform 0.2s, box-shadow 0.2s",
-  "&:hover": {
-    transform: "translateY(-5px)",
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
-  },
-}));
-
-// Custom theme
+// CRIMEGAZETTE THEME
 const theme = createTheme({
   palette: {
-    primary: {
-      main: "#4CAF50", // Fresh green color
-    },
-    secondary: {
-      main: "#FF5722", // Carrot orange color
-    },
+    mode: "dark",
+    primary: { main: "#61090b" },
+    secondary: { main: "#ab0000" },
     background: {
-      default: "#F1F8E9", // Light green background
+      default: "#0a0000",
+      paper: "#150404",
     },
     text: {
-      primary: "#33691E", // Dark green text
-      secondary: "#689F38", // Medium green text
+      primary: "#ffffff",
+      secondary: "#ffcccc",
+    },
+    error: { main: "#ff2b2b" },
+  },
+  typography: {
+    fontFamily: "'Playfair Display', serif",
+    h3: {
+      letterSpacing: "0.05em",
+      fontWeight: 700,
+    },
+    h4: {
+      letterSpacing: "0.03em",
+    },
+  },
+  shape: {
+    borderRadius: 4,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+        },
+      },
     },
   },
 });
 
+// STYLED COMPONENTS
+const ProfileCard = styled(Card)(({ theme }) => ({
+  backgroundColor: "#1a0507",
+  border: `1px solid ${theme.palette.primary.main}`,
+  boxShadow: "0 4px 20px rgba(97, 9, 11, 0.4)",
+}));
+
+const BloodAvatar = styled(Avatar)(({ theme }) => ({
+  width: 120,
+  height: 120,
+  border: `3px solid ${theme.palette.primary.main}`,
+  backgroundColor: "#300000",
+  boxShadow: "0 0 15px rgba(171, 0, 0, 0.7)",
+}));
+
+const BloodButton = styled(Button)(({ theme }) => ({
+  borderLeft: `4px solid ${theme.palette.primary.dark}`,
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  fontWeight: "bold",
+  padding: "8px 16px",
+  position: "relative",
+  overflow: "hidden",
+  "&:before": {
+    content: '""',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: "linear-gradient(45deg, rgba(97, 9, 11, 0.4), transparent)",
+    opacity: 0,
+    transition: "opacity 0.3s ease",
+  },
+  "&:hover:before": {
+    opacity: 1,
+  },
+}));
+
+const CrimeTab = styled(Tab)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  textTransform: "uppercase",
+  letterSpacing: "0.1em",
+  fontWeight: "bold",
+  fontSize: "0.85rem",
+  "&.Mui-selected": {
+    color: theme.palette.text.primary,
+  },
+}));
+
+const ContentPanel = styled(Paper)(({ theme }) => ({
+  backgroundColor: "#1d0608",
+  border: `1px solid ${theme.palette.primary.dark}`,
+  boxShadow: "inset 0 0 10px rgba(97, 9, 11, 0.3)",
+  padding: theme.spacing(3),
+  marginTop: theme.spacing(2),
+}));
+
+const CrimeListItem = styled(ListItem)(({ theme }) => ({
+  borderBottom: "1px solid rgba(97, 9, 11, 0.5)",
+  position: "relative",
+  "&:hover": {
+    backgroundColor: "rgba(97, 9, 11, 0.1)",
+  },
+  "&:before": {
+    content: '""',
+    position: "absolute",
+    left: 0,
+    top: 0,
+    height: "100%",
+    width: "3px",
+    backgroundColor: theme.palette.primary.main,
+    transform: "scaleY(0)",
+    transition: "transform 0.2s ease",
+  },
+  "&:hover:before": {
+    transform: "scaleY(1)",
+  },
+}));
+
+const CrimeTitleText = styled(Typography)(({ theme }) => ({
+  fontFamily: "'Playfair Display', serif",
+  fontWeight: 600,
+}));
+
+const dateFormatter = (dateString) => {
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  return new Date(dateString).toLocaleDateString("en-US", options);
+};
+
 const UserProfile = () => {
   const [user, setUser] = useState(null);
+  const [tabValue, setTabValue] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({});
-  const [showChefRequestForm, setShowChefRequestForm] = useState(false);
-  const [tabValue, setTabValue] = useState(0);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
+  // GET user profile
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/users/profile`,
-        { withCredentials: true }
+        "http://localhost:5000/api/users/profile",
+        {
+          withCredentials: true,
+        }
       );
-      console.log(response.data);
-      setUser(response.data);
-      setEditedUser(response.data);
+      console.log("✅ User profile fetched:", response.data);
+      setUser(response.data.user);
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      console.error(
+        "❌ Error fetching profile:",
+        error.response?.data || error.message
+      );
     }
   };
 
+  // EDIT user
   const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditedUser(user);
-  };
+  const handleCancel = () => setIsEditing(false);
 
   const handleSave = async () => {
     try {
-      const response = await axios.put(
-        "http://localhost:5000/api/users/profile",
-        editedUser,
-        { withCredentials: true }
-      );
-      setUser(response.data);
+      await axios.put("http://localhost:5000/api/users/profile", editedUser, {
+        withCredentials: true,
+      });
+      setUser({ ...user, ...editedUser });
       setIsEditing(false);
     } catch (error) {
-      console.error("Error updating user profile:", error);
-    }
-  };
-
-  const handleChange = (e) => {
-    setEditedUser({ ...editedUser, [e.target.name]: e.target.value });
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const handleRemoveSavedRecipe = async (recipeId) => {
-    try {
-      console.log(recipeId);
-      const response = await axios.delete(
-        `http://localhost:5000/api/users/saved-recipes/${recipeId}`,
-        { withCredentials: true }
-      );
-      console.log("Server response:", response.data);
-      fetchUserProfile();
-    } catch (error) {
       console.error(
-        "Error removing saved recipe:",
-        error.response ? error.response.data : error.message
+        "❌ Error updating profile:",
+        error.response?.data || error.message
       );
     }
   };
 
-  const handleRemoveOrderHistory = async (orderId) => {
-    try {
-      await axios.delete(
-        `http://localhost:5000/api/users/order-history/${orderId}`,
-        { withCredentials: true }
-      );
-      fetchUserProfile();
-    } catch (error) {
-      console.error("Error removing order history:", error);
-    }
-  };
-
-  const handleChefRequest = () => setShowChefRequestForm(true);
-  const closeChefRequestForm = () => setShowChefRequestForm(false);
-
-  if (!user)
+  if (!user) {
     return (
-      <Typography variant="h6" align="center" sx={{ mt: 4 }}>
-        Loading...
-      </Typography>
+      <Box
+        sx={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#0a0000",
+        }}
+      >
+        <motion.div
+          animate={{
+            opacity: [0.3, 1, 0.3],
+            scale: [0.98, 1.02, 0.98],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 2,
+          }}
+        >
+          <Typography variant="h5" sx={{ color: "#61090b" }}>
+            Loading Profile Data...
+          </Typography>
+        </motion.div>
+      </Box>
     );
-
-  const RecipeList = ({ user, handleRemoveSavedRecipe }) => {};
+  }
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ py: 6 }}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Typography
-            variant="h3"
-            component="h1"
-            align="center"
-            color="primary"
-            gutterBottom
-            sx={{ fontWeight: "bold", mb: 4 }}
+      <Box
+        sx={{
+          backgroundColor: theme.palette.background.default,
+          minHeight: "100vh",
+          pt: 3,
+          pb: 6,
+        }}
+      >
+        <Container maxWidth="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            User Profile
-          </Typography>
+            <Box sx={{ mb: 5, textAlign: "center" }}>
+              <Typography
+                variant="h3"
+                color="primary"
+                sx={{
+                  textTransform: "uppercase",
+                  textShadow: "2px 2px 4px rgba(0,0,0,0.7)",
+                }}
+              >
+                <BloodIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+                CRIMEGAZETTE
+              </Typography>
+              <Typography variant="h5" color="text.secondary" sx={{ mt: 1 }}>
+                CASE FILE: {user.username.toUpperCase()}
+              </Typography>
+            </Box>
 
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <StyledCard>
-                <CardHeader
-                  avatar={
-                    <StyledAvatar
-                      src={user.profilePicture || Profile}
-                      alt={user.name}
+            <Grid container spacing={4}>
+              {/* LEFT SIDE (Profile Card) */}
+              <Grid item xs={12} md={4}>
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                >
+                  <ProfileCard>
+                    <CardHeader
+                      avatar={
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          badgeContent={
+                            <FingerprintIcon
+                              sx={{ color: theme.palette.primary.main }}
+                            />
+                          }
+                        >
+                          <BloodAvatar
+                            src={user.profilePicture}
+                            alt={user.username}
+                          >
+                            {!user.profilePicture &&
+                              user.username.charAt(0).toUpperCase()}
+                          </BloodAvatar>
+                        </Badge>
+                      }
+                      title={
+                        <Box sx={{ mt: 2 }}>
+                          <Typography variant="h4" sx={{ color: "#ffffff" }}>
+                            {user.username}
+                          </Typography>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              color: theme.palette.primary.main,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.05em",
+                            }}
+                          >
+                            {user.role || "Criminal Enthusiast"}
+                          </Typography>
+                        </Box>
+                      }
                     />
-                  }
-                  title={
-                    <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                      {user.name}
-                    </Typography>
-                  }
-                  subheader={
-                    <Typography variant="h6" color="text.secondary">
-                      {user.role}
-                    </Typography>
-                  }
-                />
-                <CardContent>
-                  <Typography variant="body1" paragraph>
-                    <strong>Email:</strong> {user.email}
-                  </Typography>
-                  <Typography variant="body1" paragraph>
-                    <strong>Bio:</strong> {user.bio}
-                  </Typography>
-                  <StyledButton
-                    startIcon={<EditIcon />}
-                    onClick={handleEdit}
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    sx={{ mt: 2 }}
-                  >
-                    Edit Profile
-                  </StyledButton>
-                  <div className={user.role == "chef" ? "hidden" : ""}>
-                    <StyledButton
-                      startIcon={<RestaurantIcon />}
-                      onClick={handleChefRequest}
-                      variant="outlined"
-                      color="secondary"
-                      fullWidth
-                      sx={{ mt: 2 }}
-                    >
-                      Become a Chef
-                    </StyledButton>
-                  </div>
+                    <CardContent>
+                      <Divider
+                        sx={{ mb: 3, borderColor: "rgba(97, 9, 11, 0.5)" }}
+                      />
 
-                  <div className={user.role == "chef" ? "" : "hidden"}>
-                    <StyledButton
-                      startIcon={<RestaurantIcon />}
-                      onClick={() => navigate("/profileChef")}
-                      variant="outlined"
-                      fullWidth
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="body1" sx={{ color: "#ffcccc" }}>
+                          <strong>CASE ID:</strong> #
+                          {user._id?.slice(-6) || "unknown"}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ mt: 1, color: "#ffcccc" }}
+                        >
+                          <strong>CONTACT:</strong> {user.email}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ mt: 1, color: "#ffcccc" }}
+                        >
+                          <strong>STATUS:</strong> Active
+                        </Typography>
+                      </Box>
+
+                      <Box sx={{ mt: 4 }}>
+                        <BloodButton
+                          startIcon={<EditIcon />}
+                          onClick={handleEdit}
+                          variant="contained"
+                          color="primary"
+                          fullWidth
+                        >
+                          Edit Case File
+                        </BloodButton>
+                      </Box>
+                    </CardContent>
+                  </ProfileCard>
+                </motion.div>
+              </Grid>
+
+              {/* RIGHT SIDE (Tabs) */}
+              <Grid item xs={12} md={8}>
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                >
+                  <Paper
+                    sx={{
+                      backgroundColor: "#0e0000",
+                      border: `1px solid ${theme.palette.primary.main}`,
+                      mb: 2,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Tabs
+                      value={tabValue}
+                      onChange={(e, newValue) => setTabValue(newValue)}
+                      variant="fullWidth"
+                      TabIndicatorProps={{
+                        style: {
+                          backgroundColor: theme.palette.primary.main,
+                          height: 3,
+                        },
+                      }}
                       sx={{
-                        mt: 2,
-                        backgroundImage:
-                          "linear-gradient(45deg, #FF6B6B, #FFD93D)", // Gradient color
-                        color: "white", // Text color
-                        "&:hover": {
-                          backgroundImage:
-                            "linear-gradient(45deg, #FFD93D, #FF6B6B)", // Reverse gradient on hover
-                          boxShadow: "0px 4px 20px rgba(255, 107, 107, 0.7)", // Shadow effect on hover
+                        "& .MuiTabs-flexContainer": {
+                          borderBottom: "1px solid rgba(97, 9, 11, 0.5)",
                         },
                       }}
                     >
-                      Chef Dashboard
-                    </StyledButton>
-                  </div>
-                </CardContent>
-              </StyledCard>
-            </Grid>
+                      <CrimeTab
+                        icon={<BookmarkIcon sx={{ mb: 0.5 }} />}
+                        label="Case Files"
+                      />
+                      <CrimeTab
+                        icon={<HistoryIcon sx={{ mb: 0.5 }} />}
+                        label="Recent Activity"
+                      />
+                      <CrimeTab
+                        icon={<CommentIcon sx={{ mb: 0.5 }} />}
+                        label="Statements"
+                      />
+                    </Tabs>
 
-            <Grid item xs={12} md={8}>
-              <StyledPaper>
-                <Tabs
-                  value={tabValue}
-                  onChange={handleTabChange}
-                  centered
-                  sx={{ mb: 3 }}
-                >
-                  <Tab label="Saved Recipes" />
-                  <Tab label="Order History" />
-                </Tabs>
-
-                {tabValue === 0 && (
-                  <List>
-                    {user.savedRecipes?.map((recipe) => (
-                      <StyledListItem key={recipe.id}>
-                        <Grid container spacing={2} alignItems="center">
-                          {/* Recipe Image */}
-                          <Grid item xs={12} md={3}>
-                            {recipe.photos.length > 0 ? (
-                              <Avatar
-                                src={recipe.photos[0]}
-                                alt={recipe.title}
-                                variant="rounded"
-                                sx={{
-                                  width: "100%",
-                                  height: "160px",
-                                  borderRadius: "12px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            ) : (
-                              <Avatar
-                                sx={{
-                                  width: "100%",
-                                  height: "160px",
-                                  borderRadius: "12px",
-                                  backgroundColor: "#e0e0e0",
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <Typography variant="h6" color="textSecondary">
-                                  No Image
-                                </Typography>
-                              </Avatar>
-                            )}
-                          </Grid>
-
-                          {/* Recipe Details */}
-                          <Grid item xs={12} md={6}>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="h5"
-                                  sx={{ color: "#333", fontWeight: "bold" }}
-                                >
-                                  {recipe.title}
-                                </Typography>
-                              }
-                              secondary={
-                                <div style={{ marginTop: "10px" }}>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ color: "#757575", mb: 1 }}
-                                  >
-                                    Chef: {recipe.chef?.name}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ color: "#757575", mb: 1 }}
-                                  >
-                                    Cooking Time: {recipe.cookingTime} mins
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ color: "#757575", mb: 1 }}
-                                  >
-                                    Cuisine Type: {recipe.cuisineType}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ color: "#757575", mb: 1 }}
-                                  >
-                                    Servings: {recipe.servings}
-                                  </Typography>
-                                </div>
-                              }
-                            />
-                          </Grid>
-                          {/* Action Buttons */}
-                          <Grid
-                            item
-                            xs={12}
-                            md={3}
+                    <ContentPanel>
+                      {/* TAB #0 - SAVED ARTICLES */}
+                      {tabValue === 0 && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.4 }}
+                        >
+                          <Typography
+                            variant="h6"
                             sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "flex-end",
-                              gap: "12px",
+                              mb: 2,
+                              borderBottom: "2px solid #61090b",
+                              pb: 1,
                             }}
                           >
-                            <StyledButton
-                              variant="contained"
-                              onClick={() => navigate(`/recipe/${recipe._id}`)}
-                              sx={{
-                                backgroundColor: "#4caf50",
-                                color: "#fff",
-                                "&:hover": {
-                                  backgroundColor: "#388e3c",
-                                },
-                                width: "100%",
-                              }}
-                            >
-                              View Details
-                            </StyledButton>
-                            <IconButton
-                              edge="end"
-                              aria-label="delete"
-                              onClick={() =>
-                                handleRemoveSavedRecipe(recipe._id)
-                              }
-                              sx={{
-                                color: "#e53935",
-                                transition: "color 0.2s",
-                                "&:hover": { color: "#d32f2f" },
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Grid>
-                        </Grid>
-                      </StyledListItem>
-                    ))}
-                  </List>
-                )}
+                            SAVED CASE FILES
+                          </Typography>
 
-                {tabValue === 1 && (
-                  <List>
-                    {user.orderHistory?.map((order) => (
-                      <StyledListItem key={order.id}>
-                        <Grid container spacing={2} alignItems="center">
-                          {/* Order Details */}
-                          <Grid item xs={12} md={8}>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="h5"
-                                  color="primary"
-                                  sx={{ fontWeight: "bold" }}
+                          {Array.isArray(user.savedArticles) &&
+                          user.savedArticles.length > 0 ? (
+                            <List disablePadding>
+                              {user.savedArticles.map((article) => (
+                                <CrimeListItem key={article._id} disablePadding>
+                                  <ListItemText
+                                    primary={
+                                      <CrimeTitleText>
+                                        {article.title}
+                                      </CrimeTitleText>
+                                    }
+                                    secondary={
+                                      <Typography
+                                        variant="body2"
+                                        sx={{ color: "rgba(255,255,255,0.7)" }}
+                                      >
+                                        By {article.author || "Anonymous"} •
+                                        Case #
+                                        {article._id?.slice(-6) || "unknown"}
+                                      </Typography>
+                                    }
+                                    sx={{ py: 1.5 }}
+                                  />
+                                  <IconButton
+                                    onClick={() =>
+                                      console.log("Remove article", article._id)
+                                    }
+                                    size="small"
+                                    sx={{ color: theme.palette.error.main }}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </CrimeListItem>
+                              ))}
+                            </List>
+                          ) : (
+                            <Box sx={{ py: 3, textAlign: "center" }}>
+                              <Typography
+                                variant="body1"
+                                color="text.secondary"
+                              >
+                                No case files found.
+                              </Typography>
+                            </Box>
+                          )}
+                        </motion.div>
+                      )}
+
+                      {/* TAB #1 - READING HISTORY */}
+                      {tabValue === 1 && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.4 }}
+                        >
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              mb: 2,
+                              borderBottom: "2px solid #61090b",
+                              pb: 1,
+                            }}
+                          >
+                            RECENT ACTIVITY
+                          </Typography>
+
+                          {Array.isArray(user.readingHistory) &&
+                          user.readingHistory.length > 0 ? (
+                            <List disablePadding>
+                              {user.readingHistory.map((historyItem) => (
+                                <CrimeListItem
+                                  key={historyItem._id}
+                                  disablePadding
                                 >
-                                  Order on{" "}
-                                  {new Date(
-                                    order.orderDate
-                                  ).toLocaleDateString()}
-                                </Typography>
-                              }
-                              secondary={
-                                <>
-                                  <Typography
-                                    variant="body1"
-                                    color="textSecondary"
-                                    sx={{ mt: 1 }}
+                                  <ListItemText
+                                    primary={
+                                      <CrimeTitleText>
+                                        {historyItem.title}
+                                      </CrimeTitleText>
+                                    }
+                                    secondary={
+                                      <Typography
+                                        variant="body2"
+                                        sx={{ color: "rgba(255,255,255,0.7)" }}
+                                      >
+                                        {historyItem.author || "No Author"} •
+                                        Accessed on{" "}
+                                        {dateFormatter(historyItem.date)}
+                                      </Typography>
+                                    }
+                                    sx={{ py: 1.5 }}
+                                  />
+                                  <IconButton
+                                    onClick={() =>
+                                      console.log(
+                                        "Remove from history",
+                                        historyItem._id
+                                      )
+                                    }
+                                    size="small"
+                                    sx={{ color: theme.palette.error.main }}
                                   >
-                                    Status:{" "}
-                                    <span
-                                      style={{
-                                        color: "#4caf50",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      {order.status}
-                                    </span>
-                                  </Typography>
-                                  <Typography
-                                    variant="body1"
-                                    color="textSecondary"
-                                  >
-                                    Total Amount:{" "}
-                                    <span
-                                      style={{
-                                        color: "#1976d2",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      ${order.totalAmount.toFixed(2)}
-                                    </span>
-                                  </Typography>
-                                  <Typography
-                                    variant="body1"
-                                    color="textSecondary"
-                                  >
-                                    Chef: {order.chef?.name}
-                                  </Typography>
-                                  <Typography
-                                    variant="body1"
-                                    color="textSecondary"
-                                  >
-                                    Delivery Method: {order.deliveryMethod}
-                                  </Typography>
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </CrimeListItem>
+                              ))}
+                            </List>
+                          ) : (
+                            <Box sx={{ py: 3, textAlign: "center" }}>
+                              <Typography
+                                variant="body1"
+                                color="text.secondary"
+                              >
+                                No recent activity logged.
+                              </Typography>
+                            </Box>
+                          )}
+                        </motion.div>
+                      )}
 
-                                  {/* List of Dishes Ordered */}
-                                  <Typography
-                                    variant="body1"
-                                    color="textSecondary"
-                                    sx={{ mt: 2 }}
-                                  >
-                                    Dishes:
-                                    <ul style={{ paddingLeft: "20px" }}>
-                                      {order.dishes
-                                        .sort((a, b) =>
-                                          a.dish.name.localeCompare(b.dish.name)
-                                        )
-                                        .map((dishItem) => (
-                                          <li
-                                            key={dishItem.dish.id}
-                                            style={{ marginBottom: "4px" }}
-                                          >
-                                            <span
-                                              style={{ fontWeight: "bold" }}
-                                            >
-                                              {dishItem.dish.name}
-                                            </span>{" "}
-                                            - {dishItem.quantity}x
-                                          </li>
-                                        ))}
-                                    </ul>
-                                  </Typography>
-                                </>
-                              }
-                            />
-                          </Grid>
+                      {/* TAB #2 - COMMENTS */}
+                      {tabValue === 2 && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.4 }}
+                        >
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              mb: 2,
+                              borderBottom: "2px solid #61090b",
+                              pb: 1,
+                            }}
+                          >
+                            STATEMENTS
+                          </Typography>
 
-                          {/* Delete Button */}
-                          <Grid item xs={12} md={4} sx={{ textAlign: "right" }}>
-                            <IconButton
-                              edge="end"
-                              aria-label="delete"
-                              onClick={() =>
-                                handleRemoveOrderHistory(order._id)
-                              }
-                              sx={{
-                                color: "#ff5722",
-                                "&:hover": {
-                                  backgroundColor: "rgba(255, 87, 34, 0.1)",
-                                },
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Grid>
-                        </Grid>
-                      </StyledListItem>
-                    ))}
-                  </List>
-                )}
-              </StyledPaper>
+                          {Array.isArray(user.comments) &&
+                          user.comments.length > 0 ? (
+                            <List disablePadding>
+                              {user.comments.map((comm) => (
+                                <CrimeListItem key={comm._id} disablePadding>
+                                  <ListItemText
+                                    primary={
+                                      <CrimeTitleText>
+                                        {comm.text}
+                                      </CrimeTitleText>
+                                    }
+                                    secondary={
+                                      <Typography
+                                        variant="body2"
+                                        sx={{ color: "rgba(255,255,255,0.7)" }}
+                                      >
+                                        Posted on{" "}
+                                        {dateFormatter(comm.createdAt)}
+                                      </Typography>
+                                    }
+                                    sx={{ py: 1.5 }}
+                                  />
+                                  <IconButton
+                                    onClick={() =>
+                                      console.log("Remove comment", comm._id)
+                                    }
+                                    size="small"
+                                    sx={{ color: theme.palette.error.main }}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </CrimeListItem>
+                              ))}
+                            </List>
+                          ) : (
+                            <Box sx={{ py: 3, textAlign: "center" }}>
+                              <Typography
+                                variant="body1"
+                                color="text.secondary"
+                              >
+                                No statements recorded.
+                              </Typography>
+                            </Box>
+                          )}
+                        </motion.div>
+                      )}
+                    </ContentPanel>
+                  </Paper>
+                </motion.div>
+              </Grid>
             </Grid>
-          </Grid>
+          </motion.div>
+        </Container>
 
-          <Dialog
-            open={isEditing}
-            onClose={handleCancel}
-            maxWidth="sm"
-            fullWidth
-          >
-            <DialogTitle>Edit Profile</DialogTitle>
-            <DialogContent>
-              <TextField
-                name="name"
-                label="Name"
-                value={editedUser.name}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                name="email"
-                label="Email"
-                value={editedUser.email}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                name="bio"
-                label="Bio"
-                value={editedUser.bio}
-                onChange={handleChange}
-                fullWidth
-                multiline
-                rows={4}
-                margin="normal"
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCancel} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={handleSave} color="primary" variant="contained">
-                Save
-              </Button>
-            </DialogActions>
-          </Dialog>
-
-          {/* Chef Request Form as Popup */}
-          <Dialog
-            open={showChefRequestForm}
-            onClose={closeChefRequestForm}
-            fullWidth
-            sx={{ zIndex: 1050 }}
-          >
-            <DialogContent>
-              <ChefRequestForm onClose={closeChefRequestForm} />
-            </DialogContent>
-          </Dialog>
-        </motion.div>
-      </Container>
+        {/* EDIT PROFILE DIALOG */}
+        <Dialog open={isEditing} onClose={handleCancel} maxWidth="sm" fullWidth>
+          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogContent>
+            <TextField
+              name="username"
+              label="Username"
+              value={editedUser.username || user.username}
+              onChange={(e) =>
+                setEditedUser({ ...editedUser, username: e.target.value })
+              }
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              name="email"
+              label="Email"
+              value={editedUser.email || user.email}
+              onChange={(e) =>
+                setEditedUser({ ...editedUser, email: e.target.value })
+              }
+              fullWidth
+              margin="normal"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCancel} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleSave} color="primary" variant="contained">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
     </ThemeProvider>
   );
 };
