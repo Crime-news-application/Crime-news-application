@@ -31,9 +31,12 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import React from "react";
 import SubscriptionCardDisplay from "./pages/Subscription/SubscriptionCardDisplay";
 import Navbar from "./Component/Navbar";
+import Footer from "./Component/Footer";
+
 import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
-
+import AboutUs from '../src/pages/AboutUs'
+import Home from "./pages/Home";
 
 import ArticlesPage from "./pages/ArticlesPage";
 import ContactUs from "./pages/contact";
@@ -41,7 +44,11 @@ import ContactUs from "./pages/contact";
 import Login from "./pages/LogIn";
 import Signup from "./pages/SignUp";
 import UserProfile from "./pages/UserProfile";
-import AForm from "./pages/Articles-Form/AForm";
+
+import PaymentPage from "./pages/Subscription/Payment";
+
+import Footer1 from "./Component/Footer";
+
 
 function App() {
   const { t } = useTranslation();
@@ -49,21 +56,33 @@ function App() {
 
   return (
     <>
-
-      {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Navbar />}
+      {location.pathname !== "/login" && location.pathname !== "/dashboard" && (
+        <Navbar />
+      )}
       <Routes>
-        <Route path="/" element={<SubscriptionCardDisplay />} />
-        <Route path="/a" element={<SubscriptionCardForm />} />
-         <Route path="/articlelist" element={<ArticlesPage />} />
-          <Route path="login" element={<Login />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/userprofile" element={<UserProfile />} />
-          <Route path="/aform" element={<AForm/>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/AboutUs" element={<AboutUs />} />
+        <Route
+          path="/SubscriptionCardDisplay"
+          element={<SubscriptionCardDisplay />}
+        />
+        <Route
+          path="/SubscriptionCardForm"
+          element={<SubscriptionCardForm />}
+        />
+        {/* <Route path="/articlelistaa" element={<ArticlesPage />} /> */}
+        <Route path="login" element={<Login />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/userprofile" element={<UserProfile />} />
+        {/* <Route path="/aform" element={<AForm/>} /> */}
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/ArticlesPage" element={<ArticlesPage />} />
       </Routes>
-      {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
 
-     
+      {location.pathname !== "/login" && location.pathname !== "/dashboard" && (
+        <Footer1 />
+      )}
     </>
   );
 }
