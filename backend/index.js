@@ -3,7 +3,8 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 require("dotenv").config();
 
-
+const subscriptionRoutes = require("./routers/subscriptionRoutes");
+const paymentRoutes = require("./routers/paymentRoutes");
 
 const app = express();
 
@@ -14,8 +15,8 @@ app.use(express.json());
 
 
 
-
-
+app.use("/api", subscriptionRoutes);
+app.use("/api", paymentRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

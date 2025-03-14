@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import "../App";
+import { useTranslation } from "react-i18next";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const { i18n } = useTranslation();
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+  };
   return (
     <>
       {/* Top Red Banner with Logo and Search */}
@@ -81,6 +85,23 @@ const Navbar = () => {
                 </svg>
               </button>
             </div>
+   {/* Language Toggle Buttons */}
+            <div className="flex space-x-2">
+              <button
+                onClick={() => changeLanguage("en")}
+                className="px-3 py-1 bg-white text-screen-red font-bold rounded transition-all duration-300 hover:bg-gray-100"
+              >
+                English
+              </button>
+              <button
+                onClick={() => changeLanguage("ar")}
+                className="px-3 py-1 bg-white text-screen-red font-bold rounded transition-all duration-300 hover:bg-gray-100"
+              >
+                العربية
+              </button>
+            </div>
+
+
           </div>
         </div>
       </div>
