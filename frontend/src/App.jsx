@@ -54,7 +54,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SubscriptionCardDisplay />} />
         <Route path="/a" element={<SubscriptionCardForm />} />
-         <Route path="/" element={<ArticlesPage />} />
+         <Route path="/articlelist" element={<ArticlesPage />} />
           <Route path="login" element={<Login />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/signup" element={<Signup />} />

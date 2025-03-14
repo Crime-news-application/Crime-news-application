@@ -1,14 +1,8 @@
 const mongoose = require("mongoose");
-const Article = require("../models/Article");
+const Article = require("../models/Article"); // تأكد أن المسار صحيح
 
 const seedArticles = async () => {
   try {
-    // التأكد من الاتصال قبل تنفيذ العملية
-    await mongoose.connect("mongodb://127.0.0.1:27017/newsdb", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
     // حذف المقالات القديمة إن وجدت
     await Article.deleteMany();
 
@@ -19,7 +13,7 @@ const seedArticles = async () => {
           body: "تمكن مجموعة من العلماء من تطوير تقنية جديدة قد تغير مستقبل التكنولوجيا.",
           summary: "اختراع ثوري في مجال التكنولوجيا الحديثة.",
         },
-        author: "65e0f1f99b8e1a23f456abcd", // استبدل بمعرّف مستخدم حقيقي
+        author: "65e0f1f99b8e1a23f456abcd", // استبدل بمعرّف مستخدم حقيقي من قاعدة بياناتك
         categories: ["تكنولوجيا"],
         tags: ["ابتكار", "تكنولوجيا", "مستقبل"],
         featuredImage: "/uploads/tech.jpg",
