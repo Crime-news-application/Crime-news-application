@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Search, FileText, Shield, AlertTriangle, Fingerprint, Eye, Instagram, Twitter, Facebook, Youtube } from "lucide-react";
 
-export default function Footer() {
+export default function Footer1() {
   return (
     <footer className="bg-[var(--background-color)] text-[var(--text-color)] relative overflow-hidden">
       {/* Background fingerprint styles */}
@@ -180,7 +180,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <p className="flex items-center">
-                © 2025 Crime Scene Investigator. All rights reserved.
+                Â© 2025 Crime Scene Investigator. All rights reserved.
               </p>
             </div>
             <div>
