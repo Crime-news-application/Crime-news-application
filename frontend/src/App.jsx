@@ -35,18 +35,30 @@ import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
 
 
+import ArticlesPage from "./pages/ArticlesPage";
+import Login from "./pages/LogIn";
+import Signup from "./pages/SignUp";
+import UserProfile from "./pages/UserProfile";
+
 function App() {
   const { t } = useTranslation();
   const location = useLocation(); 
 
   return (
     <>
+
       {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Navbar />}
       <Routes>
         <Route path="/" element={<SubscriptionCardDisplay />} />
         <Route path="/a" element={<SubscriptionCardForm />} />
+         <Route path="/" element={<ArticlesPage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/userprofile" element={<UserProfile />} />
       </Routes>
-      {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
+      {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />}
+
+     
     </>
   );
 }

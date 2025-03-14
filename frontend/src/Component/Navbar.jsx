@@ -29,7 +29,7 @@ const Navbar = () => {
             {/* Auth Links */}
             <div className="hidden md:flex space-x-4 text-md font-semibold mr-6">
               <a
-                href="#"
+                href="signup"
                 className="hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
               >
                 REGISTER
@@ -43,7 +43,7 @@ const Navbar = () => {
               </a>
               <span>|</span>
               <a
-                href="#"
+                href="login"
                 className="flex items-center hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
               >
                 SIGN IN
