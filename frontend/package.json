@@ -20,13 +20,10 @@
     "@tailwindcss/vite": "^4.0.13",
     "axios": "^1.8.3",
     "framer-motion": "^12.5.0",
-    "i18next": "^24.2.2",
+    "i18next": "^24.2.3",
     "js-cookie": "^3.0.5",
-
-    
- 
     "jspdf": "^3.0.0",
-    "lucide-react": "^0.481.0",
+    "lucide-react": "^0.479.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
