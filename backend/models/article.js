@@ -3,7 +3,22 @@ const mongoose = require("mongoose");
 const articleSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    content: { type: String, required: true },
+    content: {
+      type: new mongoose.Schema({
+        description: { type: String },
+        victimInfo: { type: String },
+        suspectInfo: { type: String },
+        weaponsUsed: { type: String },
+        suicideDetails: { type: String },
+        evidenceNotes: { type: String },
+        witnessReports: { type: String },
+        officerInCharge: { type: String },
+        caseStatus: { type: String, default: "open" },
+        publicRisk: { type: String, default: "none" },
+        relatedCases: { type: String },
+      }),
+      required: true,
+    },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
