@@ -31,9 +31,12 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import React from "react";
 import SubscriptionCardDisplay from "./pages/Subscription/SubscriptionCardDisplay";
 import Navbar from "./Component/Navbar";
+import Footer from "./Component/Footer";
+
 import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
-
+import AboutUs from '../src/pages/AboutUs'
+import Home from "./pages/Home";
 
 import ArticlesPage from "./pages/ArticlesPage";
 import ContactUs from "./pages/contact";
@@ -52,6 +55,8 @@ function App() {
 
       {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Navbar />}
       <Routes>
+      <Route path="/HOME" element={<Home />} />
+      <Route path="/AboutUs" element={<AboutUs />} />
         <Route path="/" element={<SubscriptionCardDisplay />} />
         <Route path="/a" element={<SubscriptionCardForm />} />
          <Route path="/" element={<ArticlesPage />} />
@@ -61,6 +66,7 @@ function App() {
           <Route path="/userprofile" element={<UserProfile />} />
           <Route path="/aform" element={<AForm/>} />
       </Routes>
+      <Footer />
       {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
 
      
