@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Search, FileText, Shield, AlertTriangle, Fingerprint, Eye, Instagram, Twitter, Facebook, Youtube } from "lucide-react";
 
-export default function Footer() {
+export default function Footer1() {
   return (
     <footer className="bg-[var(--background-color)] text-[var(--text-color)] relative overflow-hidden">
       {/* Background fingerprint styles */}

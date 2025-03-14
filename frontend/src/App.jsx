@@ -46,7 +46,8 @@ import Signup from "./pages/SignUp";
 import UserProfile from "./pages/UserProfile";
 
 import PaymentPage from "./pages/Subscription/Payment";
-import Footer from "./Component/Footer";
+
+import Footer1 from "./Component/Footer";
 
 
 function App() {
@@ -58,10 +59,10 @@ function App() {
 
       {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Navbar />}
       <Routes>
-      <Route path="/HOME" element={<Home />} />
+      <Route path="/" element={<Home />} />
       <Route path="/AboutUs" element={<AboutUs />} />
-        <Route path="/" element={<SubscriptionCardDisplay />} />
-        <Route path="/a" element={<SubscriptionCardForm />} />
+        <Route path="/SubscriptionCardDisplay" element={<SubscriptionCardDisplay />} />
+        <Route path="/SubscriptionCardForm" element={<SubscriptionCardForm />} />
          {/* <Route path="/aa" element={<ArticlesPage />} /> */}
           <Route path="login" element={<Login />} />
           <Route path="/contact" element={<ContactUs />} />
@@ -71,7 +72,7 @@ function App() {
           <Route path="/payment" element={<PaymentPage/>} />
       </Routes>
      
-      {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />}
+      {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Footer1/>}
 
      
     </>
