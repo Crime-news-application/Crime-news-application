@@ -1,3 +1,4 @@
+وفي ملف controller 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -110,38 +111,41 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
-    }
-
-    // Find user by email
+    // Find user
     const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Compare passwords
+    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
-    }
 
     // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
+    // ✅ Set token as an HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true, // ❗ Prevent JavaScript access
+      secure: false, // ❗ Set true in production with HTTPS
+      sameSite: "Lax", // ❗ Prevent CSRF issues
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
+    console.log("✅ Token set in cookie:", token); // Debugging
+
     res
       .status(200)
       .json({ message: "Login successful", token, user_id: user._id });
   } catch (error) {
-    console.error("❌ Error during login:", error);
+    console.error("❌ Login error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -296,6 +300,30 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+
+const getUserProfile = async (req, res) => {
+  try {
+    console.log("✅ ID from token or cookie:", req.user);
+
+    if (!req.user || !mongoose.Types.ObjectId.isValid(req.user)) {
+      console.error("❌ Invalid user ID:", req.user);
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    const user = await User.findById(req.user).select("-password");
+    if (!user) {
+      console.error("❌ User not found:", req.user);
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ user, message: "User profile fetched successfully" });
+  } catch (error) {
+    console.error("❌ Error fetching user profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 // Export all functions
 module.exports = {
   createUser,
@@ -303,6 +331,7 @@ module.exports = {
   getUserById,
   editUser,
   deleteUser,
+  getUserProfile,
   verifyOtp,
   loginUser,
   googleLogin,

@@ -3,7 +3,22 @@ const mongoose = require("mongoose");
 const articleSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    content: { type: String, required: true },
+    content: {
+      type: new mongoose.Schema({
+        description: { type: String },
+        victimInfo: { type: String },
+        suspectInfo: { type: String },
+        weaponsUsed: { type: String },
+        suicideDetails: { type: String },
+        evidenceNotes: { type: String },
+        witnessReports: { type: String },
+        officerInCharge: { type: String },
+        caseStatus: { type: String, default: "open" },
+        publicRisk: { type: String, default: "none" },
+        relatedCases: { type: String },
+      }),
+      required: true,
+    },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -15,7 +30,7 @@ const articleSchema = new mongoose.Schema(
     media: [{ type: String }], // روابط صور أو فيديوهات أخرى
     status: {
       type: String,
-      enum: ["draft", "pending", "published"],
+      enum: ["Rejected", "Pending", "Published"],
       default: "draft",
     },
     publishDate: { type: Date, default: Date.now },
@@ -25,10 +40,6 @@ const articleSchema = new mongoose.Schema(
     location: {
       city: { type: String },
       country: { type: String },
-      coordinates: {
-        lat: { type: Number },
-        long: { type: Number },
-      },
     }, // location كـ embedded document
   },
   { timestamps: true }
