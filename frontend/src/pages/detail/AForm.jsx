@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Import axios for making HTTP requests
 
 function AForm() {
-  const [crimeType, setCrimeType] = useState("murder");
+  const [categories, setCategories] = useState("murder");
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -23,11 +24,17 @@ function AForm() {
   const [files, setFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [formStep, setFormStep] = useState(1);
+  const [error, setError] = useState(null); // State for error handling
+  const [isSubmitting, setIsSubmitting] = useState(false); // State for submission loading
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "categories") {
+      setCategories(value);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -38,13 +45,69 @@ function AForm() {
     }, 1500);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Save form data to session storage for simplicity
-    sessionStorage.setItem("formData", JSON.stringify(formData));
-    sessionStorage.setItem("files", JSON.stringify(files));
-    // Navigate to details page
-    navigate("/details");
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Retrieve the token from local storage
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("No token found. Please log in.");
+      }
+
+      // Map frontend keys to backend keys
+      const payload = {
+        title: formData.title,
+        content: {
+          description: formData.description,
+          victimInfo: formData.victimInfo,
+          suspectInfo: formData.suspectInfo,
+          weaponsUsed: formData.weaponsUsed,
+          suicideDetails: formData.suicideDetails,
+          evidenceNotes: formData.evidenceNotes,
+          witnessReports: formData.witnessReports,
+          officerInCharge: formData.officerInCharge,
+          caseStatus: formData.caseStatus,
+          publicRisk: formData.publicRisk,
+          relatedCases: formData.relatedCases,
+        },
+        categories: categories, // Use categories instead of categories
+        tags: [categories], // Add categories as a tag
+        mediaSource: [formData.mediaSource], // Convert mediaSource to an array
+        location: {
+          city: formData.location.split(",")[0]?.trim(), // Extract city from location
+          country: formData.location.split(",")[1]?.trim(), // Extract country from location
+        },
+      };
+
+      // Send the POST request to the API with the token in the header
+      const response = await axios.post(
+        "http://localhost:5000/api/articles/add-articles",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+          withCredentials: true, // Optional: Only needed if you're using cookies
+        }
+      );
+
+      // Handle success
+      if (response.status === 201) {
+        alert("Article submitted successfully!");
+        navigate("/details"); // Navigate to the details page
+      }
+    } catch (err) {
+      // Handle errors
+      setError(
+        err.response?.data?.message || "An error occurred. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const nextStep = () => {
@@ -59,7 +122,6 @@ function AForm() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex flex-col">
-      
       <div className="flex-grow flex items-center justify-center p-4 md:p-8">
         <div className="bg-white shadow-2xl rounded-lg w-full max-w-4xl overflow-hidden">
           {/* Form Header */}
@@ -139,24 +201,28 @@ function AForm() {
                   {/* Crime Type */}
                   <div>
                     <label
-                      htmlFor="crimeType"
+                      htmlFor="categories"
                       className="block text-sm font-medium text-gray-700"
                     >
                       Crime Type <span className="text-[#b21e23]">*</span>
                     </label>
                     <select
-                      id="crimeType"
-                      name="crimeType"
-                      value={crimeType}
-                      onChange={(e) => setCrimeType(e.target.value)}
+                      id="categories"
+                      name="categories"
+                      value={categories}
+                      onChange={handleChange}
                       className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-[#b21e23] focus:border-[#b21e23]"
                     >
-                      <option value="murder">Murder</option>
-                      <option value="suicide">Suicide</option>
-                      <option value="assault">Assault</option>
-                      <option value="robbery">Robbery</option>
-                      <option value="kidnapping">Kidnapping</option>
-                      <option value="other">Other Violent Crime</option>
+                      <option value="Murder">Murder</option>
+                      <option value="Theft">Theft</option>
+                      <option value="Fraud">Fraud</option>
+                      <option value="Cybercrime">Cybercrime</option>
+                      <option value="Kidnapping">Kidnapping</option>
+                      <option value="Drugs">Drugs</option>
+                      <option value="Awareness">Awareness</option>
+                      <option value="Domestic Violence">
+                        Domestic Violence
+                      </option>
                     </select>
                   </div>
 
@@ -332,7 +398,7 @@ function AForm() {
                 </div>
 
                 {/* Suspect Info (Conditional Rendering) */}
-                {crimeType !== "suicide" && (
+                {categories !== "suicide" && (
                   <div>
                     <label
                       htmlFor="suspectInfo"
@@ -372,7 +438,7 @@ function AForm() {
                 </div>
 
                 {/* Suicide Details (Conditional Rendering) */}
-                {crimeType === "suicide" && (
+                {categories === "suicide" && (
                   <div>
                     <label
                       htmlFor="suicideDetails"
@@ -605,8 +671,6 @@ function AForm() {
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 }

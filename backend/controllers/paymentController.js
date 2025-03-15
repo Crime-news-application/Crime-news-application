@@ -1,7 +1,7 @@
 // controllers/paymentController.js
 const Payment = require("../models/Payment");
 const SubscriptionCard = require("../models/SubscriptionCard");
-const User = require("../models/User");
+const User = require("../models/user");
 
 exports.createPayment = async (req, res) => {
   try {
@@ -12,7 +12,9 @@ exports.createPayment = async (req, res) => {
     }
 
     // جلب بطاقة الاشتراك للحصول على السعر والعنوان
-    const subscriptionCard = await SubscriptionCard.findById(subscriptionCard_id);
+    const subscriptionCard = await SubscriptionCard.findById(
+      subscriptionCard_id
+    );
     if (!subscriptionCard) {
       return res.status(404).json({ error: "Subscription card not found" });
     }
@@ -51,7 +53,9 @@ exports.createPayment = async (req, res) => {
       subscriptionExpiry,
     });
 
-    return res.status(201).json({ message: "Payment recorded successfully", payment });
+    return res
+      .status(201)
+      .json({ message: "Payment recorded successfully", payment });
   } catch (error) {
     console.error("Error creating payment:", error);
     return res.status(500).json({ error: "Internal server error" });
