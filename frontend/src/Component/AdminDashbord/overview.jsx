@@ -41,7 +41,7 @@ const Overview = () => {
   // Fetch data from Firebase using Axios
   useEffect(() => {
     axios
-      .get("https://ahlam-4cb7e-default-rtdb.firebaseio.com/articals.json")
+      .get("http://localhost:5000/api/articles")
       .then((response) => {
         // Convert Firebase data to array (as it comes as an object)
         const fetchedArticles = [];
@@ -255,9 +255,9 @@ const Overview = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="">All Statuses</option>
-              <option value="published">Published</option>
-              <option value="pending">Pending</option>
-              <option value="rejected">Rejected</option>
+              <option value="Published">Published</option>
+              <option value="Pending">Pending</option>
+              <option value="Rejected">Rejected</option>
             </select>
           </div>
 
@@ -302,9 +302,9 @@ const Overview = () => {
                   <td className="px-6 py-6">
                     <span
                       className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
-                        article.status === "published"
+                        article.status === "Published"
                           ? "bg-green-200 text-green-800"
-                          : article.status === "pending"
+                          : article.status === "Pending"
                           ? "bg-yellow-200 text-yellow-800"
                           : "bg-red-200 text-red-800"
                       }`}

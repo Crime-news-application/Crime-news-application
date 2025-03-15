@@ -7,10 +7,6 @@ require("dotenv").config();
 //the routes :
 const articleRoutes = require("./routers/articleRoutes");
 
-
-
-
-
 const subscriptionRoutes = require("./routers/subscriptionRoutes");
 const paymentRoutes = require("./routers/paymentRoutes");
 
@@ -21,18 +17,15 @@ const app = express();
 // Connect to the database
 connectDB();
 
-
-//the paths of routes
-app.use("/api/articles", articleRoutes);
-
-// CORS configuration
+// CORS configuration (Move it before routes)
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
   "http://localhost:3000",
   "http://localhost:5173",
   "http://localhost:8080",
   "http://localhost:5174",
 ];
-app.use(
+
+app.use(  
   cors({
     origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -40,17 +33,18 @@ app.use(
   })
 );
 
+//the paths of routes
+app.use("/api/articles", articleRoutes);
+
 app.use(express.json());
 app.use(cookieParser());
 
-
-// 
+//
 app.use("/api/users", userRoutes);
 app.use("/app", messageroutes);
 
 app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
-
 
 // 404 handler
 app.use((req, res) => {
@@ -62,7 +56,6 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Internal Server Error" });
 });
-
 
 // Start the server
 const PORT = process.env.PORT || 5000;

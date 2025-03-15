@@ -1,6 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const UserArticlesDashboard = () => {
+  // State to store articles
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+
+  const filteredArticles = articles.filter(
+    (article) =>
+      article.title.includes(searchTerm) &&
+      (filterStatus === "" || article.status === filterStatus)
+  );
+
+  // Fetch data from Firebase using Axios
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/articles")
+      .then((response) => {
+        // Convert Firebase data to array (as it comes as an object)
+        const fetchedArticles = [];
+        for (let key in response.data) {
+          fetchedArticles.push({
+            id: key,
+            ...response.data[key],
+          });
+        }
+        setArticles(fetchedArticles);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Error while fetching data: {error.message}
+      </div>
+    );
+  }
+
   // بيانات نموذجية
   const users = [
     {
@@ -45,59 +97,6 @@ const UserArticlesDashboard = () => {
     },
   ];
 
-  const articles = [
-    {
-      id: 1,
-      title: "Missing Person: Emily Carter",
-      date: "2025-02-28",
-      location: "Los Angeles, CA",
-      description:
-        "Emily Carter, a 23-year-old woman, was last seen leaving her apartment...",
-      state: "pending",
-      image: "https://example.com/images/missing_person.jpg",
-    },
-    {
-      id: 2,
-      title: "Missing Person: Emily Carter",
-      date: "2025-02-28",
-      location: "Los Angeles, CA",
-      description:
-        "Emily Carter, a 23-year-old woman, was last seen leaving her apartment...",
-      state: "pending",
-      image: "https://example.com/images/missing_person.jpg",
-    },
-    {
-      id: 3,
-      title: "Missing Person: Emily Carter",
-      date: "2025-02-28",
-      location: "Los Angeles, CA",
-      description:
-        "Emily Carter, a 23-year-old woman, was last seen leaving her apartment...",
-      state: "pending",
-      image: "https://example.com/images/missing_person.jpg",
-    },
-    {
-      id: 4,
-      title: "Missing Person: Emily Carter",
-      date: "2025-02-28",
-      location: "Los Angeles, CA",
-      description:
-        "Emily Carter, a 23-year-old woman, was last seen leaving her apartment...",
-      state: "pending",
-      image: "https://example.com/images/missing_person.jpg",
-    },
-    {
-      id: 5,
-      title: "Missing Person: Emily Carter",
-      date: "2025-02-28",
-      location: "Los Angeles, CA",
-      description:
-        "Emily Carter, a 23-year-old woman, was last seen leaving her apartment...",
-      state: "pending",
-      image: "https://example.com/images/missing_person.jpg",
-    },
-  ];
-
   // Combined data for display
   const dashboardData = users.flatMap((user) =>
     articles.map((article) => ({
@@ -109,11 +108,11 @@ const UserArticlesDashboard = () => {
   // Function to get status color
   const getStatusColor = (state) => {
     switch (state) {
-      case "pending":
+      case "Pending":
         return "bg-amber-100 text-amber-800 border-amber-300";
-      case "approved":
+      case "Approved":
         return "bg-emerald-100 text-emerald-800 border-emerald-300";
-      case "rejected":
+      case "Rejected":
         return "bg-rose-100 text-rose-800 border-rose-300";
       default:
         return "bg-slate-100 text-slate-800 border-slate-300";
@@ -222,22 +221,22 @@ const UserArticlesDashboard = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatDate(item.article.date)}
+                  {formatDate(item.article.publishDate)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {item.article.location}
+                  {item.article.location.city}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusColor(
-                      item.article.state
+                      item.article.status
                     )}`}
                   >
-                    {item.article.state}
+                    {item.article.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 ">
+                  <button className="text-blue-600 hover:cursor-pointer hover:text-blue-900 ">
                     Read more
                   </button>
                 </td>
@@ -283,26 +282,26 @@ const UserArticlesDashboard = () => {
                 </div>
                 <div className="text-sm text-gray-700">
                   <span className="font-medium">Date:</span>{" "}
-                  {formatDate(item.article.date)}
+                  {formatDate(item.article.publishDate)}
                 </div>
                 <div className="text-sm text-gray-700">
                   <span className="font-medium">Location:</span>{" "}
-                  {item.article.location}
+                  {item.article.location.city}
                 </div>
                 <div>
                   <span
                     className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                      item.article.state
+                      item.article.status
                     )}`}
                   >
-                    {item.article.state}
+                    {item.article.status}
                   </span>
                 </div>
               </div>
 
               {/* الأزرار */}
               <div className="mt-5 flex justify-between space-x-3">
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">
+                <button className="px-4 py-2 hover:cursor-pointer bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">
                   Read more
                 </button>
               </div>
