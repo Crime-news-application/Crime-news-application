@@ -1,97 +1,184 @@
-const Article = require("../models/Article");
+const Article = require("../models/article");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-// Create a new article
-const createArticle = async (req, res) => {
-  try {
-    const { title, content, author, categories, tags, location } = req.body;
-
-    // التحقق من وجود صور مرفوعة
-    const featuredImage = req.file ? `/uploads/${req.file.filename}` : null;
-    const media = req.files
-      ? req.files.map((file) => `/uploads/${file.filename}`)
-      : [];
-
-    const newArticle = new Article({
-      title,
-      content,
-      author,
-      categories,
-      tags,
-      featuredImage,
-      media,
-      location,
-    });
-
-    await newArticle.save();
-    res.status(201).json(newArticle);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating article", error });
-  }
-};
-
-// Get all articles with filters
 const getArticles = async (req, res) => {
   try {
     const { category, sortBy } = req.query;
-    let query = {};
-    if (category) query.categories = category;
 
-    let articles = Article.find(query);
+    const query =
+      category && category !== "All" ? { categories: category } : {};
 
-    // Sorting
-    if (sortBy === "newest") articles = articles.sort({ publishDate: -1 });
-    if (sortBy === "oldest") articles = articles.sort({ publishDate: 1 });
-    if (sortBy === "most-viewed") articles = articles.sort({ views: -1 });
-    if (sortBy === "most-liked") articles = articles.sort({ likes: -1 });
+    let sortOption = {};
+    switch (sortBy) {
+      case "newest":
+        sortOption = { publishDate: -1 };
+        break;
+      case "oldest":
+        sortOption = { publishDate: 1 };
+        break;
+      case "most-viewed":
+        sortOption = { views: -1 };
+        break;
+      case "most-liked":
+        sortOption = { likes: -1 };
+        break;
+      default:
+        sortOption = { publishDate: -1 };
+    }
 
-    const result = await articles.exec();
-    res.status(200).json(result);
+    const articles = await Article.find(query).sort(sortOption);
+    res.json(articles);
   } catch (error) {
     res.status(500).json({ message: "Error fetching articles", error });
   }
 };
 
-// Get a single article by ID
+
+// const getTop5Articles = async (req, res) => {
+//   try {
+//     const articles = await Article.find().sort({ views: -1 }).limit(5);
+//     res.json(articles);
+//   } catch (error) {
+//     console.error('Error fetching top 5 articles:', error);
+//     res.status(500).json({ message: 'Error fetching top 5 articles', error });
+//   }
+// };
+
+
+function getUserIdFromToken(token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Replace with your secret key
+    return decoded.userId; // Ensure this matches the field in your token payload
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
+}
+
+async function createArticle(req, res) {
+  // Extract token from the Authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+
+  const token = authHeader.split(" ")[1]; // Get the token after "Bearer "
+
+  if (!token) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+
+  try {
+    const authorId = getUserIdFromToken(token); // Decode the token to get the user ID
+
+    const newArticle = new Article({
+      title: req.body.title,
+      content: req.body.content,
+      author: authorId,
+      categories: req.body.categories,
+      tags: req.body.tags,
+      featuredImage: req.body.featuredImage,
+      mediaSource: req.body.mediaSource,
+      status: req.body.status || "Pending",
+      location: req.body.location,
+    });
+
+    const savedArticle = await newArticle.save();
+    res.status(201).json(savedArticle);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
 const getArticleById = async (req, res) => {
   try {
-    const article = await Article.findById(req.params.id).populate(
-      "author comments"
-    );
-    if (!article) return res.status(404).json({ message: "Article not found" });
-    res.status(200).json(article);
+    const articleId = req.params.id; // Extract the article ID from the request parameters
+
+    const article = await Article.findById(articleId); // Find the article by ID
+
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    res.json(article); // Return the article
   } catch (error) {
     res.status(500).json({ message: "Error fetching article", error });
   }
 };
 
-// Update an article
-const updateArticle = async (req, res) => {
+const addCommentToArticle = async (req, res) => {
   try {
-    const updatedArticle = await Article.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    res.status(200).json(updatedArticle);
+    const articleId = req.params.id; // Extract article ID from the URL
+    const { text } = req.body; // Extract comment text from the request body
+
+    // Extract token from the Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const token = authHeader.split(" ")[1]; // Get the token after "Bearer "
+
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    // Decode the token to get the user ID (author of the comment)
+    const authorId = getUserIdFromToken(token);
+
+    // Find the article by ID
+    const article = await Article.findById(articleId);
+
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    // Add the new comment to the comments array
+    article.comments.push({
+      text,
+      author: authorId,
+    });
+
+    // Save the updated article
+    const updatedArticle = await article.save();
+
+    res.status(201).json({
+      message: "Comment added successfully",
+      article: updatedArticle,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error updating article", error });
+    res.status(500).json({ message: "Error adding comment", error });
   }
 };
 
-// Delete an article
-const deleteArticle = async (req, res) => {
+const getArticleComments = async (req, res) => {
   try {
-    await Article.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Article deleted successfully" });
+    const articleId = req.params.id; // Extract article ID from the URL
+
+    // Find the article and populate the author field in the comments array
+    const article = await Article.findById(articleId).populate({
+      path: "comments.author",
+      select: "username email", // Include only the fields you need
+    });
+
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    // Return the comments with user details
+    res.status(200).json({
+      message: "Comments retrieved successfully",
+      comments: article.comments,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting article", error });
+    res.status(500).json({ message: "Error retrieving comments", error });
   }
 };
 
 module.exports = {
-  createArticle,
   getArticles,
+  createArticle,
   getArticleById,
-  updateArticle,
-  deleteArticle,
+  addCommentToArticle,
+  getArticleComments,
 };

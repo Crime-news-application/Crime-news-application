@@ -10,14 +10,10 @@ import { useEffect, useState } from "react";
 import heroVideo from "../assets/Recording 2025-03-14 140130.mp4"; // تأكد أن اسم الملف صحيح
 import CybercrimeSection from "../Component/Homecomponent/CybercrimeSection"
 import { Link } from "react-router-dom";
+import { CrimePodcastSection } from "../Component/Homecomponent/CrimePodcastSection"
+import axios from "axios";
 
 
-const statsData = [
-  { value: "10+", label: "Years Experience" },
-  { value: "50+", label: "Global Correspondents" },
-  { value: "1000+", label: "Investigations Covered" },
-  { value: "24/7", label: "News Coverage" },
-];
 
 
 
@@ -26,11 +22,60 @@ const statsData = [
 const Home = () => {
 
 
-  const [stats, setStats] = useState([]);
 
-  useEffect(() => {
-    setStats(statsData);
-  }, []);
+  
+// =============section 2
+
+const [articlesCount, setArticlesCount] = useState(0);
+const [loading, setLoading] = useState(true);
+
+const fetchArticlesCount = async () => {
+  try {
+    const response = await axios.get("http://localhost:5000/api/articles/get");
+    console.log("Fetched articles:", response.data); // Check the data
+    setArticlesCount(response.data.length); // Set the count, not the entire array
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchArticlesCount();
+}, []);
+// =======================================visitor
+const [visitCount, setVisitCount] = useState(0);
+useEffect(() => {
+  // استرجاع عدد الزيارات المخزن
+  const storedVisitCount = localStorage.getItem('visitCount');
+
+  if (storedVisitCount) {
+    // زيادة العدد بمقدار واحد
+    const newVisitCount = parseInt(storedVisitCount, 10) +1;
+    setVisitCount(newVisitCount);
+    // تخزين العدد المحدث
+    localStorage.setItem('visitCount', newVisitCount);
+  } else {
+    // إذا لم يكن هناك عدد مخزن، تعيينه إلى 1
+    setVisitCount(0);
+    localStorage.setItem('visitCount', 1);
+  }
+}, []);
+// statsData with the updated articlesCount
+const statsData = [
+  { value: "New", label: "Experience" },
+  { value: visitCount, label: "Global Correspondents" },
+  { value: articlesCount, label: "Investigations Covered" }, // This will now show the correct count
+  { value: "24/7", label: "News Coverage" },
+];
+
+// Section to display stats
+const [stats, setStats] = useState([]);
+
+useEffect(() => {
+  setStats(statsData); // Update stats after articlesCount changes
+}, [articlesCount]);
 
 
 
@@ -172,8 +217,12 @@ const Home = () => {
 
 
       {/* TrendReports  */}
-      <div className="my-20  mb-20">
+      <div className="my-5  mb-30">
         <TrendReports />
+      </div>
+
+      <div className="my-5  mb-30">
+        <CrimePodcastSection />
       </div>
 
 
@@ -184,3 +233,10 @@ const Home = () => {
 };
 
 export default Home;
+
+
+
+
+
+
+

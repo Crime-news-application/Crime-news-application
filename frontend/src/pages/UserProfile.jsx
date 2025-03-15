@@ -37,6 +37,7 @@ import {
 import { styled } from "@mui/system";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { motion } from "framer-motion";
+import { jwtDecode } from "jwt-decode"; // ✅ Correct way to import in ES modules
 
 // CRIMEGAZETTE THEME
 const theme = createTheme({
@@ -199,23 +200,48 @@ const UserProfile = () => {
   }, []);
 
   // GET user profile
-  const fetchUserProfile = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/users/profile",
-        {
-          withCredentials: true,
-        }
-      );
-      console.log("✅ User profile fetched:", response.data);
-      setUser(response.data.user);
-    } catch (error) {
-      console.error(
-        "❌ Error fetching profile:",
-        error.response?.data || error.message
-      );
+ 
+const fetchUserProfile = async () => {
+  try {
+    // 🔥 1️⃣ Retrieve the token from localStorage
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("❌ No token found in localStorage");
+      return;
     }
-  };
+
+    // 🔥 2️⃣ Decode the token to extract user ID
+    const decodedToken = jwtDecode(token); // Extracts { userId: "67d44acc1bdee5c049d5519e", iat: ..., exp: ... }
+
+    if (!decodedToken.userId) {
+      console.error("❌ No user ID found in token");
+      return;
+    }
+
+    console.log("✅ Extracted User ID from token:", decodedToken.userId);
+
+    // 🔥 3️⃣ Fetch user profile using token (No need to send user ID in request)
+    const response = await axios.get(
+      "http://localhost:5000/api/users/profile",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Send token in headers
+        },
+      }
+    );
+
+    console.log("✅ User profile fetched:", response.data);
+    setUser(response.data.user);
+  } catch (error) {
+    console.error(
+      "❌ Error fetching profile:",
+      error.response?.data || error.message
+    );
+  }
+};
+
+
 
   // EDIT user
   const handleEdit = () => setIsEditing(true);

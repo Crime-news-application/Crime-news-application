@@ -124,27 +124,17 @@ const loginUser = async (req, res) => {
       expiresIn: "1d",
     });
 
-    // ✅ Set token as an HTTP-only cookie
-    res.cookie("token", token, {
-      httpOnly: true, // ❗ Prevent JavaScript access
-      secure: false, // ❗ Set `true` in production with HTTPS
-      sameSite: "Lax", // ❗ Prevent CSRF issues
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    // Return token in the response
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user_id: user._id,
     });
-
-    console.log("✅ Token set in cookie:", token); // Debugging
-
-    res
-      .status(200)
-      .json({ message: "Login successful", token, user_id: user._id });
   } catch (error) {
     console.error("❌ Login error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -299,19 +289,31 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-
 const getUserProfile = async (req, res) => {
   try {
-    console.log("✅ ID from token or cookie:", req.user);
+    // 🔥 1️⃣ Extract token from Authorization header
+    const authHeader = req.headers.authorization;
 
-    if (!req.user || !mongoose.Types.ObjectId.isValid(req.user)) {
-      console.error("❌ Invalid user ID:", req.user);
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1]; // Get only the token part
+
+    // 🔥 2️⃣ Verify and decode token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log("✅ Decoded User ID from token:", decoded.userId);
+
+    // 🔥 3️⃣ Validate user ID
+    if (!decoded.userId || !mongoose.Types.ObjectId.isValid(decoded.userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const user = await User.findById(req.user).select("-password");
+    // 🔥 4️⃣ Fetch user profile from database
+    const user = await User.findById(decoded.userId).select("-password");
+
     if (!user) {
-      console.error("❌ User not found:", req.user);
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -328,8 +330,27 @@ const getUserProfile = async (req, res) => {
 
 
 
+/*
+ try {
+    const token = req.cookies.token;
 
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+
+*/
 
 // Export all functions
 module.exports = {

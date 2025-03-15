@@ -86,14 +86,19 @@ const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true,
+          withCredentials: true, // This is not needed if you're not using cookies
         }
       );
 
       if (response.data.token) {
+        // Save token and user_id in local storage
+        localStorage.setItem("token", response.data.token);
+
+        // Optionally, you can also set an expiry for the token in local storage
         const expiryDays = rememberMe ? 30 : 1;
-        Cookies.set("token", response.data.token, { expires: expiryDays });
-        Cookies.set("user_id", response.data.user_id, { expires: expiryDays });
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + expiryDays);
+        localStorage.setItem("token_expiry", expiryDate.toISOString());
       }
 
       Swal.fire({
