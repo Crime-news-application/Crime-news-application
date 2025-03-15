@@ -33,8 +33,18 @@ exports.createPayment = async (req, res) => {
 
     // تحديث بيانات المستخدم: تخزين عنوان الاشتراك وتاريخ انتهاء الاشتراك
     // مثال: الاشتراك لمدة شهر
+    const durationMatch = subscriptionCard.duration.match(/\d+/);
+    if (!durationMatch) {
+      throw new Error("No numeric value found in duration");
+    }
+    
+    const durationNumber = parseInt(durationMatch[0], 10);
+    
+    if (isNaN(durationNumber)) {
+      throw new Error("Invalid duration value");
+    }
     const subscriptionExpiry = new Date();
-    subscriptionExpiry.setMonth(subscriptionExpiry.getMonth() + 1);
+    subscriptionExpiry.setMonth(subscriptionExpiry.getMonth() +durationNumber);
 
     await User.findByIdAndUpdate(subscriber_id, {
       subscriptionPlan: subscriptionCard.title,

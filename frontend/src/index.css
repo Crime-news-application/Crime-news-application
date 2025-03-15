@@ -1,7 +1,4 @@
 @import "tailwindcss";
-@tailwind base;
-
-
 
 @layer base {
   :root {
@@ -14,9 +11,6 @@
     --bg-color: #ffffff; /* خلفية الأقسام */
     --button-hover: #8b0d11; /* لون زر الهوفر */
     --overlay-color: rgba(0, 0, 0, 0.5); /* تغطية للفيديو */
-
-
-
   }
 }
 
@@ -27,7 +21,6 @@
 .bg-screen-dark {
   background-color: var(--screen-dark);
 }
-
 
 /* الوضع الفاتح /
 .light-mode {
@@ -45,7 +38,7 @@
 
 / استخدام المتغيرات */
 /* استخدام المتغيرات */
-body {
+/* body {
   background-color: var(--background-color);
   color: var(--text-color);
-}
+} */
