@@ -229,16 +229,24 @@
 // };
 
 // export default Navbar;
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
+import arabicIcon from "../assets/translation.png";
+import englishIcon from  "../assets/translation (1).png";
+
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const { i18n } = useTranslation();
+  const [language, setLanguage] = useState("en");
 
   // التحقق من التوكن في الـ cookies عند تحميل الصفحة
   useEffect(() => {
@@ -250,9 +258,10 @@ const Navbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-    document.documentElement.dir = lng === "ar" ? "rtl" : "ltr";
+  const changeLanguage = () => {
+    const newLang = language === "en" ? "ar" : "en";
+    setLanguage(newLang);
+    // هنا يمكنك إضافة الكود لتغيير اللغة في التطبيق
   };
 
   // دالة تسجيل الخروج
@@ -262,6 +271,10 @@ const Navbar = () => {
     setIsLoggedIn(false);
     navigate("/login"); // إعادة التوجيه إلى صفحة تسجيل الدخول
   };
+
+
+
+ 
 
   return (
     <>
@@ -329,20 +342,15 @@ const Navbar = () => {
             </div>
 
             {/* Language Toggle Buttons */}
-            <div className="flex space-x-2">
-              <button
-                onClick={() => changeLanguage("en")}
-                className="px-3 py-1 bg-white text-screen-red font-bold rounded transition-all duration-300 hover:bg-gray-100"
-              >
-                English
-              </button>
-              <button
-                onClick={() => changeLanguage("ar")}
-                className="px-3 py-1 bg-white text-screen-red font-bold rounded transition-all duration-300 hover:bg-gray-100"
-              >
-                العربية
-              </button>
-            </div>
+            <button
+      onClick={changeLanguage}    >
+      <img
+        src={language === "en" ? arabicIcon : englishIcon}
+        alt="Language Icon"
+        className="w-11 h-11 transition-transform duration-300 hover:scale-110 mr-3"
+      />
+    </button>
+
           </div>
         </div>
       </div>

@@ -333,3 +333,17 @@ const PaymentPage = () => {
 };
 
 export default PaymentPage;
+
+
+
+// import React from "react";
+
+// const PaymentPage=()=>{
+//   return(
+//     <div>
+//       hello
+//     </div>
+//   )
+// }
+
+// export default PaymentPage ;
