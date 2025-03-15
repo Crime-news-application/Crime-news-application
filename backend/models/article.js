@@ -24,7 +24,20 @@ const articleSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    categories: [{ type: String, required: true }], // مثل "جرائم إلكترونية", "سرقات"
+    categories: {
+      type: String,
+      required: true,
+      enum: [
+        "Murder",
+        "Theft",
+        "Fraud",
+        "Cybercrime",
+        "Kidnapping",
+        "Domestic Violence",
+        "Drugs",
+        "Awareness",
+      ],
+    },
     tags: [{ type: String }],
     featuredImage: { type: String }, // رابط الصورة الرئيسية
     media: [{ type: String }], // روابط صور أو فيديوهات أخرى
