@@ -9,7 +9,6 @@ const articleRoutes = require("./routers/articleRoutes");
 
 const subscriptionRoutes = require("./routers/subscriptionRoutes");
 const paymentRoutes = require("./routers/paymentRoutes");
-
 const userRoutes = require("./routers/userRoutes");
 const messageroutes = require("./routers/messageroutes");
 const app = express();
@@ -18,6 +17,8 @@ const app = express();
 connectDB();
 
 // CORS configuration (Move it before routes)
+
+// CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
   "http://localhost:3000",
   "http://localhost:5173",
@@ -25,7 +26,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
   "http://localhost:5174",
 ];
 
-app.use(  
+app.use(
   cors({
     origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -45,6 +46,7 @@ app.use("/app", messageroutes);
 
 app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
+app.use("/api/articles", articleRoutes);
 
 // 404 handler
 app.use((req, res) => {
