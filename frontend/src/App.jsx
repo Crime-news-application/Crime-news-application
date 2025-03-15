@@ -1,30 +1,3 @@
-// import { BrowserRouter as Router, Routes, Route,Lo } from "react-router-dom";
-// import React from "react";
-// import SubscriptionCardDisplay from "./pages/Subscription/SubscriptionCardDisplay";
-// import Navbar from "./Component/Navbar";
-// import { useTranslation } from 'react-i18next';
-// function App() {
-//   const { t, i18n } = useTranslation();
-//   const location = useLocation();
-
-//   useEffect(() => {
-//     document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
-//   }, [i18n.language]);
-//   return (
-//     <>
-
-//      {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Navbar />}
-//       <Routes>
-//       <Route path="/" element={<SubscriptionCardDisplay/>} />
-
-//       </Routes>
-//       {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
-//     </>
-//  );
-// }
-
-// export default App;
-//the emport of our site
 import {
   BrowserRouter as Router,
   Routes,
@@ -48,6 +21,9 @@ import UserProfile from "./pages/UserProfile";
 import Overview from "./Component/AdminDashbord/overview";
 import FormDetails from "./Component/AdminDashbord/ArticalCards";
 import PaymentPage from "./pages/Subscription/Payment";
+import AForm from "./pages/detail/AForm";
+import Details from "./pages/detail/FormDetails";
+import Comment from "./pages/detail/Comment";
 function App() {
   const { t } = useTranslation();
   const location = useLocation();
@@ -89,6 +65,10 @@ function App() {
         <Route path="/subformDash" element={<SubscriptionCardForm />} />
         <Route path="/" element={<Home />} />
         <Route path="/AboutUs" element={<AboutUs />} />
+        <Route path="/aform" element={<AForm />} />
+        <Route path="/details/:id" element={<Details />} />
+        <Route path="/comments/:id" element={<Comment />} />
+
         <Route
           path="/SubscriptionCardDisplay"
           element={<SubscriptionCardDisplay />}

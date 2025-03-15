@@ -1,4 +1,6 @@
 const Article = require("../models/article");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const getArticles = async (req, res) => {
   try {
@@ -32,4 +34,139 @@ const getArticles = async (req, res) => {
   }
 };
 
-module.exports = { getArticles };
+function getUserIdFromToken(token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Replace with your secret key
+    return decoded.userId; // Ensure this matches the field in your token payload
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
+}
+
+async function createArticle(req, res) {
+  // Extract token from the Authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+
+  const token = authHeader.split(" ")[1]; // Get the token after "Bearer "
+
+  if (!token) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+
+  try {
+    const authorId = getUserIdFromToken(token); // Decode the token to get the user ID
+
+    const newArticle = new Article({
+      title: req.body.title,
+      content: req.body.content,
+      author: authorId,
+      categories: req.body.categories,
+      tags: req.body.tags,
+      featuredImage: req.body.featuredImage,
+      mediaSource: req.body.mediaSource,
+      status: req.body.status || "Pending",
+      location: req.body.location,
+    });
+
+    const savedArticle = await newArticle.save();
+    res.status(201).json(savedArticle);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
+const getArticleById = async (req, res) => {
+  try {
+    const articleId = req.params.id; // Extract the article ID from the request parameters
+
+    const article = await Article.findById(articleId); // Find the article by ID
+
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    res.json(article); // Return the article
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching article", error });
+  }
+};
+
+const addCommentToArticle = async (req, res) => {
+  try {
+    const articleId = req.params.id; // Extract article ID from the URL
+    const { text } = req.body; // Extract comment text from the request body
+
+    // Extract token from the Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const token = authHeader.split(" ")[1]; // Get the token after "Bearer "
+
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    // Decode the token to get the user ID (author of the comment)
+    const authorId = getUserIdFromToken(token);
+
+    // Find the article by ID
+    const article = await Article.findById(articleId);
+
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    // Add the new comment to the comments array
+    article.comments.push({
+      text,
+      author: authorId,
+    });
+
+    // Save the updated article
+    const updatedArticle = await article.save();
+
+    res.status(201).json({
+      message: "Comment added successfully",
+      article: updatedArticle,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error adding comment", error });
+  }
+};
+
+const getArticleComments = async (req, res) => {
+  try {
+    const articleId = req.params.id; // Extract article ID from the URL
+
+    // Find the article and populate the author field in the comments array
+    const article = await Article.findById(articleId).populate({
+      path: "comments.author",
+      select: "username email", // Include only the fields you need
+    });
+
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    // Return the comments with user details
+    res.status(200).json({
+      message: "Comments retrieved successfully",
+      comments: article.comments,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving comments", error });
+  }
+};
+
+module.exports = {
+  getArticles,
+  createArticle,
+  getArticleById,
+  addCommentToArticle,
+  getArticleComments,
+};
