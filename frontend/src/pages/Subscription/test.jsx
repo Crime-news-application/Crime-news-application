@@ -103,6 +103,7 @@ const SubscriptionCardForm = () => {
         </div>
 
         <button
+        
           type="submit"
           className="w-full bg-screen-red text-white py-2 rounded hover:bg-opacity-80 transition duration-300"
         >
