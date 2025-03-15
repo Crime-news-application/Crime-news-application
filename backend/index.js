@@ -35,18 +35,17 @@ app.use(
 );
 
 //the paths of routes
-app.use("/api/articles", articleRoutes);
 
 app.use(express.json());
 app.use(cookieParser());
 
+app.use("/api/articles", articleRoutes);
 //
 app.use("/api/users", userRoutes);
 app.use("/app", messageroutes);
 
 app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
-app.use("/api/articles", articleRoutes);
 
 // 404 handler
 app.use((req, res) => {

@@ -41,7 +41,7 @@ const Overview = () => {
   // Fetch data from Firebase using Axios
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/articles")
+      .get("http://localhost:5000/api/articles/get")
       .then((response) => {
         // Convert Firebase data to array (as it comes as an object)
         const fetchedArticles = [];
@@ -99,7 +99,7 @@ const Overview = () => {
       {
         label: "Number of Articles",
         data: Object.values(statusCounts),
-        backgroundColor: ["#FFC107", "#F44336", "#4CAF50"],
+        backgroundColor: ["#F44336", "#4CAF50", "#FFC107"],
         borderColor: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
         borderWidth: 1,
       },

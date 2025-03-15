@@ -48,6 +48,7 @@ import UserProfile from "./pages/UserProfile";
 import Overview from "./Component/AdminDashbord/overview";
 import FormDetails from "./Component/AdminDashbord/ArticalCards";
 import PaymentPage from "./pages/Subscription/Payment";
+import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
 function App() {
   const { t } = useTranslation();
   const location = useLocation();
@@ -61,12 +62,17 @@ function App() {
         "/signup",
         "/subformDash",
         "/articlescardsDash",
-      ].includes(location.pathname) && <Navbar />}
+      ].includes(location.pathname) &&
+        !location.pathname.startsWith("/articledetail/") && <Navbar />}
 
       {/* عرض SidebarDoners في صفحات الداشبورد */}
-      {["/dashboard", "/articlescardsDash", "/subformDash"].includes(
-        location.pathname
-      ) && <SidebarDoners />}
+      {([
+        "/dashboard",
+        "/articlescardsDash",
+        "/subformDash",
+        "/ArticleDetail/:id",
+      ].includes(location.pathname) ||
+        location.pathname.startsWith("/articledetail/")) && <SidebarDoners />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -103,15 +109,17 @@ function App() {
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/ArticlesPage" element={<ArticlesPage />} />
+        <Route path="/articledetail/:id" element={<ArticleDetail />} />
       </Routes>
       {/*Displat the footer in the right component DONT TOUCH*/}
       {![
         "/login",
-        "/signup",
         "/dashboard",
+        "/signup",
         "/subformDash",
         "/articlescardsDash",
-      ].includes(location.pathname) && <Footer />}
+      ].includes(location.pathname) &&
+        !location.pathname.startsWith("/articledetail/") && <Footer />}
     </>
   );
 }
