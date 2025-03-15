@@ -3,7 +3,6 @@
 
 
 
-
 @layer base {
   :root {
     --screen-red: #61090b;
@@ -43,6 +42,7 @@
 }
 
 / استخدام المتغيرات */
+/* استخدام المتغيرات */
 body {
   background-color: var(--background-color);
   color: var(--text-color);

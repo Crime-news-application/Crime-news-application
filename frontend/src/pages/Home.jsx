@@ -172,7 +172,7 @@ const Home = () => {
 
 
       {/* TrendReports  */}
-      <div className="my-20  mb-20">
+      <div className="my-5  mb-30">
         <TrendReports />
       </div>
 

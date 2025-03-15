@@ -55,11 +55,11 @@ function App() {
 
       {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Navbar />}
       <Routes>
-      <Route path="/HOME" element={<Home />} />
+      <Route path="/" element={<Home />} />
       <Route path="/AboutUs" element={<AboutUs />} />
-        <Route path="/" element={<SubscriptionCardDisplay />} />
+        {/* <Route path="/" element={<SubscriptionCardDisplay />} /> */}
         <Route path="/a" element={<SubscriptionCardForm />} />
-         <Route path="/" element={<ArticlesPage />} />
+         {/* <Route path="/" element={<ArticlesPage />} /> */}
           <Route path="login" element={<Login />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/signup" element={<Signup />} />

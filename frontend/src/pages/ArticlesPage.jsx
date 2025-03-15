@@ -1,98 +1,158 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { motion } from "framer-motion";
+import { FaCalendarAlt, FaEye, FaHeart } from "react-icons/fa";
 
-const ArticlesPage = () => {
-  // Example data for categories and articles
-  const categories = [
-    "الجرائم الإلكترونية",
-    "السرقات",
-    "جرائم القتل",
-    "الجرائم الاقتصادية",
-  ];
-  const [selectedCategory, setSelectedCategory] = useState("");
+const CategoryPage = () => {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortOption, setSortOption] = useState("newest");
   const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Simulate fetching articles based on category
+  // Fetch articles from backend
   useEffect(() => {
-    // Example articles data (replace this with API call)
-    const articlesData = [
-      {
-        id: 1,
-        title: "جرائم السرقات في المدينة",
-        category: "السرقات",
-        content: "تفاصيل حول السرقات الأخيرة",
-      },
-      {
-        id: 2,
-        title: "أحدث التطورات في جرائم القتل",
-        category: "جرائم القتل",
-        content: "قصة جريمة قتل في الحي",
-      },
-      {
-        id: 3,
-        title: "كيف تحمي نفسك من الجرائم الإلكترونية؟",
-        category: "الجرائم الإلكترونية",
-        content: "نصائح لتفادي الجرائم الإلكترونية",
-      },
-    ];
+    const fetchArticles = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/articles", {
+          params: {
+            category: selectedCategory === "All" ? null : selectedCategory,
+            sortBy: sortOption,
+          },
+        });
+        setArticles(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+        setLoading(false);
+      }
+    };
 
-    if (selectedCategory) {
-      setArticles(
-        articlesData.filter((article) => article.category === selectedCategory)
-      );
-    } else {
-      setArticles(articlesData);
-    }
-  }, [selectedCategory]);
+    fetchArticles();
+  }, [selectedCategory, sortOption]);
+
+  if (loading) {
+    return <p className="text-center text-gray-600">Loading...</p>;
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-        أحدث المقالات عن الجرائم
-      </h1>
+    <div className="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] p-6">
+      {/* Header Section */}
+      <header className="mb-8 text-center">
+        <h1 className="text-4xl font-bold text-[var(--primary-color)] mb-2">
+          Crime News
+        </h1>
+        <p className="text-gray-600">
+          Stay informed about the latest crime-related news and updates.
+        </p>
+      </header>
 
-      {/* Category Filter */}
-      <div className="mb-6 text-center">
-        <span className="text-lg text-gray-700">اختر التصنيف: </span>
-        <select
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="ml-2 px-4 py-2 border rounded-md shadow-sm text-gray-700"
+      {/* Categories Filter */}
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
+        <button
+          className={`px-4 py-2 rounded-md transition duration-300 ${
+            selectedCategory === "All"
+              ? "bg-[var(--primary-color)] text-white"
+              : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+          }`}
+          onClick={() => setSelectedCategory("All")}
         >
-          <option value="">كل التصنيفات</option>
-          {categories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+          All Categories
+        </button>
+        {[
+          "Murder",
+          "Theft",
+          "Fraud",
+          "Cybercrime",
+          "Kidnapping",
+          "Awareness",
+        ].map((category, index) => (
+          <button
+            key={index}
+            className={`px-4 py-2 rounded-md transition duration-300 ${
+              selectedCategory === category
+                ? "bg-[var(--primary-color)] text-white"
+                : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+            }`}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* Sort Options */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-4">
+          <label htmlFor="sort" className="text-gray-600 font-medium">
+            Sort by:
+          </label>
+          <select
+            id="sort"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="most-viewed">Most Viewed</option>
+            <option value="most-liked">Most Liked</option>
+          </select>
+        </div>
       </div>
 
       {/* Articles List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {articles.length > 0 ? (
           articles.map((article) => (
-            <div
-              key={article.id}
-              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition duration-300"
+            <motion.div
+              key={article._id}
+              className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                {article.title}
-              </h2>
-              <p className="text-gray-600 mb-4">
-                {article.content.substring(0, 100)}...
-              </p>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                قراءة المزيد
-              </button>
-            </div>
+              {/* Featured Image */}
+              <img
+                src={article.featuredImage}
+                alt={article.title}
+                className="w-full h-48 object-cover"
+              />
+              {/* Content */}
+              <div className="p-4">
+                <h2 className="text-lg font-semibold text-[var(--primary-color)] line-clamp-2">
+                  {article.title}
+                </h2>
+                <div className="mt-2 flex justify-between items-center text-gray-600 text-sm">
+                  <span className="flex items-center gap-2">
+                    <FaCalendarAlt className="text-[var(--primary-color)]" />
+                    {new Date(article.publishDate).toLocaleDateString()}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <FaEye className="text-[var(--primary-color)]" />
+                    {article.views} Views
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <FaHeart className="text-[var(--primary-color)]" />
+                    {article.likes} Likes
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           ))
         ) : (
-          <p className="col-span-full text-center text-gray-500">
-            لا توجد مقالات حالياً في هذا التصنيف.
+          <p className="text-center text-gray-600 col-span-full">
+            No articles found for this category.
           </p>
         )}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-8">
+        <button className="px-4 py-2 bg-[var(--primary-color)] text-white rounded-md hover:bg-red-600 transition duration-300">
+          Load More
+        </button>
       </div>
     </div>
   );
 };
 
-export default ArticlesPage;
+export default CategoryPage;
