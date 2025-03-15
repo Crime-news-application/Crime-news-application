@@ -56,11 +56,11 @@ const PaymentPage = () => {
   };
   const { id, title, price, duration, features } = planData;
 
-  // جلب بيانات المستخدم من الباك إند
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/users/profile", {
+        const response = await axios.get("http://localhost:5000/api/users/gituserpayment", {
           withCredentials: true,
         });
         console.log("✅ User profile fetched:", response.data);
@@ -73,9 +73,9 @@ const PaymentPage = () => {
     fetchUserProfile();
   }, []);
 
-  // إعدادات PayPal SDK
+
   const paypalClientId =
-    "AU5e_yUL8prhNgnKaZSZzhXsTmTOlWeDW5YsAg3JIjdWJjehIpyy7wLKYjfakSXoUrPaP07FroujGFne"; // استبدله بمعرف حسابك
+    "AU5e_yUL8prhNgnKaZSZzhXsTmTOlWeDW5YsAg3JIjdWJjehIpyy7wLKYjfakSXoUrPaP07FroujGFne"; 
   const initialOptions = {
     "client-id": paypalClientId,
     components: "buttons",
@@ -83,7 +83,7 @@ const PaymentPage = () => {
     intent: "capture",
   };
 
-  // دالة إرسال بيانات الدفع للباك إند
+  
   const sendPaymentData = async (paymentDetails) => {
     try {
       const requestBody = {
@@ -333,3 +333,6 @@ const PaymentPage = () => {
 };
 
 export default PaymentPage;
+
+
+

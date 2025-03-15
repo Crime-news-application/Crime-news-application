@@ -335,6 +335,44 @@ const getUserProfile = async (req, res) => {
 
 */
 
+
+
+
+const getUserPaymentDetails = async (req, res) => {
+  try {
+    // عرض الـ ID المستخرج من التوكن أو الكوكيز في الكونسول
+    console.log("✅ Token from cookie or header:", req.user);
+
+    // التحقق من صحة الـ ID
+    if (!req.user || !mongoose.Types.ObjectId.isValid(req.user)) {
+      console.error("❌ Invalid user ID:", req.user);
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    // جلب بيانات المستخدم مع اختيار فقط حقل الاسم والبريد الإلكتروني
+    const user = await User.findById(req.user).select("username email");
+    if (!user) {
+      console.error("❌ User not found:", req.user);
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // إرسال البيانات المطلوبة للمستخدم (اسم وبريد إلكتروني)
+    res.status(200).json({
+      name: user.username,
+      email: user.email,
+      message: "User payment details fetched successfully",
+    });
+  } catch (error) {
+    console.error("❌ Error fetching payment details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+
+
 // Export all functions
 module.exports = {
   createUser,
@@ -346,4 +384,5 @@ module.exports = {
   verifyOtp,
   loginUser,
   googleLogin,
+  getUserPaymentDetails
 };

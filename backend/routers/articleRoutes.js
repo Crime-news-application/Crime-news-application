@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+// router.get("/top-5-articles", getTop5Articles);
+
+
 const {
   getArticles,
   createArticle,
