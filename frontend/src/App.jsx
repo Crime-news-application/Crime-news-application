@@ -7,7 +7,6 @@
 //   const { t, i18n } = useTranslation();
 //   const location = useLocation();
 
-
 //   useEffect(() => {
 //     document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 //   }, [i18n.language]);
@@ -25,35 +24,50 @@
 // }
 
 // export default App;
-
-
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+//the emport of our site
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import React from "react";
 import SubscriptionCardDisplay from "./pages/Subscription/SubscriptionCardDisplay";
 import Navbar from "./Component/Navbar";
 import Footer from "./Component/Footer";
-
 import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
-import AboutUs from '../src/pages/AboutUs'
+import AboutUs from "../src/pages/AboutUs";
 import Home from "./pages/Home";
-
+import SidebarDoners from "./Component/AdminDashbord/SidebarDoners";
 import ArticlesPage from "./pages/ArticlesPage";
 import ContactUs from "./pages/contact";
-
 import Login from "./pages/LogIn";
 import Signup from "./pages/SignUp";
 import UserProfile from "./pages/UserProfile";
-import AForm from "./pages/Articles-Form/AForm";
-
+import Overview from "./Component/AdminDashbord/overview";
+import FormDetails from "./Component/AdminDashbord/ArticalCards";
+import PaymentPage from "./pages/Subscription/Payment";
 function App() {
   const { t } = useTranslation();
-  const location = useLocation(); 
+  const location = useLocation();
 
   return (
     <>
+      {/*Display the navbar in the right component  DONT TOUCH*/}
+      {![
+        "/login",
+        "/dashboard",
+        "/signup",
+        "/subformDash",
+        "/articlescardsDash",
+      ].includes(location.pathname) && <Navbar />}
 
-      {location.pathname !== "/login" && location.pathname !== "/dashboard" && <Navbar />}
+      {/* عرض SidebarDoners في صفحات الداشبورد */}
+      {["/dashboard", "/articlescardsDash", "/subformDash"].includes(
+        location.pathname
+      ) && <SidebarDoners />}
+
       <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/AboutUs" element={<AboutUs />} />
@@ -64,12 +78,16 @@ function App() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/userprofile" element={<UserProfile />} />
-          <Route path="/aform" element={<AForm/>} />
+          {/* <Route path="/aform" element={<AForm/>} /> */}
       </Routes>
-      <Footer />
-      {/* {location.pathname !== "/Login" && location.pathname !== "/dashboard" && <Footer />} */}
-
-     
+      {/*Displat the footer in the right component DONT TOUCH*/}
+      {![
+        "/login",
+        "/signup",
+        "/dashboard",
+        "/subformDash",
+        "/articlescardsDash",
+      ].includes(location.pathname) && <Footer />}
     </>
   );
 }

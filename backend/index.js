@@ -1,29 +1,22 @@
 //the library :
 const express = require("express");
 const cors = require("cors");
-
+const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 require("dotenv").config();
 //the routes :
 const articleRoutes = require("./routers/articleRoutes");
-
-
-
-
-
 const subscriptionRoutes = require("./routers/subscriptionRoutes");
 const paymentRoutes = require("./routers/paymentRoutes");
-
 const userRoutes = require("./routers/userRoutes");
 const messageroutes = require("./routers/messageroutes");
 const app = express();
+
 
 // Connect to the database
 connectDB();
 
 
-//the paths of routes
-app.use("/api/articles", articleRoutes);
 
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
@@ -41,6 +34,8 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
+
 
 // 
 app.use("/api/users", userRoutes);
@@ -48,6 +43,7 @@ app.use("/app", messageroutes);
 
 app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
+app.use("/api/articles", articleRoutes);
 
 
 // 404 handler
