@@ -36,6 +36,12 @@ const SidebarDoners = () => {
       path: "/UsersDash",
       icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
     },
+    {
+      name: "Posts",
+      path: "/postform",
+      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
+    },
+
   ];
 
   return (

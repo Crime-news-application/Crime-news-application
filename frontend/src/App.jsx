@@ -27,6 +27,7 @@ import ArticleManagement from "./Component/AdminDashbord/UsersDash";
 import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
 import Comment from "./pages/detail/Comment";
+import PostDashboard from "./pages/Subscription/Post";
 function App() {
   // const { t } = useTranslation();
   const location = useLocation(); 
@@ -40,7 +41,7 @@ function App() {
         "/signup",
         "/subformDash",
         "/articlescardsDash",
-        "/UsersDash",
+        "/UsersDash","/postform"
       ].includes(location.pathname) &&
         !location.pathname.startsWith("/articledetail/") && <Navbar />}
 
@@ -50,7 +51,7 @@ function App() {
         "/articlescardsDash",
         "/subformDash",
         "/ArticleDetail/:id",
-        "/UsersDash",
+        "/UsersDash","/postform"
       ].includes(location.pathname) ||
         location.pathname.startsWith("/articledetail/")) && <SidebarDoners />}
 
@@ -95,7 +96,8 @@ function App() {
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/ArticlesPage" element={<ArticlesPage />} />
         <Route path="/articledetail/:id" element={<ArticleDetail />} />
-        <Route path="/UsersDash" element={<ArticleManagement />} />
+        <Route path="/UsersDash" element={<Users />} />
+        <Route path="/postform" element={<PostDashboard />} />
       </Routes>
       {/*Displat the footer in the right component DONT TOUCH*/}
       {![
@@ -104,7 +106,7 @@ function App() {
         "/signup",
         "/subformDash",
         "/articlescardsDash",
-        "/UsersDash",
+        "/UsersDash","/postform"
       ].includes(location.pathname) &&
         !location.pathname.startsWith("/articledetail/") && <Footer />}
     </>
