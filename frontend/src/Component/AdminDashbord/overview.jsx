@@ -317,7 +317,7 @@ const Overview = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4">{article.views}</td>
-                  <td className="px-6 py-4">{article.author}</td>
+                  <td className="px-6 py-4">{article.author?.username || "Unknown"}</td>
                   <td className="px-6 py-4">{article.publishDate}</td>
                   <td className="px-6 py-4">{article.likes}</td>
                   <td className="px-6 py-4">
