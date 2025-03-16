@@ -11,7 +11,7 @@ const addMessages = async (req, res) => {
     const newMessage = await Contact.create({ name, email, message });
 
     return res
-      .status(201)
+      .status(201) //successfully//
       .json({ message: "Message added successfully", data: newMessage });
   } 
   

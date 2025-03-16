@@ -326,7 +326,7 @@ const CategoryPage = () => {
     const fetchArticles = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/articles/get",
+          "http://localhost:5000/api/articles/getA",
           {
             params: {
               category: selectedCategory === "All" ? "" : selectedCategory,
