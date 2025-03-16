@@ -321,6 +321,10 @@ const CategoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 9; // Number of articles per page
+
   // Fetch articles from backend
   useEffect(() => {
     const fetchArticles = async () => {
@@ -384,6 +388,17 @@ const CategoryPage = () => {
     setSearchQuery(e.target.value);
   };
 
+  // Get the current articles for the current page
+  const currentArticles = filteredArticles.slice(
+    (currentPage - 1) * articlesPerPage,
+    currentPage * articlesPerPage
+  );
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -395,6 +410,8 @@ const CategoryPage = () => {
     );
   }
 
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+
   return (
     <div className="min-h-screen bg-white text-black p-6 relative">
       {/* Background Effect */}
@@ -402,26 +419,9 @@ const CategoryPage = () => {
 
       {/* Content Container with z-index */}
       <div className="relative z-10">
-        {/* Header Section */}
-        <header className="mb-12 text-center">
-          <div className="inline-block mb-4 relative">
-            <h1 className="text-5xl font-bold text-black mb-2 relative">
-              <span className="relative z-10">CRIME WATCH</span>
-              <span className="absolute -left-2 -top-2 text-red-800 opacity-50 z-0">
-                CRIME WATCH
-              </span>
-            </h1>
-            <div className="h-1 w-32 bg-red-700 mx-auto mt-2"></div>
-          </div>
-          <p className="text-gray-700 text-lg max-w-2xl mx-auto">
-            Unveiling the shadows: Stay informed about the latest crime-related
-            news and investigations.
-          </p>
-        </header>
-
-        {/* Search Bar */}
-        <div className="max-w-xl mx-auto mb-10 relative">
-          <div className="relative">
+        {/* Search Bar and Create Article Button */}
+        <div className="flex justify-between max-w-xl mx-auto mb-10 relative">
+          <div className="relative flex-grow">
             <input
               type="text"
               placeholder="Search criminal activities..."
@@ -431,6 +431,12 @@ const CategoryPage = () => {
             />
             <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
+          <Link
+            to="/aform"
+            className="ml-4 bg-red-800 text-white py-3 px-6 rounded-md hover:bg-red-900 transition duration-300"
+          >
+            Create Article
+          </Link>
         </div>
 
         {/* Categories Filter */}
@@ -509,8 +515,8 @@ const CategoryPage = () => {
 
         {/* Articles List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {filteredArticles.length > 0 ? (
-            filteredArticles.map((article) => (
+          {currentArticles.length > 0 ? (
+            currentArticles.map((article) => (
               <Link to={`/details/${article._id}`} key={article._id}>
                 <motion.div
                   className="bg-gray-100 rounded-lg overflow-hidden transform hover:scale-105 transition duration-300 border border-[#ececec] shadow-xl hover:shadow-red-900/20"
@@ -532,10 +538,10 @@ const CategoryPage = () => {
 
                   {/* Content */}
                   <div className="p-5">
-                    <h2 className="text-xl font-bold text-black line-clamp-2 mb-3 hover:text-red-400 transition duration-300">
+                    <h2 className="text-xl font-bold text-black line-clamp-1 mb-3 hover:text-red-400 transition duration-300">
                       {article.title}
                     </h2>
-                    <p className="text-gray-700 line-clamp-2 mb-4">
+                    <p className="text-gray-700 line-clamp-1 mb-4">
                       {article.content?.description ||
                         "Breaking news about this criminal case that has shocked the local community..."}
                     </p>
@@ -575,20 +581,20 @@ const CategoryPage = () => {
 
         {/* Pagination */}
         <div className="flex justify-center mt-12">
-          <button className="px-6 py-3 bg-red-800 text-white rounded-md hover:bg-red-900 transition duration-300 shadow-lg shadow-red-900/30 flex items-center gap-2">
-            <span>View More Cases</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <button
+            className="px-6 py-3 bg-red-800 text-white rounded-md hover:bg-red-900 transition duration-300 shadow-lg shadow-red-900/30 flex items-center gap-2"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            Prev
+          </button>
+          <span className="mx-4 text-lg">{`Page ${currentPage} of ${totalPages}`}</span>
+          <button
+            className="px-6 py-3 bg-red-800 text-white rounded-md hover:bg-red-900 transition duration-300 shadow-lg shadow-red-900/30 flex items-center gap-2"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Next
           </button>
         </div>
       </div>
