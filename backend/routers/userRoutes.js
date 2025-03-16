@@ -11,7 +11,7 @@ const {
   getUserProfile,
   verifyOtp,
   loginUser,
-  googleLogin,
+  googleLogin,getUserPaymentDetails
 } = require("../controllers/userController");
 
 // Create a new user
@@ -31,7 +31,7 @@ router.get("/", getAllUsers);
 
 // ✅ GET USER PROFILE (Protected)
 router.get("/profile", authMiddleware, getUserProfile);
-
+router.get("/gituserpayment", authMiddleware, getUserPaymentDetails);
 // Edit user details
 router.patch("/:id", editUser);
 
