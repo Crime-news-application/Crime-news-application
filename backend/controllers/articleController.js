@@ -12,7 +12,8 @@ const getArticlesJenan = async (req, res) => {
     let query = {};
     if (category) query.categories = category;
 
-    let articles = Article.find(query);
+let articles = Article.find(query).populate("author", "username");
+    // let articles = Article.find(query);
 
     // Sorting
     if (sortBy === "newest") articles = articles.sort({ publishDate: -1 });
