@@ -56,7 +56,7 @@ const MostViewedReports = () => {
       </div>
 
       {loading ? (
-        <div className="text-center">جاري تحميل البيانات...</div>
+        <div className="text-center">Loading data...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reports.map((report, index) => (
