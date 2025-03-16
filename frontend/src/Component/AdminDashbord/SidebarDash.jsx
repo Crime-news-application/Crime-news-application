@@ -41,7 +41,7 @@ const SidebarDoners = () => {
     {
       name: "Posts",
       path: "/postform",
-      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
+      icon: <PencilIcon className="w-5 h-5" />,
     },
   ];
 
