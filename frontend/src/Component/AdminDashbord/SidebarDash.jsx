@@ -6,6 +6,8 @@ import {
   ChatBubbleLeftIcon,
   ArrowRightOnRectangleIcon,
   ChartBarIcon,
+  PencilIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/24/solid";
 
 const SidebarDoners = () => {
@@ -24,24 +26,23 @@ const SidebarDoners = () => {
     {
       name: "Subscription Card Form",
       path: "/subformDash",
-      icon: <UserCircleIcon className="w-5 h-5" />,
+      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
     },
     {
       name: "Articls Cards",
       path: "/articlescardsDash",
-      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
+      icon: <DocumentTextIcon className="h-6 w-6 text-white" />,
     },
     {
       name: "Users",
       path: "/UsersDash",
-      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
+      icon: <UserCircleIcon className="w-5 h-5" />,
     },
     {
       name: "Posts",
       path: "/postform",
-      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
+      icon: <PencilIcon className="w-5 h-5" />,
     },
-
   ];
 
   return (
@@ -66,9 +67,9 @@ const SidebarDoners = () => {
         {/* زر إغلاق القائمة (يظهر فقط في الشاشات الصغيرة) */}
         <button
           onClick={toggleSidebar}
-          className="mb-4 self-start text-lg lg:hidden"
+          className="mb-4 hover:cursor-pointer hover:text-[#c9c9c9] self-start text-4xl lg:hidden"
         >
-          ✖
+          x
         </button>
 
         {/* عنوان الموقع */}
