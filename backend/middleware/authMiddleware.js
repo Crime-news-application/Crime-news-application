@@ -1,48 +1,41 @@
-// middleware/authMiddleware.js
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
 const authMiddleware = (req, res, next) => {
   try {
-    // 1) Check if JWT cookie is present
-    const token = req.cookies.token;
+    // 🔥 1️⃣ Get the token from Authorization header (since it's stored in localStorage)
+    const authHeader = req.headers.authorization;
 
-    if (token) {
-      // ✅ We have a JWT token in cookies, use it
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("✅ Decoded token:", decoded);
-      // Ex: decoded = { userId: "67d44acc1bdee5c049d5519e", iat: 123, exp: 1234 }
-
-      req.user = decoded.userId;
-      return next();
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("❌ No token found in Authorization header");
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
     }
 
-    // 2) Fallback: if no JWT token, check if there's a user_id cookie
-    const userIdFromCookie = req.cookies.user_id;
-    if (userIdFromCookie) {
-      console.log("✅ Using user_id from cookies:", userIdFromCookie);
+    // 🔥 2️⃣ Extract the token from "Bearer <TOKEN>"
+    const token = authHeader.split(" ")[1];
 
-      // Validate that userIdFromCookie is a valid MongoDB ObjectId string
-      if (!mongoose.Types.ObjectId.isValid(userIdFromCookie)) {
-        console.error(
-          "❌ user_id cookie is not a valid ObjectId:",
-          userIdFromCookie
-        );
-        return res.status(400).json({ message: "Invalid user ID in cookie" });
-      }
+    // 🔥 3️⃣ Verify and decode the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Attach user ID from cookie
-      req.user = userIdFromCookie;
-      return next();
+    console.log("✅ Decoded token:", decoded);
+
+    // 🔥 4️⃣ Validate the extracted user ID
+    if (!decoded.userId || !mongoose.Types.ObjectId.isValid(decoded.userId)) {
+      console.error("❌ Invalid user ID in token:", decoded.userId);
+      return res.status(400).json({ message: "Invalid token" });
     }
 
-    // 3) If neither token nor user_id
-    console.error("❌ No token or user_id cookie found");
-    return res.status(401).json({ message: "No token or user_id cookie" });
+    // 🔥 5️⃣ Attach user ID to `req.user`
+    req.user = decoded.userId;
+    next(); // Move to the next middleware
   } catch (error) {
     console.error("❌ Auth middleware error:", error.message);
-    return res.status(401).json({ message: "Invalid or expired token" });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: Invalid or expired token" });
   }
 };
 

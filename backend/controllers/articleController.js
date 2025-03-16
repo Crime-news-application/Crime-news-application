@@ -1,11 +1,79 @@
 const Article = require("../models/article");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const mongoose = require("mongoose");
+const Comment = require("../models/comment");
+
+// Get all articles with filters
+const getArticlesJenan = async (req, res) => {
+  try {
+    const { category, sortBy } = req.query;
+    let query = {};
+    if (category) query.categories = category;
+
+    let articles = Article.find(query);
+
+    // Sorting
+    if (sortBy === "newest") articles = articles.sort({ publishDate: -1 });
+    if (sortBy === "oldest") articles = articles.sort({ publishDate: 1 });
+    if (sortBy === "most-viewed") articles = articles.sort({ views: -1 });
+    if (sortBy === "most-liked") articles = articles.sort({ likes: -1 });
+
+    const result = await articles.exec();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching articles", error });
+  }
+};
 
 const getArticles = async (req, res) => {
   try {
     const { category, sortBy } = req.query;
 
+    const query = {
+      status: "Published",
+      ...(category && category !== "All" ? { categories: category } : {}),
+    };
+    let sortOption = {};
+    switch (sortBy) {
+      case "newest":
+        sortOption = { publishDate: -1 };
+        break;
+      case "oldest":
+        sortOption = { publishDate: 1 };
+        break;
+      case "most-viewed":
+        sortOption = { views: -1 };
+        break;
+      case "most-liked":
+        sortOption = { likes: -1 };
+        break;
+      default:
+        sortOption = { publishDate: -1 };
+    }
+
+    const articles = await Article.find(query).sort(sortOption);
+    res.json(articles);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching articles", error });
+  }
+};
+
+const getArticlesByIdjenan = async (req, res) => {
+  try {
+    const { category, sortBy } = req.query;
+    const { id } = req.params; // جلب الـ ID من الـ URL
+
+    if (id) {
+      // إذا كان هناك ID، جلب مقال واحد فقط
+      const article = await Article.findById(id);
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      return res.json(article);
+    }
+
+    // إذا لم يكن هناك ID، جلب كل المقالات مع الفلترة والفرز
     const query =
       category && category !== "All" ? { categories: category } : {};
 
@@ -34,17 +102,51 @@ const getArticles = async (req, res) => {
   }
 };
 
+const acceptArticle = async (req, res) => {
+  const { articleId } = req.body;
 
-// const getTop5Articles = async (req, res) => {
-//   try {
-//     const articles = await Article.find().sort({ views: -1 }).limit(5);
-//     res.json(articles);
-//   } catch (error) {
-//     console.error('Error fetching top 5 articles:', error);
-//     res.status(500).json({ message: 'Error fetching top 5 articles', error });
-//   }
-// };
+  try {
+    const article = await Article.findByIdAndUpdate(
+      articleId,
+      { status: "Published" },
+      { new: true }
+    );
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+    res.json(article);
+  } catch (error) {
+    res.status(500).json({ message: "Error accepting article", error });
+  }
+};
 
+const rejectArticle = async (req, res) => {
+  const { articleId } = req.body;
+
+  try {
+    const article = await Article.findByIdAndUpdate(
+      articleId,
+      { status: "Rejected" },
+      { new: true }
+    );
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+    res.json(article);
+  } catch (error) {
+    res.status(500).json({ message: "Error rejecting article", error });
+  }
+};
+
+const getTop5Articles = async (req, res) => {
+  try {
+    const articles = await Article.find().sort({ views: -1 }).limit(5);
+    res.json(articles);
+  } catch (error) {
+    console.error('Error fetching top 5 articles:', error);
+    res.status(500).json({ message: 'Error fetching top 5 articles', error });
+  }
+};
 
 function getUserIdFromToken(token) {
   try {
@@ -95,7 +197,12 @@ const getArticleById = async (req, res) => {
     const articleId = req.params.id; // Extract the article ID from the request parameters
 
     const article = await Article.findById(articleId); // Find the article by ID
-
+    //كود بلال عشان تزيد المشاهدات
+    await Article.findByIdAndUpdate(
+      articleId,
+      { $inc: { views: 1 } }, // زيادة عدد المشاهدات بمقدار 1
+      { new: true } // إرجاع الوثيقة المحدثة
+    ); //هي نهاية كود المشاهدات
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
@@ -175,10 +282,69 @@ const getArticleComments = async (req, res) => {
   }
 };
 
+const getArticleAuthorComments = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    console.log("✅ Extracted User ID:", userId);
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    // Use `new` to properly instantiate ObjectId
+    const articles = await Article.find({
+      "comments.author": new mongoose.Types.ObjectId(userId),
+    }).populate({
+      path: "comments.author",
+      select: "username email",
+    });
+
+    console.log("✅ Articles containing user comments:", articles);
+
+    if (!articles || articles.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "User has no comments", comments: [] });
+    }
+
+    // Extract user-specific comments
+    const userComments = articles.flatMap((article) =>
+      article.comments.filter(
+        (comment) => comment.author._id.toString() === userId
+      )
+    );
+
+    console.log("✅ User Comments Extracted:", userComments);
+
+    res.status(200).json({
+      message: "User comments fetched successfully",
+      comments: userComments,
+    });
+  } catch (error) {
+    console.error("❌ Server Error fetching user comments:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
 module.exports = {
   getArticles,
   createArticle,
   getArticleById,
   addCommentToArticle,
   getArticleComments,
+  getArticleAuthorComments,
+  getArticlesByIdjenan,
+  acceptArticle,
+  rejectArticle,
+  getArticlesJenan,
+  getTop5Articles,
 };

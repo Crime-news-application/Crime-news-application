@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import axios from "axios";
-
+import { jwtDecode } from "jwt-decode";
 // Error Boundary للتعامل مع الأخطاء داخل مكون PayPalButtons
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -56,26 +56,64 @@ const PaymentPage = () => {
   };
   const { id, title, price, duration, features } = planData;
 
-  // جلب بيانات المستخدم من الباك إند
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/users/profile", {
-          withCredentials: true,
-        });
-        console.log("✅ User profile fetched:", response.data);
-        setUser(response.data.user);
-      } catch (error) {
-        console.error("❌ Error fetching profile:", error.response?.data || error.message);
-      }
-    };
 
+  useEffect(() => {
+    // const fetchUserProfile = async () => {
+    //   try {
+    //     const response = await axios.get("http://localhost:5000/api/users/gituserpayment", {
+    //       withCredentials: true,
+    //     });
+    //     console.log("✅ User profile fetched:", response.data);
+    //     setUser(response.data.user);
+    //   } catch (error) {
+    //     console.error("❌ Error fetching profile:", error.response?.data || error.message);
+    //   }
+    // };
+const fetchUserProfile = async () => {
+  try {
+    // 🔥 1️⃣ Retrieve the token from localStorage
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("❌ No token found in localStorage");
+      return;
+    }
+
+    // 🔥 2️⃣ Decode the token to extract user ID
+    const decodedToken = jwtDecode(token); // Extracts { userId: "67d44acc1bdee5c049d5519e", iat: ..., exp: ... }
+
+    if (!decodedToken.userId) {
+      console.error("❌ No user ID found in token");
+      return;
+    }
+
+    console.log("✅ Extracted User ID from token:", decodedToken.userId);
+
+    // 🔥 3️⃣ Fetch user profile using token (No need to send user ID in request)
+    const response = await axios.get(
+      "http://localhost:5000/api/users/profile",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Send token in headers
+        },
+      }
+    );
+
+    console.log("✅ User profile fetched:", response.data);
+    setUser(response.data.user);
+  } catch (error) {
+    console.error(
+      "❌ Error fetching profile:",
+      error.response?.data || error.message
+    );
+  }
+};
     fetchUserProfile();
   }, []);
 
-  // إعدادات PayPal SDK
+
   const paypalClientId =
-    "AU5e_yUL8prhNgnKaZSZzhXsTmTOlWeDW5YsAg3JIjdWJjehIpyy7wLKYjfakSXoUrPaP07FroujGFne"; // استبدله بمعرف حسابك
+    "AU5e_yUL8prhNgnKaZSZzhXsTmTOlWeDW5YsAg3JIjdWJjehIpyy7wLKYjfakSXoUrPaP07FroujGFne"; 
   const initialOptions = {
     "client-id": paypalClientId,
     components: "buttons",
@@ -83,7 +121,7 @@ const PaymentPage = () => {
     intent: "capture",
   };
 
-  // دالة إرسال بيانات الدفع للباك إند
+  
   const sendPaymentData = async (paymentDetails) => {
     try {
       const requestBody = {
@@ -217,7 +255,7 @@ const PaymentPage = () => {
                     style={{ accentColor: customColors.primary }}
                   />
                   <label htmlFor="credit-card" className="flex items-center text-black">
-                    <span className="mr-2">Credit Card</span>
+                    <span className="mr-2">Visa</span>
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjXEU_gvHUQSBFi_KEJVyM1gC-q_fFDYriIg&s" alt="Credit Cards" className="h-8" />
                   </label>
                 </div>
@@ -336,14 +374,3 @@ export default PaymentPage;
 
 
 
-// import React from "react";
-
-// const PaymentPage=()=>{
-//   return(
-//     <div>
-//       hello
-//     </div>
-//   )
-// }
-
-// export default PaymentPage ;
