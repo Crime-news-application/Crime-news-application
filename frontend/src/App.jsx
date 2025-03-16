@@ -23,7 +23,7 @@ import Overview from "./Component/AdminDashbord/overview";
 import FormDetails from "./Component/AdminDashbord/ArticalCards";
 import PaymentPage from "./pages/Subscription/Payment";
 import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
-import Users from "./Component/AdminDashbord/UsersDash";
+import ArticleManagement from "./Component/AdminDashbord/UsersDash";
 import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
 import Comment from "./pages/detail/Comment";
@@ -95,7 +95,7 @@ function App() {
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/ArticlesPage" element={<ArticlesPage />} />
         <Route path="/articledetail/:id" element={<ArticleDetail />} />
-        <Route path="/UsersDash" element={<Users />} />
+        <Route path="/UsersDash" element={<ArticleManagement />} />
       </Routes>
       {/*Displat the footer in the right component DONT TOUCH*/}
       {![

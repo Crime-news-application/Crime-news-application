@@ -162,7 +162,7 @@ const Overview = () => {
       {
         label: "Views Count",
         data: filteredArticlesView.map((article) => article.views),
-        backgroundColor: "#03A9F4",
+        backgroundColor: "#ffbcbd",
         borderColor: "#FFFFFF",
         borderWidth: 1,
       },
