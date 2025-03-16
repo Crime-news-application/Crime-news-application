@@ -1,4 +1,3 @@
-وفي ملف controller 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -128,7 +127,7 @@ const loginUser = async (req, res) => {
     // ✅ Set token as an HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true, // ❗ Prevent JavaScript access
-      secure: false, // ❗ Set true in production with HTTPS
+      secure: false, // ❗ Set `true` in production with HTTPS
       sameSite: "Lax", // ❗ Prevent CSRF issues
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
@@ -143,9 +142,6 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -300,7 +296,6 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-
 const getUserProfile = async (req, res) => {
   try {
     console.log("✅ ID from token or cookie:", req.user);
@@ -324,6 +319,29 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+/*
+ try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+
+*/
+
 // Export all functions
 module.exports = {
   createUser,
