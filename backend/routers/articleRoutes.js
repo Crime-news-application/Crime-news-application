@@ -13,6 +13,7 @@ const {
   getArticlesJenan,
 } = require("../controllers/articleController");
 
+router.get("/getA", getArticles);
 router.get("/get", getArticlesJenan);
 router.get("/get/:id", getArticlesByIdjenan);
 router.put("/accept", acceptArticle);
