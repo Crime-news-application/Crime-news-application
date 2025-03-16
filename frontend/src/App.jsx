@@ -14,8 +14,8 @@ import AboutUs from "../src/pages/AboutUs";
 import Home from "./pages/Home";
 import SidebarDoners from "./Component/AdminDashbord/SidebarDash";
 import ArticlesPage from "./pages/ArticlesPage";
-import ContactUs from "./pages/contact";////////////////////////////////////////////////////
-import BookMark from "./pages/Bookmark";////////////////////////////////////////////////////
+import ContactUs from "./pages/contact";
+import BookMark from "./pages/Bookmark";
 import Login from "./pages/LogIn";
 import Signup from "./pages/SignUp";
 import UserProfile from "./pages/UserProfile";
@@ -28,12 +28,19 @@ import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
 import Comment from "./pages/detail/Comment";
 import PostDashboard from "./pages/Subscription/Post";
+import { useLanguage } from "./context/LanguageContext";
+import arabicIcon from "./assets/translation.png";
+import englishIcon from "./assets/translation (1).png";
+import { useTranslation } from "react-i18next";
 function App() {
-  // const { t } = useTranslation();
-  const location = useLocation(); 
+  const { t } = useTranslation();
+  const { language, toggleLanguage } = useLanguage(); 
+  const location = useLocation();
 
   return (
     <>
+    <div className={`min-h-screen ${language === "ar" ? "text-right" : "text-left"}`} dir={language === "ar" ? "rtl" : "ltr"}>
+   
       {/*Display the navbar in the right component  DONT TOUCH*/}
       {![
         "/login",
@@ -109,7 +116,16 @@ function App() {
         "/UsersDash","/postform"
       ].includes(location.pathname) &&
         !location.pathname.startsWith("/articledetail/") && <Footer />}
-    </>
+     
+     <button onClick={toggleLanguage} className="fixed bottom-5 right-5 p-3 rounded-full bg-blue-500 text-white">
+        <img
+          src={language === "en" ? englishIcon : arabicIcon}
+          alt="Language Icon"
+          className="w-8 h-8"
+        />
+      </button>
+     
+     </div></>
   );
 }
 

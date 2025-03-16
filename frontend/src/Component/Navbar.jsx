@@ -3,14 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import arabicIcon from "../assets/translation.png";
 import englishIcon from "../assets/translation (1).png";
-
+import { useLanguage } from "../Context//LanguageContext";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
   const navigate = useNavigate();
   const { i18n } = useTranslation();
-  const [language, setLanguage] = useState("en");
-
+  // const [language, setLanguage] = useState("en");
+  const { language, toggleLanguage } = useLanguage()
   // Check if the user is logged in by checking localStorage for a token
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,11 +39,18 @@ const Navbar = () => {
   };
 
   // Change language
+  // const changeLanguage = () => {
+  //   const newLang = language === "en" ? "ar" : "en";
+  //   setLanguage(newLang);
+  //   i18n.changeLanguage(newLang); // Change the language in the i18n library
+  // };
+
   const changeLanguage = () => {
-    const newLang = language === "en" ? "ar" : "en";
-    setLanguage(newLang);
-    i18n.changeLanguage(newLang); // Change the language in the i18n library
+    const newLang = language === "en" ? "ar" : "en"; // تحديد اللغة الجديدة
+    toggleLanguage(); // تغيير اللغة في Context
+    i18n.changeLanguage(newLang); // استخدام i18next لتغيير اللغة فعليًا
   };
+
 
   // Handle logout
   const handleLogout = () => {
