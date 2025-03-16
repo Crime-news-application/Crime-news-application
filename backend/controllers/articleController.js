@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const Comment = require("../models/comment");
+const User = require("../models/user");
 
 // Get all articles with filters
 const getArticlesJenan = async (req, res) => {
@@ -139,15 +140,15 @@ const rejectArticle = async (req, res) => {
   }
 };
 
-// const getTop5Articles = async (req, res) => {
-//   try {
-//     const articles = await Article.find().sort({ views: -1 }).limit(5);
-//     res.json(articles);
-//   } catch (error) {
-//     console.error('Error fetching top 5 articles:', error);
-//     res.status(500).json({ message: 'Error fetching top 5 articles', error });
-//   }
-// };
+const getTop5Articles = async (req, res) => {
+  try {
+    const articles = await Article.find().sort({ views: -1 }).limit(5);
+    res.json(articles);
+  } catch (error) {
+    console.error('Error fetching top 5 articles:', error);
+    res.status(500).json({ message: 'Error fetching top 5 articles', error });
+  }
+};
 
 function getUserIdFromToken(token) {
   try {
@@ -336,6 +337,39 @@ const getArticleAuthorComments = async (req, res) => {
   }
 };
 
+const getSavedArticles = async (req, res) => {
+  try {
+    // Extract the token from the Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+    const token = authHeader.split(" ")[1];
+
+    // Verify the token and extract the user ID
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    console.log("✅ Extracted User ID:", userId);
+
+    // Validate the user ID format
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    // Fetch the user and populate the savedArticles field
+    const user = await User.findById(userId).populate("savedArticles");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ savedArticles: user.savedArticles });
+  } catch (error) {
+    console.error("❌ Server error fetching saved articles:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
 module.exports = {
   getArticles,
   createArticle,
@@ -347,4 +381,6 @@ module.exports = {
   acceptArticle,
   rejectArticle,
   getArticlesJenan,
+  getSavedArticles,
+  getTop5Articles,
 };

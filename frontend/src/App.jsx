@@ -26,6 +26,9 @@ import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
 import Users from "./Component/AdminDashbord/UsersDash";
 import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
+import Blog from "./pages/Blog"
+import BlogDetails from "./pages/BlogDetails"
+
 import Comment from "./pages/detail/Comment";
 import PostDashboard from "./pages/Subscription/Post";
 function App() {
@@ -80,6 +83,9 @@ function App() {
         <Route path="/aform" element={<AForm />} />
         <Route path="/details/:id" element={<Details />} />
         <Route path="/comments/:id" element={<Comment />} />
+        <Route path="/Blog" element={<Blog />} />
+        {/* <Route path="/Blog/:id" element={<BlogDetails />} /> */}
+        <Route path="/BlogDetails" element={<BlogDetails />} />
 
         <Route
           path="/SubscriptionCardDisplay"

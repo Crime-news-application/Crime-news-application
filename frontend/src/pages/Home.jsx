@@ -1,19 +1,28 @@
 import React from "react";
-import hero from "../assets/Recording 2025-03-12 205117.mp4"; // تأكد أن اسم الملف صحيح
-import NewsTicker from "../Component/Homecomponent/NewsTicker ";
-import CategorySection from "../Component/Homecomponent/CategorySection";
-import { Play } from "lucide-react";
-import CrimeStatistics from "../Component/Homecomponent/Statistics";
-import TrendReports from "../Component/Homecomponent/TrendReports";
-import CrimeNewsWarning from "../Component/Homecomponent/CrimeNewsWarning"
-import { useEffect, useState } from "react";
-import heroVideo from "../assets/Recording 2025-03-14 140130.mp4"; // تأكد أن اسم الملف صحيح
-import CybercrimeSection from "../Component/Homecomponent/CybercrimeSection"
 import { Link } from "react-router-dom";
-import { CrimePodcastSection } from "../Component/Homecomponent/CrimePodcastSection"
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { Play } from "lucide-react";
+import hero from "../assets/Recording 2025-03-12 205117.mp4"; // تأكد أن اسم الملف صحيح
+import CategorySection from "../Component/Homecomponent/CategorySection";
+import heroVideo from "../assets/Recording 2025-03-14 140130.mp4"; // تأكد أن اسم الملف صحيح
+import CrimeStatistics from "../Component/Homecomponent/Statistics";
+import CrimeNewsWarning from "../Component/Homecomponent/CrimeNewsWarning"
+import CybercrimeSection from "../Component/Homecomponent/CybercrimeSection"
+import { CrimePodcastSection } from "../Component/Homecomponent/CrimePodcastSection"
+import NewsTicker from "../Component/Homecomponent/NewsTicker ";
+import TrendReports from "../Component/Homecomponent/TrendReports";
+// import crimeSceneImage from "../assets/crime-scene.png"; // تأكد من المسار الصحيح للصورة
+// import crimeSceneImage from "../assets/finger.jpg"; // تأكد من المسار الصحيح للصورة
 
 
+// <div className="absolute right-8 bottom-8 opacity-40 w-40 h-40">
+// <img
+//   src={crimeSceneImage}
+//   alt="Crime Scene Silhouette"
+//   className="w-full h-full"
+// />
+// </div> 
 
 
 
@@ -148,6 +157,7 @@ useEffect(() => {
       {/* MostViewedReports  */}
       <div className="my-5  mb-20">
         <CategorySection />
+        
       </div>
 
 
@@ -204,6 +214,13 @@ useEffect(() => {
         </div>
       </div>
     </div>
+
+
+
+
+
+
+
 
       {/* Statistics  */}
       <div className="my-20  mb-20">
