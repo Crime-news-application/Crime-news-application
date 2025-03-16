@@ -1,16 +1,58 @@
-import React, { useState } from "react";
-import "../App";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import arabicIcon from "../assets/translation.png";
+import englishIcon from "../assets/translation (1).png";
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const navigate = useNavigate();
   const { i18n } = useTranslation();
+  const [language, setLanguage] = useState("en");
+
+  // Check if the user is logged in by checking localStorage for a token
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token); // Set isLoggedIn to true if a token exists
+  }, []);
+
+  // Listen for changes in localStorage (e.g., after signup or login)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    };
+
+    // Add event listener for localStorage changes
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  // Toggle mobile menu
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+
+  // Change language
+  const changeLanguage = () => {
+    const newLang = language === "en" ? "ar" : "en";
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang); // Change the language in the i18n library
   };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove token from localStorage
+    localStorage.removeItem("user_id"); // Remove user_id if it exists
+    setIsLoggedIn(false); // Update login status
+    navigate("/"); // Redirect to the login page
+  };
+
   return (
     <>
       {/* Top Red Banner with Logo and Search */}
@@ -18,90 +60,83 @@ const Navbar = () => {
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="text-6xl font-bold tracking-tighter transition-transform duration-300 hover:scale-105 hover:text-gray-200 cursor-pointer">
+            <Link
+              to="/"
+              className="text-6xl font-bold tracking-tighter transition-transform duration-300 hover:scale-105 hover:text-gray-200 cursor-pointer"
+            >
               <span className="font-extrabold">CRIME</span>
               <span className="font-light">GAZETTE</span>
-            </div>
+            </Link>
           </div>
 
           {/* Right Side */}
           <div className="flex items-center mt-3 md:mt-0">
             {/* Auth Links */}
             <div className="hidden md:flex space-x-4 text-md font-semibold mr-6">
-              <a
-                href="signup"
-                className="hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
-              >
-                REGISTER
-              </a>
-              <span>|</span>
-              <a
-                href="#"
-                className="hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
-              >
-                SUBSCRIBE
-              </a>
-              <span>|</span>
-              <a
-                href="login"
-                className="flex items-center hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
-              >
-                SIGN IN
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  ></path>
-                </svg>
-              </a>
+              {isLoggedIn ? (
+                <>
+                  {/* User Profile Button */}
+                  <Link
+                    to="/userprofile"
+                    className="hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
+                  >
+                    PROFILE
+                  </Link>
+                  <span>|</span>
+                  {/* Logout Button */}
+                  <button
+                    onClick={handleLogout}
+                    className="hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
+                  >
+                    LOGOUT
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/signup"
+                    className="hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
+                  >
+                    REGISTER
+                  </Link>
+                  <span>|</span>
+                  <Link
+                    to="/subscribe"
+                    className="hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
+                  >
+                    SUBSCRIBE
+                  </Link>
+                  <span>|</span>
+                  <Link
+                    to="/login"
+                    className="flex items-center hover:bg-screen-red transition-all duration-300 px-4 py-1 rounded"
+                  >
+                    SIGN IN
+                    <svg
+                      className="ml-2 w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      ></path>
+                    </svg>
+                  </Link>
+                </>
+              )}
             </div>
 
-            {/* Search Bar */}
-            <div className="relative ml-4">
-              <input
-                type="text"
-                placeholder="Search our site"
-                className="px-4 py-2 text-md bg-white text-black w-64 md:w-80 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-screen-red"
+            {/* Language Toggle Buttons */}
+            <button onClick={changeLanguage}>
+              <img
+                src={language === "en" ? arabicIcon : englishIcon}
+                alt="Language Icon"
+                className="w-11 h-11 transition-transform duration-300 hover:scale-110 mr-3"
               />
-              <button className="absolute right-0 top-0 h-full px-3 bg-gray-200 rounded-r-md">
-                <svg
-                  className="w-5 h-5 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-   {/* Language Toggle Buttons */}
-            <div className="flex space-x-2">
-              <button
-                onClick={() => changeLanguage("en")}
-                className="px-3 py-1 bg-white text-screen-red font-bold rounded transition-all duration-300 hover:bg-gray-100"
-              >
-                English
-              </button>
-              <button
-                onClick={() => changeLanguage("ar")}
-                className="px-3 py-1 bg-white text-screen-red font-bold rounded transition-all duration-300 hover:bg-gray-100"
-              >
-                العربية
-              </button>
-            </div>
-
-
+            </button>
           </div>
         </div>
       </div>
@@ -128,99 +163,52 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Mobile Menu */}
-          <div
-            className={`md:hidden py-2 ${
-              isMobileMenuOpen ? "block" : "hidden"
-            }`}
-          >
-            <a
-              href="#"
-              className="block py-2 px-6 text-lg hover:bg-screen-red transition-all duration-300"
-            >
-              NEWS
-            </a>
-            <a
-              href="#"
-              className="block py-2 px-6 text-lg hover:bg-screen-red transition-all duration-300"
-            >
-              REVIEWS
-            </a>
-            <a
-              href="#"
-              className="block py-2 px-6 text-lg hover:bg-screen-red transition-all duration-300"
-            >
-              FEATURES
-            </a>
-            <a
-              href="#"
-              className="block py-2 px-6 text-lg hover:bg-screen-red transition-all duration-300"
-            >
-              AWARDS
-            </a>
-            <a
-              href="#"
-              className="block py-2 px-6 text-lg hover:bg-screen-red transition-all duration-300"
-            >
-              MORE FROM »
-            </a>
-          </div>
-
           {/* Desktop Navigation */}
           <nav className="hidden md:flex flex-wrap items-center justify-center py-2">
-            <a
-              href="#"
+            <Link
+              to="/"
               className="relative px-5 py-3 text-lg font-semibold group"
             >
               <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
                 HOME
               </span>
-            </a>
+            </Link>
 
-            <a
-              href="#"
+            <Link
+              to="/ArticlesPage"
               className="relative px-5 py-3 text-lg font-semibold group"
             >
               <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
                 NEWS
               </span>
-            </a>
+            </Link>
 
-            <a
-              href="#"
+            <Link
+              to="/AboutUs"
               className="relative px-5 py-3 text-lg font-semibold group"
             >
               <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
-                REVIEWS
+                ABOUT US
               </span>
-            </a>
+            </Link>
 
-            <a
-              href="#"
+            <Link
+              to="/contact"
               className="relative px-5 py-3 text-lg font-semibold group"
             >
               <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
-                FEATURES
+                CONTACT US
               </span>
-            </a>
+            </Link>
 
-            <a
-              href="#"
-              className="relative px-5 py-3 text-lg font-semibold group"
-            >
-              <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
-                AWARDS
-              </span>
-            </a>
-
-            <a
-              href="#"
+            <Link
+              to="/more"
               className="relative px-5 py-3 text-lg font-semibold group"
             >
               <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
                 MORE FROM »
               </span>
-            </a>
+            </Link>
           </nav>
         </div>
       </div>

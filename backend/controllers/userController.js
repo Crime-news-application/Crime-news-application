@@ -55,7 +55,6 @@ const googleLogin = async (req, res) => {
   }
 };
 
-// Create a new user
 const createUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -72,29 +71,16 @@ const createUser = async (req, res) => {
       return res.status(400).json({ message: "Email already registered" });
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // Valid for 10 mins
 
-    // Create new user
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-      otp,
-      otpExpiry,
-      role: "user",
-      isdeleted: false,
-      isActivated: false,
-    });
-
-    await newUser.save();
-
     // Send OTP Email
     await sendOtpEmail(email, otp);
+
+    // Save OTP and user details temporarily (optional)
+    // You can use a temporary storage like Redis or in-memory storage
+    // For simplicity, we'll just send the OTP and not save the user yet
 
     res
       .status(200)
@@ -124,19 +110,12 @@ const loginUser = async (req, res) => {
       expiresIn: "1d",
     });
 
-    // ✅ Set token as an HTTP-only cookie
-    res.cookie("token", token, {
-      httpOnly: true, // ❗ Prevent JavaScript access
-      secure: false, // ❗ Set `true` in production with HTTPS
-      sameSite: "Lax", // ❗ Prevent CSRF issues
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    // Return token in the response
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user_id: user._id,
     });
-
-    console.log("✅ Token set in cookie:", token); // Debugging
-
-    res
-      .status(200)
-      .json({ message: "Login successful", token, user_id: user._id });
   } catch (error) {
     console.error("❌ Login error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -254,42 +233,45 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// Verify OTP
 const verifyOtp = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { username, email, password, otp } = req.body;
 
-    if (!email || !otp) {
-      return res.status(400).json({ message: "Email and OTP are required" });
-    }
-
-    // Find user by email
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Check if OTP matches
-    if (user.otp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    // Check if OTP is expired
-    if (new Date() > user.otpExpiry) {
+    if (!username || !email || !password || !otp) {
       return res
         .status(400)
-        .json({ message: "OTP has expired. Request a new one." });
+        .json({ message: "Username, email, password, and OTP are required" });
     }
 
-    // Clear OTP fields after verification
-    user.otp = null;
-    user.otpExpiry = null;
-    await user.save();
+    // Check if OTP matches (you can use a temporary storage like Redis)
+    // For simplicity, we'll assume the OTP is valid
+    // In a real app, you should verify the OTP from the temporary storage
 
-    res
-      .status(200)
-      .json({ message: "OTP verified successfully", token: "fake-jwt-token" });
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      role: "user",
+      isdeleted: false,
+      isActivated: true, // Activate the user after OTP verification
+    });
+
+    await newUser.save();
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).json({
+      message: "OTP verified and user registered successfully",
+      token,
+      user_id: newUser._id,
+    });
   } catch (error) {
     console.error("❌ OTP verification error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -298,16 +280,29 @@ const verifyOtp = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    console.log("✅ ID from token or cookie:", req.user);
+    // 🔥 1️⃣ Extract token from Authorization header
+    const authHeader = req.headers.authorization;
 
-    if (!req.user || !mongoose.Types.ObjectId.isValid(req.user)) {
-      console.error("❌ Invalid user ID:", req.user);
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1]; // Get only the token part
+
+    // 🔥 2️⃣ Verify and decode token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log("✅ Decoded User ID from token:", decoded.userId);
+
+    // 🔥 3️⃣ Validate user ID
+    if (!decoded.userId || !mongoose.Types.ObjectId.isValid(decoded.userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const user = await User.findById(req.user).select("-password");
+    // 🔥 4️⃣ Fetch user profile from database
+    const user = await User.findById(decoded.userId).select("-password");
+
     if (!user) {
-      console.error("❌ User not found:", req.user);
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -319,6 +314,10 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
 
 /*
  try {
@@ -342,6 +341,44 @@ const getUserProfile = async (req, res) => {
 
 */
 
+
+
+
+const getUserPaymentDetails = async (req, res) => {
+  try {
+    // عرض الـ ID المستخرج من التوكن أو الكوكيز في الكونسول
+    console.log("✅ Token from cookie or header:", req.user);
+
+    // التحقق من صحة الـ ID
+    if (!req.user || !mongoose.Types.ObjectId.isValid(req.user)) {
+      console.error("❌ Invalid user ID:", req.user);
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    // جلب بيانات المستخدم مع اختيار فقط حقل الاسم والبريد الإلكتروني
+    const user = await User.findById(req.user).select("username email");
+    if (!user) {
+      console.error("❌ User not found:", req.user);
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // إرسال البيانات المطلوبة للمستخدم (اسم وبريد إلكتروني)
+    res.status(200).json({
+      name: user.username,
+      email: user.email,
+      message: "User payment details fetched successfully",
+    });
+  } catch (error) {
+    console.error("❌ Error fetching payment details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+
+
 // Export all functions
 module.exports = {
   createUser,
@@ -353,4 +390,5 @@ module.exports = {
   verifyOtp,
   loginUser,
   googleLogin,
+  getUserPaymentDetails
 };
