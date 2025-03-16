@@ -11,7 +11,9 @@ const {
   getUserProfile,
   verifyOtp,
   loginUser,
-  googleLogin,getUserPaymentDetails
+  updateUserRole,
+  googleLogin,
+  getUserPaymentDetails,
 } = require("../controllers/userController");
 
 // Create a new user
@@ -28,6 +30,7 @@ router.post("/verify-otp", verifyOtp);
 
 // Get all users
 router.get("/", getAllUsers);
+router.patch("/:userId/role", updateUserRole);
 
 // ✅ GET USER PROFILE (Protected)
 router.get("/profile", authMiddleware, getUserProfile);
