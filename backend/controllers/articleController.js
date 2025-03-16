@@ -1,7 +1,10 @@
 const Article = require("../models/article");
 const jwt = require("jsonwebtoken");
-const Comment = require("../models/comment");
 require("dotenv").config();
+const mongoose = require("mongoose");
+const Comment = require("../models/comment");
+
+
 
 const getArticles = async (req, res) => {
   try {
@@ -176,39 +179,63 @@ const getArticleComments = async (req, res) => {
   }
 };
 
-
 const getArticleAuthorComments = async (req, res) => {
   try {
-    // استخراج التوكن من الـ Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "No token provided" });
     }
     const token = authHeader.split(" ")[1];
-
-    // التحقق من التوكن واستخراج userId
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.userId;
-    console.log("✅ Decoded User ID from token:", userId);
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+
+    console.log("✅ Extracted User ID:", userId);
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    // جلب جميع التعليقات التي كتبها المستخدم
-    const comments = await Comment.find({ author: userId }).populate({
-      path: "author",
+    // Use `new` to properly instantiate ObjectId
+    const articles = await Article.find({
+      "comments.author": new mongoose.Types.ObjectId(userId),
+    }).populate({
+      path: "comments.author",
       select: "username email",
     });
 
-    res.status(200).json({
-      message: "User comments fetched successfully",
-      comments,
-    });
+    console.log("✅ Articles containing user comments:", articles);
+
+    if (!articles || articles.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "User has no comments", comments: [] });
+    }
+
+    // Extract user-specific comments
+    const userComments = articles.flatMap((article) =>
+      article.comments.filter(
+        (comment) => comment.author._id.toString() === userId
+      )
+    );
+
+    console.log("✅ User Comments Extracted:", userComments);
+
+    res
+      .status(200)
+      .json({
+        message: "User comments fetched successfully",
+        comments: userComments,
+      });
   } catch (error) {
-    console.error("❌ Error fetching user comments:", error);
-    res.status(500).json({ message: "Error fetching user comments", error });
+    console.error("❌ Server Error fetching user comments:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
+
+
+
 
 
 module.exports = {
