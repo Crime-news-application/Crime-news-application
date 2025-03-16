@@ -10,9 +10,10 @@ const getArticles = async (req, res) => {
   try {
     const { category, sortBy } = req.query;
 
-    const query =
-      category && category !== "All" ? { categories: category } : {};
-
+ const query = {
+   status: "Published",
+   ...(category && category !== "All" ? { categories: category } : {}),
+ };
     let sortOption = {};
     switch (sortBy) {
       case "newest":
@@ -98,8 +99,14 @@ const getArticleById = async (req, res) => {
   try {
     const articleId = req.params.id; // Extract the article ID from the request parameters
 
+    
     const article = await Article.findById(articleId); // Find the article by ID
-
+   //كود بلال عشان تزيد المشاهدات
+    await Article.findByIdAndUpdate(
+     articleId,
+     { $inc: { views: 1 } }, // زيادة عدد المشاهدات بمقدار 1
+     { new: true } // إرجاع الوثيقة المحدثة
+   );//هي نهاية كود المشاهدات
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
