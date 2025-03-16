@@ -1,5 +1,6 @@
 const Article = require("../models/article");
 const jwt = require("jsonwebtoken");
+const Comment = require("../models/comment");
 require("dotenv").config();
 
 const getArticles = async (req, res) => {
@@ -175,10 +176,46 @@ const getArticleComments = async (req, res) => {
   }
 };
 
+
+const getArticleAuthorComments = async (req, res) => {
+  try {
+    // استخراج التوكن من الـ Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+    const token = authHeader.split(" ")[1];
+
+    // التحقق من التوكن واستخراج userId
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    console.log("✅ Decoded User ID from token:", userId);
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    // جلب جميع التعليقات التي كتبها المستخدم
+    const comments = await Comment.find({ author: userId }).populate({
+      path: "author",
+      select: "username email",
+    });
+
+    res.status(200).json({
+      message: "User comments fetched successfully",
+      comments,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching user comments:", error);
+    res.status(500).json({ message: "Error fetching user comments", error });
+  }
+};
+
+
 module.exports = {
   getArticles,
   createArticle,
   getArticleById,
   addCommentToArticle,
   getArticleComments,
+  getArticleAuthorComments
 };

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import axios from "axios";
-
+import { jwtDecode } from "jwt-decode";
 // Error Boundary للتعامل مع الأخطاء داخل مكون PayPalButtons
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -58,18 +58,56 @@ const PaymentPage = () => {
 
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/users/gituserpayment", {
-          withCredentials: true,
-        });
-        console.log("✅ User profile fetched:", response.data);
-        setUser(response.data.user);
-      } catch (error) {
-        console.error("❌ Error fetching profile:", error.response?.data || error.message);
-      }
-    };
+    // const fetchUserProfile = async () => {
+    //   try {
+    //     const response = await axios.get("http://localhost:5000/api/users/gituserpayment", {
+    //       withCredentials: true,
+    //     });
+    //     console.log("✅ User profile fetched:", response.data);
+    //     setUser(response.data.user);
+    //   } catch (error) {
+    //     console.error("❌ Error fetching profile:", error.response?.data || error.message);
+    //   }
+    // };
+const fetchUserProfile = async () => {
+  try {
+    // 🔥 1️⃣ Retrieve the token from localStorage
+    const token = localStorage.getItem("token");
 
+    if (!token) {
+      console.error("❌ No token found in localStorage");
+      return;
+    }
+
+    // 🔥 2️⃣ Decode the token to extract user ID
+    const decodedToken = jwtDecode(token); // Extracts { userId: "67d44acc1bdee5c049d5519e", iat: ..., exp: ... }
+
+    if (!decodedToken.userId) {
+      console.error("❌ No user ID found in token");
+      return;
+    }
+
+    console.log("✅ Extracted User ID from token:", decodedToken.userId);
+
+    // 🔥 3️⃣ Fetch user profile using token (No need to send user ID in request)
+    const response = await axios.get(
+      "http://localhost:5000/api/users/profile",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Send token in headers
+        },
+      }
+    );
+
+    console.log("✅ User profile fetched:", response.data);
+    setUser(response.data.user);
+  } catch (error) {
+    console.error(
+      "❌ Error fetching profile:",
+      error.response?.data || error.message
+    );
+  }
+};
     fetchUserProfile();
   }, []);
 

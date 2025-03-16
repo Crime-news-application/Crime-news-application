@@ -291,16 +291,29 @@ const verifyOtp = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    console.log("✅ ID from token or cookie:", req.user);
+    // 🔥 1️⃣ Extract token from Authorization header
+    const authHeader = req.headers.authorization;
 
-    if (!req.user || !mongoose.Types.ObjectId.isValid(req.user)) {
-      console.error("❌ Invalid user ID:", req.user);
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1]; // Get only the token part
+
+    // 🔥 2️⃣ Verify and decode token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log("✅ Decoded User ID from token:", decoded.userId);
+
+    // 🔥 3️⃣ Validate user ID
+    if (!decoded.userId || !mongoose.Types.ObjectId.isValid(decoded.userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const user = await User.findById(req.user).select("-password");
+    // 🔥 4️⃣ Fetch user profile from database
+    const user = await User.findById(decoded.userId).select("-password");
+
     if (!user) {
-      console.error("❌ User not found:", req.user);
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -312,6 +325,10 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
 
 /*
  try {
