@@ -11,6 +11,8 @@ const {
   getArticleComments,
   getArticleAuthorComments,
   getArticlesJenan,
+  getSavedArticles
+  
 } = require("../controllers/articleController");
 
 router.get("/getA", getArticles);
@@ -26,4 +28,6 @@ router.get("/get-articles/:id", getArticleById);
 router.post("/addComents-articles/:id/comments", addCommentToArticle);
 router.get("/getComment-articles/:id/comments", getArticleComments);
 router.get("/user-comments", getArticleAuthorComments);
+router.get("/saved-articles", getSavedArticles);
+
 module.exports = router;
