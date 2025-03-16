@@ -37,25 +37,25 @@ const UserArticlesDashboard = () => {
       count: 0,
       change: 0,
       title: "TOTAL ARTICLES",
-      color: "bg-blue-500",
+      color: "bg-blue-400",
     },
     published: {
       count: 0,
       change: 0,
       title: "PUBLISHED ARTICLES",
-      color: "bg-green-500",
+      color: "bg-green-400",
     },
     pending: {
       count: 0,
       change: 0,
       title: "PENDING ARTICLES",
-      color: "bg-yellow-500",
+      color: "bg-yellow-400",
     },
     rejected: {
       count: 0,
       change: 0,
       title: "REJECTED ARTICLES",
-      color: "bg-red-500",
+      color: "bg-red-400",
     },
   });
 

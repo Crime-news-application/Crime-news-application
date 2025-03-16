@@ -38,6 +38,10 @@ const Overview = () => {
       (filterStatus === "" || article.status === filterStatus)
   );
 
+  const filteredArticlesView = articles.filter(
+    (article) => article.status === "Published"
+  );
+
   // Fetch data from Firebase using Axios
   useEffect(() => {
     axios
@@ -99,7 +103,7 @@ const Overview = () => {
       {
         label: "Number of Articles",
         data: Object.values(statusCounts),
-        backgroundColor: ["#F44336", "#4CAF50", "#FFC107"],
+        backgroundColor: ["#FFC107", "#F44336", "#4CAF50"],
         borderColor: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
         borderWidth: 1,
       },
@@ -149,7 +153,7 @@ const Overview = () => {
 
   // Second chart data (views count for each article)
   const viewsData = {
-    labels: articles.map((article) =>
+    labels: filteredArticlesView.map((article) =>
       article.title.length > 15
         ? article.title.substring(0, 15) + "..."
         : article.title
@@ -157,7 +161,7 @@ const Overview = () => {
     datasets: [
       {
         label: "Views Count",
-        data: articles.map((article) => article.views),
+        data: filteredArticlesView.map((article) => article.views),
         backgroundColor: "#03A9F4",
         borderColor: "#FFFFFF",
         borderWidth: 1,

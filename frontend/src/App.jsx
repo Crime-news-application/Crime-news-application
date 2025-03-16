@@ -39,7 +39,7 @@ import { useTranslation } from "react-i18next";
 import SubscriptionCardForm from "./pages/Subscription/test";
 import AboutUs from "../src/pages/AboutUs";
 import Home from "./pages/Home";
-import SidebarDoners from "./Component/AdminDashbord/SidebarDoners";
+import SidebarDoners from "./Component/AdminDashbord/SidebarDash";
 import ArticlesPage from "./pages/ArticlesPage";
 import ContactUs from "./pages/contact";
 import Login from "./pages/LogIn";
@@ -49,6 +49,7 @@ import Overview from "./Component/AdminDashbord/overview";
 import FormDetails from "./Component/AdminDashbord/ArticalCards";
 import PaymentPage from "./pages/Subscription/Payment";
 import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
+import Users from "./Component/AdminDashbord/UsersDash";
 function App() {
   const { t } = useTranslation();
   const location = useLocation();
@@ -62,6 +63,7 @@ function App() {
         "/signup",
         "/subformDash",
         "/articlescardsDash",
+        "/UsersDash",
       ].includes(location.pathname) &&
         !location.pathname.startsWith("/articledetail/") && <Navbar />}
 
@@ -71,6 +73,7 @@ function App() {
         "/articlescardsDash",
         "/subformDash",
         "/ArticleDetail/:id",
+        "/UsersDash",
       ].includes(location.pathname) ||
         location.pathname.startsWith("/articledetail/")) && <SidebarDoners />}
 
@@ -110,6 +113,7 @@ function App() {
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/ArticlesPage" element={<ArticlesPage />} />
         <Route path="/articledetail/:id" element={<ArticleDetail />} />
+        <Route path="/UsersDash" element={<Users />} />
       </Routes>
       {/*Displat the footer in the right component DONT TOUCH*/}
       {![
@@ -118,6 +122,7 @@ function App() {
         "/signup",
         "/subformDash",
         "/articlescardsDash",
+        "/UsersDash",
       ].includes(location.pathname) &&
         !location.pathname.startsWith("/articledetail/") && <Footer />}
     </>

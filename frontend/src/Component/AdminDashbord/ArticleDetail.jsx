@@ -125,7 +125,7 @@ const ArticleDetails = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen lg:pl-75 bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           {/* Header Section */}
           <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
