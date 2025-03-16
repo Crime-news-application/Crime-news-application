@@ -223,14 +223,17 @@ const ArticleManagement = () => {
   };
 
   // Add these state variables at the top of your component
-const [currentPage, setCurrentPage] = useState(1);
-const articlesPerPage = 5; // Show 5 articles per page as requested
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 5; // Show 5 articles per page as requested
 
-// Calculate pagination values
-const indexOfLastArticle = currentPage * articlesPerPage;
-const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
-const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+  // Calculate pagination values
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = filteredArticles.slice(
+    indexOfFirstArticle,
+    indexOfLastArticle
+  );
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
 
   if (loading) {
     return (
@@ -541,49 +544,55 @@ const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
 
           {/* Pagination */}
           {/* Pagination */}
-{filteredArticles.length > 0 && !loading && (
-  <div className="flex justify-center items-center p-4 border-t border-gray-200">
-    <div className="flex space-x-1">
-      <button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        disabled={currentPage === 1}
-        className={`px-4 py-2 rounded-md text-sm ${
-          currentPage === 1
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-[#fff3f3] hover:text-[var(--screen-red)] border border-gray-300"
-        }`}
-      >
-        Previous
-      </button>
-      
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <button
-          key={page}
-          onClick={() => setCurrentPage(page)}
-          className={`px-4 py-2 rounded-md text-sm ${
-            currentPage === page
-              ? "bg-[var(--screen-red)] text-white"
-              : "bg-white text-gray-700 hover:bg-[#fff3f3] hover:text-[var(--screen-red)] border border-gray-300"
-          }`}
-        >
-          {page}
-        </button>
-      ))}
-      
-      <button
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className={`px-4 py-2 rounded-md text-sm ${
-          currentPage === totalPages
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-[#fff3f3] hover:text-[var(--screen-red)] border border-gray-300"
-        }`}
-      >
-        Next
-      </button>
-    </div>
-  </div>
-)}
+          {filteredArticles.length > 0 && !loading && (
+            <div className="flex justify-center items-center p-4 border-t border-gray-200">
+              <div className="flex space-x-1">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-md text-sm ${
+                    currentPage === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 hover:bg-[#fff3f3] hover:text-[var(--screen-red)] border border-gray-300"
+                  }`}
+                >
+                  Previous
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-4 py-2 rounded-md text-sm ${
+                        currentPage === page
+                          ? "bg-[var(--screen-red)] text-white"
+                          : "bg-white text-gray-700 hover:bg-[#fff3f3] hover:text-[var(--screen-red)] border border-gray-300"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-md text-sm ${
+                    currentPage === totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 hover:bg-[#fff3f3] hover:text-[var(--screen-red)] border border-gray-300"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         {selectedArticle && (
           <ArticlePopup

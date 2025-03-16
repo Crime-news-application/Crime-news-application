@@ -23,7 +23,7 @@ import Overview from "./Component/AdminDashbord/overview";
 import FormDetails from "./Component/AdminDashbord/ArticalCards";
 import PaymentPage from "./pages/Subscription/Payment";
 import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
-import ArticleManagement from "./Component/AdminDashbord/UsersDash";
+import Users from "./Component/AdminDashbord/UsersDash";
 import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
 import Comment from "./pages/detail/Comment";

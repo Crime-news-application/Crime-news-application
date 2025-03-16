@@ -103,7 +103,7 @@ const Overview = () => {
       {
         label: "Number of Articles",
         data: Object.values(statusCounts),
-        backgroundColor: ["#FFC107", "#F44336", "#4CAF50"],
+        backgroundColor: ["#61090b", "#ffbcbd", "#aeaeae"],
         borderColor: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
         borderWidth: 1,
       },
@@ -307,10 +307,10 @@ const Overview = () => {
                     <span
                       className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
                         article.status === "Published"
-                          ? "bg-green-200 text-green-800"
+                          ? "bg-[var(--screen-red)] text-white"
                           : article.status === "Pending"
-                          ? "bg-yellow-200 text-yellow-800"
-                          : "bg-red-200 text-red-800"
+                          ? "bg-[#aeaeae] text-white"
+                          : "bg-[#ffbcbd] text-white"
                       }`}
                     >
                       {article.status}
@@ -341,11 +341,11 @@ const Overview = () => {
                   </span>
                   <span
                     className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
-                      article.status === "published"
-                        ? "bg-green-200 text-green-800"
-                        : article.status === "pending"
-                        ? "bg-yellow-200 text-yellow-800"
-                        : "bg-red-200 text-red-800"
+                      article.status === "Published"
+                        ? "bg-[var(--screen-red)] text-white"
+                        : article.status === "Pending"
+                        ? "bg-[#aeaeae] text-white"
+                        : "bg-[#ffbcbd] text-white"
                     }`}
                   >
                     {article.status}
