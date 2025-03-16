@@ -12,7 +12,7 @@ import Footer from "./Component/Footer";
 import SubscriptionCardForm from "./pages/Subscription/test";
 import AboutUs from "../src/pages/AboutUs";
 import Home from "./pages/Home";
-import SidebarDoners from "./Component/AdminDashbord/SidebarDoners";
+import SidebarDoners from "./Component/AdminDashbord/SidebarDash";
 import ArticlesPage from "./pages/ArticlesPage";
 import ContactUs from "./pages/contact";////////////////////////////////////////////////////
 import BookMark from "./pages/Bookmark";////////////////////////////////////////////////////
@@ -22,6 +22,8 @@ import UserProfile from "./pages/UserProfile";
 import Overview from "./Component/AdminDashbord/overview";
 import FormDetails from "./Component/AdminDashbord/ArticalCards";
 import PaymentPage from "./pages/Subscription/Payment";
+import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
+import Users from "./Component/AdminDashbord/UsersDash";
 import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
 import Comment from "./pages/detail/Comment";
@@ -38,12 +40,19 @@ function App() {
         "/signup",
         "/subformDash",
         "/articlescardsDash",
-      ].includes(location.pathname) && <Navbar />}
+        "/UsersDash",
+      ].includes(location.pathname) &&
+        !location.pathname.startsWith("/articledetail/") && <Navbar />}
 
       {/* عرض SidebarDoners في صفحات الداشبورد */}
-      {["/dashboard", "/articlescardsDash", "/subformDash"].includes(
-        location.pathname
-      ) && <SidebarDoners />}
+      {([
+        "/dashboard",
+        "/articlescardsDash",
+        "/subformDash",
+        "/ArticleDetail/:id",
+        "/UsersDash",
+      ].includes(location.pathname) ||
+        location.pathname.startsWith("/articledetail/")) && <SidebarDoners />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -85,15 +94,19 @@ function App() {
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/ArticlesPage" element={<ArticlesPage />} />
+        <Route path="/articledetail/:id" element={<ArticleDetail />} />
+        <Route path="/UsersDash" element={<Users />} />
       </Routes>
       {/*Displat the footer in the right component DONT TOUCH*/}
       {![
         "/login",
-        "/signup",
         "/dashboard",
+        "/signup",
         "/subformDash",
         "/articlescardsDash",
-      ].includes(location.pathname) && <Footer />}
+        "/UsersDash",
+      ].includes(location.pathname) &&
+        !location.pathname.startsWith("/articledetail/") && <Footer />}
     </>
   );
 }
