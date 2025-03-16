@@ -11,7 +11,6 @@ const subscriptionRoutes = require("./routers/subscriptionRoutes");
 const paymentRoutes = require("./routers/paymentRoutes");
 const userRoutes = require("./routers/userRoutes");
 const messageroutes = require("./routers/messageroutes");
-const getSavedArticles = require("./routers/savedArticlesRoutes")
 const postRoutes = require('./routers/postRoutes');
 const app = express();
 
@@ -49,7 +48,6 @@ app.use("/app", messageroutes);
 app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api/articles", articleRoutes);
-app.use("/api/profile", getSavedArticles);
 app.use('/api/posts', postRoutes);
 
 // 404 handler
