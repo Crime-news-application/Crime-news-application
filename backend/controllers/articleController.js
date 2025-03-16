@@ -4,16 +4,36 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const Comment = require("../models/comment");
 
+// Get all articles with filters
+const getArticlesJenan = async (req, res) => {
+  try {
+    const { category, sortBy } = req.query;
+    let query = {};
+    if (category) query.categories = category;
 
+    let articles = Article.find(query);
+
+    // Sorting
+    if (sortBy === "newest") articles = articles.sort({ publishDate: -1 });
+    if (sortBy === "oldest") articles = articles.sort({ publishDate: 1 });
+    if (sortBy === "most-viewed") articles = articles.sort({ views: -1 });
+    if (sortBy === "most-liked") articles = articles.sort({ likes: -1 });
+
+    const result = await articles.exec();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching articles", error });
+  }
+};
 
 const getArticles = async (req, res) => {
   try {
     const { category, sortBy } = req.query;
 
- const query = {
-   status: "Published",
-   ...(category && category !== "All" ? { categories: category } : {}),
- };
+    const query = {
+      status: "Published",
+      ...(category && category !== "All" ? { categories: category } : {}),
+    };
     let sortOption = {};
     switch (sortBy) {
       case "newest":
@@ -39,8 +59,7 @@ const getArticles = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-const getArticlesById = async (req, res) => {
+const getArticlesByIdjenan = async (req, res) => {
   try {
     const { category, sortBy } = req.query;
     const { id } = req.params; // جلب الـ ID من الـ URL
@@ -119,9 +138,6 @@ const rejectArticle = async (req, res) => {
   }
 };
 
-module.exports = { getArticles, getArticlesById, acceptArticle, rejectArticle };
-=======
-
 // const getTop5Articles = async (req, res) => {
 //   try {
 //     const articles = await Article.find().sort({ views: -1 }).limit(5);
@@ -131,7 +147,6 @@ module.exports = { getArticles, getArticlesById, acceptArticle, rejectArticle };
 //     res.status(500).json({ message: 'Error fetching top 5 articles', error });
 //   }
 // };
-
 
 function getUserIdFromToken(token) {
   try {
@@ -181,14 +196,13 @@ const getArticleById = async (req, res) => {
   try {
     const articleId = req.params.id; // Extract the article ID from the request parameters
 
-    
     const article = await Article.findById(articleId); // Find the article by ID
-   //كود بلال عشان تزيد المشاهدات
+    //كود بلال عشان تزيد المشاهدات
     await Article.findByIdAndUpdate(
-     articleId,
-     { $inc: { views: 1 } }, // زيادة عدد المشاهدات بمقدار 1
-     { new: true } // إرجاع الوثيقة المحدثة
-   );//هي نهاية كود المشاهدات
+      articleId,
+      { $inc: { views: 1 } }, // زيادة عدد المشاهدات بمقدار 1
+      { new: true } // إرجاع الوثيقة المحدثة
+    ); //هي نهاية كود المشاهدات
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
@@ -309,12 +323,10 @@ const getArticleAuthorComments = async (req, res) => {
 
     console.log("✅ User Comments Extracted:", userComments);
 
-    res
-      .status(200)
-      .json({
-        message: "User comments fetched successfully",
-        comments: userComments,
-      });
+    res.status(200).json({
+      message: "User comments fetched successfully",
+      comments: userComments,
+    });
   } catch (error) {
     console.error("❌ Server Error fetching user comments:", error);
     res
@@ -323,16 +335,15 @@ const getArticleAuthorComments = async (req, res) => {
   }
 };
 
-
-
-
-
 module.exports = {
   getArticles,
   createArticle,
   getArticleById,
   addCommentToArticle,
   getArticleComments,
-  getArticleAuthorComments
+  getArticleAuthorComments,
+  getArticlesByIdjenan,
+  acceptArticle,
+  rejectArticle,
+  getArticlesJenan,
 };
->>>>>>> 39738652b38e1cb876ac208f5b8fa85951cf189a
