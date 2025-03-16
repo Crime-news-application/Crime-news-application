@@ -213,7 +213,7 @@ function AForm() {
                       onChange={handleChange}
                       className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-[#b21e23] focus:border-[#b21e23]"
                     >
-                      <option value="Murder">Murder</option>
+                      <option value="murder">Murder</option>
                       <option value="Theft">Theft</option>
                       <option value="Fraud">Fraud</option>
                       <option value="Cybercrime">Cybercrime</option>
