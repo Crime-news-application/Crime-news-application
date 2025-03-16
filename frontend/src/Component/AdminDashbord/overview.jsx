@@ -64,6 +64,21 @@ const Overview = () => {
       });
   }, []);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 5;
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+
+  // Slice articles for the current page
+  const paginatedArticles = filteredArticles.slice(
+    (currentPage - 1) * articlesPerPage,
+    currentPage * articlesPerPage
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -241,6 +256,7 @@ const Overview = () => {
           </div>
         </div>
       </div>
+
       <div className="flex flex-col px-4 items-center lg:pl-30 xl:pl-4 lg:items-end w-[100%] justify-center  bg-gray-100">
         {/* Table */}
         <div className="w-full my-10 max-w-[84%] overflow-x-auto bg-white p-4 rounded-lg shadow-lg">
@@ -266,46 +282,50 @@ const Overview = () => {
           </div>
 
           {/* Table for medium screens and larger */}
-          <table className="w-full text-sm text-left text-gray-500 hidden lg:table">
-            <thead className="text-xs text-[var(--primary-color)] uppercase border-[var(--primary-color)] bg-gray-50">
+          <table className="w-full text-sm text-left text-gray-700 hidden lg:table border-collapse">
+            <thead className="text-xs uppercase bg-[var(--primary-color)] text-white border-b border-[var(--primary-color)]">
               <tr className="h-[60px]">
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   #
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   Article Title
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   Views Count
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   Author
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   Publication Date
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   Likes Count
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 font-medium">
                   Location
                 </th>
               </tr>
             </thead>
             <tbody>
-              {filteredArticles.map((article, index) => (
+              {paginatedArticles.map((article, index) => (
                 <tr
                   key={index}
-                  className="border-[var(--primary-color)] border-b hover:bg-gray-50"
+                  className="border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                 >
-                  <td className="px-6 py-6">{index + 1}</td>
-                  <td className="px-6 py-6">{article.title}</td>
-                  <td className="px-6 py-6">
+                  <td className="px-6 py-4">
+                    {(currentPage - 1) * articlesPerPage + index + 1}
+                  </td>
+                  <td className="px-6 py-4 font-semibold text-gray-800">
+                    {article.title}
+                  </td>
+                  <td className="px-6 py-4">
                     <span
-                      className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
                         article.status === "Published"
                           ? "bg-[var(--screen-red)] text-white"
                           : article.status === "Pending"
@@ -318,7 +338,9 @@ const Overview = () => {
                   </td>
                   <td className="px-6 py-4">{article.views}</td>
                   <td className="px-6 py-4">{article.author}</td>
-                  <td className="px-6 py-4">{article.publishDate}</td>
+                  <td className="px-6 py-4">
+                    {new Date(article.publishDate).toLocaleDateString()}
+                  </td>
                   <td className="px-6 py-4">{article.likes}</td>
                   <td className="px-6 py-4">
                     {article.location.city}, {article.location.country}
@@ -329,18 +351,18 @@ const Overview = () => {
           </table>
 
           {/* Responsive Cards for Small Screens */}
-          <div className="lg:hidden space-y-4">
-            {filteredArticles.map((article, index) => (
+          <div className="lg:hidden space-y-6">
+            {paginatedArticles.map((article, index) => (
               <div
                 key={index}
-                className="bg-white p-4 rounded-lg shadow-md border border-gray-200"
+                className="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300"
               >
-                <div className="flex justify-between items-center mb-2">
+                <div className="flex justify-between items-center mb-4">
                   <span className="font-semibold text-gray-700">
-                    #{index + 1}
+                    #{(currentPage - 1) * articlesPerPage + index + 1}
                   </span>
                   <span
-                    className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                    className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
                       article.status === "Published"
                         ? "bg-[var(--screen-red)] text-white"
                         : article.status === "Pending"
@@ -351,7 +373,7 @@ const Overview = () => {
                     {article.status}
                   </span>
                 </div>
-                <div className="mb-2">
+                <div className="mb-4">
                   <p className="text-lg font-bold text-gray-800">
                     {article.title}
                   </p>
@@ -367,7 +389,7 @@ const Overview = () => {
                   </div>
                   <div>
                     <span className="font-semibold">Published:</span>{" "}
-                    {article.publishDate}
+                    {new Date(article.publishDate).toLocaleDateString()}
                   </div>
                   <div>
                     <span className="font-semibold">Likes:</span>{" "}
@@ -380,6 +402,45 @@ const Overview = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Pagination Component */}
+          <div className="flex justify-center items-center mt-8 space-x-2">
+            <button
+              className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md hover:bg-gray-300 transition-colors duration-200"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+
+            {/* Display only 5 pages at a time */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .slice(
+                Math.max(0, currentPage - 3),
+                Math.min(totalPages, currentPage + 1)
+              )
+              .map((page) => (
+                <button
+                  key={page}
+                  className={`px-4 py-2 rounded-md ${
+                    currentPage === page
+                      ? "bg-[var(--primary-color)] text-white"
+                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                  } transition-colors duration-200`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+            <button
+              className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md hover:bg-gray-300 transition-colors duration-200"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

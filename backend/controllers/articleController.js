@@ -380,9 +380,6 @@ module.exports = {
   acceptArticle,
   rejectArticle,
   getArticlesJenan,
-<<<<<<< HEAD
   getSavedArticles,
-=======
   getTop5Articles,
->>>>>>> 6cc78673743facc73ec4830ba53d83b2d819c1e9
 };
