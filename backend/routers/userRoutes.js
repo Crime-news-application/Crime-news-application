@@ -12,7 +12,10 @@ const {
   verifyOtp,
   loginUser,
   googleLogin,getUserPaymentDetails
+  
 } = require("../controllers/userController");
+const upload = require("../middleware/upload"); // adjust the path as needed
+
 
 // Create a new user
 router.post("/", createUser);
@@ -37,5 +40,8 @@ router.patch("/:id", editUser);
 
 // Delete a user (soft delete)
 router.delete("/:id", deleteUser);
+
+router.patch("/users/:id", upload.single("profilePicture"), editUser);
+
 
 module.exports = router;

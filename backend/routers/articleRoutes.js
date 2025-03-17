@@ -11,12 +11,8 @@ const {
   getArticleComments,
   getArticleAuthorComments,
   getArticlesJenan,
-<<<<<<< HEAD
   getSavedArticles
   
-=======
-  getTop5Articles,
->>>>>>> 6cc78673743facc73ec4830ba53d83b2d819c1e9
 } = require("../controllers/articleController");
 
 router.get("/getA", getArticles);
@@ -25,7 +21,6 @@ router.get("/get/:id", getArticlesByIdjenan);
 router.put("/accept", acceptArticle);
 router.put("/reject", rejectArticle);
 
-router.get("/top-5-articles", getTop5Articles);
 
 router.post("/add-articles", createArticle);
 router.get("/get-articles/:id", getArticleById);

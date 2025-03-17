@@ -92,6 +92,7 @@ const createUser = async (req, res) => {
 };
 
 // Login user
+// Login user
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -105,22 +106,28 @@ const loginUser = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    // Generate JWT token including user role
+    const tokenPayload = { userId: user._id, role: user.role };
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
-    // Return token in the response
+    // Decide redirect URL based on role
+    const redirectUrl = user.role === "admin" ? "/dashboard" : "/";
+
+    // Return token along with redirectUrl
     res.status(200).json({
       message: "Login successful",
       token,
       user_id: user._id,
+      redirectUrl,
     });
   } catch (error) {
     console.error("❌ Login error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Get all users
 const getAllUsers = async (req, res) => {
