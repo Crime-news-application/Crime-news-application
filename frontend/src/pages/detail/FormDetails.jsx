@@ -268,7 +268,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -288,7 +288,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -308,7 +308,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -328,7 +328,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -349,7 +349,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -366,7 +366,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -391,7 +391,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -573,7 +573,7 @@ function FormDetails() {
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns="http://localhost:5173/articledetail/:id"
                           >
                             <path
                               strokeLinecap="round"
@@ -597,7 +597,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://localhost:5173/articledetail/:id"
                             >
                               <path
                                 strokeLinecap="round"
@@ -742,7 +742,7 @@ function FormDetails() {
             <div className="mb-3 rounded-md bg-red-50 p-3">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5 text-red-400" xmlns="http://localhost:5173/articledetail/:id" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
                 </div>
@@ -763,12 +763,12 @@ function FormDetails() {
             <div className="px-5 py-3 bg-white flex justify-between items-center border-t border-gray-100">
               <div className="flex items-center space-x-4">
                 <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </button>
                 <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                   </svg>
                 </button>
@@ -782,7 +782,7 @@ function FormDetails() {
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="http://localhost:5173/articledetail/:id"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -816,7 +816,7 @@ function FormDetails() {
     <div className="divide-y divide-gray-100">
       {comments.length === 0 ? (
         <div className="text-center py-14">
-          <svg className="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
           </svg>
           <h3 className="mt-4 text-lg font-medium text-gray-900">No comments yet</h3>
@@ -858,7 +858,7 @@ function FormDetails() {
                       </time>
                       <div className="ml-2 relative">
                         <button className="text-gray-400 hover:text-gray-600">
-                          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://localhost:5173/articledetail/:id">
                             <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                           </svg>
                         </button>
@@ -870,25 +870,25 @@ function FormDetails() {
                   </div>
                   <div className="flex items-center space-x-4 text-sm">
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                       </svg>
                       <span>Like</span>
                     </button>
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                       </svg>
                       <span>Reply</span>
                     </button>
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                       </svg>
                       <span>Share</span>
                     </button>
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
                       </svg>
                       <span>Report</span>
