@@ -1,7 +1,15 @@
 const express = require("express");
-const router = express.Router();
-const addMessages = require("../controllers/messagecontrollers");
+const {
+  getMessages,
+  addMessages,
+} = require("../controllers/messagecontrollers");
 
-router.post("/message", addMessages); // تأكد من أن المسار متطابق مع ما في الـ frontend
+const router = express.Router();
+
+// ✅ Route لإضافة رسالة جديدة
+router.post("/message", addMessages);
+
+// ✅ Route لجلب جميع الرسائل
+router.get("/message", getMessages);
 
 module.exports = router;

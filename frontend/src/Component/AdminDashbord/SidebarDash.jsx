@@ -43,6 +43,11 @@ const SidebarDoners = () => {
       path: "/postform",
       icon: <PencilIcon className="w-5 h-5" />,
     },
+    {
+      name: "Conatact",
+      path: "/conatactdash",
+      icon: <PencilIcon className="w-5 h-5" />,
+    },
   ];
 
   return (
@@ -100,7 +105,7 @@ const SidebarDoners = () => {
 
         {/* زر تسجيل الخروج */}
         <NavLink
-          to="/sign-in"
+          to="/"
           className="mt-auto flex justify-center items-center gap-2 p-3 rounded-md bg-[var(--primary-color)] hover:bg-red-700 transition"
         >
           <ArrowRightOnRectangleIcon className="w-5 h-5" /> <span>Logout</span>
