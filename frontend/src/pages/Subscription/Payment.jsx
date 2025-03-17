@@ -255,7 +255,7 @@ const fetchUserProfile = async () => {
                     style={{ accentColor: customColors.primary }}
                   />
                   <label htmlFor="credit-card" className="flex items-center text-black">
-                    <span className="mr-2">Credit Card</span>
+                    <span className="mr-2">Visa</span>
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjXEU_gvHUQSBFi_KEJVyM1gC-q_fFDYriIg&s" alt="Credit Cards" className="h-8" />
                   </label>
                 </div>

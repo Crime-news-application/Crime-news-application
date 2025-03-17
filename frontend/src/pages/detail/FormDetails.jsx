@@ -1,31 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"; // Import useParams
+import { useNavigate, useParams } from "react-router-dom";
 import jsPDF from "jspdf";
 import axios from "axios";
+import html2canvas from "html2canvas";
 
 function FormDetails() {
   const [formData, setFormData] = useState({});
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const { id } = useParams(); // Extract the article ID from the URL
-  const [commentText, setCommentText] = useState(""); // State for the comment input
-  const [loading, setLoading] = useState(false); // State for loading indicator
-  const [error, setError] = useState(""); // State for error messages
-  const [comments, setComments] = useState([]); // State to store comments
+  const { id } = useParams();
+  const [commentText, setCommentText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    // Fetch article data from the API using the ID
     const fetchArticle = async () => {
       try {
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+        if (!token) {
+          throw new Error("No token found");
+        }
+
         const response = await fetch(
-          `http://localhost:5000/api/articles/get-articles/${id}`
+          `http://localhost:5000/api/articles/get-articles/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Include the token in the header
+            },
+          }
         );
+
         if (!response.ok) {
           throw new Error("Failed to fetch article");
         }
+
         const data = await response.json();
-        setFormData(data); // Set the fetched article data to state
+        setFormData(data);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching article:", error);
@@ -34,26 +46,60 @@ function FormDetails() {
     };
 
     fetchArticle();
-  }, [id]); // Re-run effect when the ID changes
+  }, [id]);
 
   const handleBackToForm = () => {
     navigate("/");
   };
 
-  const handleShare = () => {
+  const handleShare = (platform) => {
     const currentUrl = window.location.href;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(currentUrl)}`;
-    window.open(whatsappUrl, "_blank");
+    let shareUrl = "";
+
+    switch (platform) {
+      case "whatsapp":
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(currentUrl)}`;
+        break;
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          currentUrl
+        )}`;
+        break;
+      case "gmail":
+        shareUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=Check%20this%20out&body=${encodeURIComponent(
+          currentUrl
+        )}`;
+        break;
+      default:
+        break;
+    }
+
+    if (shareUrl) {
+      window.open(shareUrl, "_blank");
+    }
   };
 
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.html(document.querySelector("#caseDetails"), {
-      callback: (doc) => {
-        doc.save("case_details.pdf");
-      },
-      x: 10,
-      y: 10,
+    const element = document.querySelector("#caseDetails"); // Ensure this ID exists in your JSX
+
+    if (!element) {
+      console.error("Element not found for PDF export.");
+      return;
+    }
+
+    // Use html2canvas to capture the content as an image
+    html2canvas(element).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png"); // Convert the canvas to an image
+      const pdf = new jsPDF("p", "mm", "a4"); // Create a new PDF instance
+
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width; // Calculate height to maintain aspect ratio
+
+      // Add the image to the PDF
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
+      // Save the PDF
+      pdf.save("case_details.pdf");
     });
   };
 
@@ -104,14 +150,12 @@ function FormDetails() {
       setLoading(true);
       setError("");
 
-      // Get the token from local storage
       const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("You must be logged in to add a comment.");
       }
 
-      // Make the API request to add the comment
       const response = await axios.post(
         `http://localhost:5000/api/articles/addComents-articles/${id}/comments`,
         { text: commentText },
@@ -122,13 +166,10 @@ function FormDetails() {
         }
       );
 
-      // Handle success
       console.log("Comment added successfully:", response.data);
 
-      // Update the comments state with the new comment
       setComments((prevComments) => [response.data.comment, ...prevComments]);
 
-      // Clear the input field
       setCommentText("");
     } catch (error) {
       console.error("Error adding comment:", error);
@@ -144,12 +185,10 @@ function FormDetails() {
         setLoading(true);
         setError("");
 
-        // Make the API request to fetch comments
         const response = await axios.get(
           `http://localhost:5000/api/articles/getComment-articles/${id}/comments`
         );
 
-        // Set the comments in state
         setComments(response.data.comments);
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -233,8 +272,8 @@ function FormDetails() {
               </div>
               <div className="mt-4 md:mt-0 flex space-x-4">
                 <button
-                  onClick={handleShare}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow flex items-center"
+                  onClick={() => handleShare("whatsapp")}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow flex items-center"
                 >
                   <svg
                     className="w-5 h-5 mr-2"
@@ -250,9 +289,12 @@ function FormDetails() {
                       d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
                     />
                   </svg>
-                  Share
+                  WhatsApp
                 </button>
-                <button className="bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 rounded-md shadow flex items-center">
+                <button
+                  onClick={() => handleShare("facebook")}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow flex items-center"
+                >
                   <svg
                     className="w-5 h-5 mr-2"
                     fill="none"
@@ -264,10 +306,50 @@ function FormDetails() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                      d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
                     />
                   </svg>
-                  Print
+                  Facebook
+                </button>
+                <button
+                  onClick={() => handleShare("gmail")}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md shadow flex items-center"
+                >
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Gmail
+                </button>
+                <button
+                  onClick={handleExportPDF}
+                  className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-md shadow flex items-center"
+                >
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  Export PDF
                 </button>
               </div>
             </div>
@@ -365,24 +447,6 @@ function FormDetails() {
                       className="border-[#b21e23] text-[#b21e23] whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
                     >
                       Case Details
-                    </a>
-                    <a
-                      href="#"
-                      className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                    >
-                      Evidence
-                    </a>
-                    <a
-                      href="#"
-                      className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                    >
-                      Timeline
-                    </a>
-                    <a
-                      href="#"
-                      className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                    >
-                      Files
                     </a>
                   </nav>
                 </div>
@@ -500,216 +564,10 @@ function FormDetails() {
               </div>
 
               {/* Case Timeline */}
-              <section className="mb-12">
-                <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2">
-                  Case Timeline
-                </h2>
-
-                <div className="relative">
-                  {/* Timeline Line */}
-                  <div className="absolute left-0 md:left-4 top-0 h-full w-0.5 bg-gray-200"></div>
-
-                  {/* Timeline Item 1 */}
-                  <div className="relative pl-8 md:pl-12 pb-8">
-                    <div className="absolute left-0 md:left-4 mt-1.5">
-                      <div className="w-8 h-8 bg-[#b21e23] rounded-full flex items-center justify-center ring-4 ring-white">
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div>
-                      <time className="text-sm font-semibold text-[#b21e23]">
-                        {formatDate(formData.publishDate) || "March 13, 2025"}
-                      </time>
-                      <h3 className="text-xl font-bold text-gray-800 mt-1">
-                        Case Opened
-                      </h3>
-                      <p className="mt-2 text-gray-600 text-base">
-                        Initial report filed by{" "}
-                        {formData.content?.officerInCharge ||
-                          "responding officer"}
-                        . Crime scene secured and preliminary investigation
-                        begins.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Timeline Item 2 */}
-                  <div className="relative pl-8 md:pl-12 pb-8">
-                    <div className="absolute left-0 md:left-4 mt-1.5">
-                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center ring-4 ring-white">
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div>
-                      <time className="text-sm font-semibold text-blue-500">
-                        March 10, 2025
-                      </time>
-                      <h3 className="text-xl font-bold text-gray-800 mt-1">
-                        Evidence Collection
-                      </h3>
-                      <p className="mt-2 text-gray-600 text-base">
-                        Forensic team collected samples from the scene. Witness
-                        interviews conducted with neighbors and potential
-                        witnesses.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Timeline Item 3 */}
-                  <div className="relative pl-8 md:pl-12">
-                    <div className="absolute left-0 md:left-4 mt-1.5">
-                      <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center ring-4 ring-white">
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div>
-                      <time className="text-sm font-semibold text-gray-500">
-                        Today
-                      </time>
-                      <h3 className="text-xl font-bold text-gray-800 mt-1">
-                        Case Details Added
-                      </h3>
-                      <p className="mt-2 text-gray-600 text-base">
-                        Full case details entered into the system. Investigation
-                        continues.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* File Gallery */}
-              {files.length > 0 && (
-                <section className="mb-12">
-                  <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2">
-                    Case Files
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {files.map((file, index) => (
-                      <div
-                        key={index}
-                        className="group bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
-                      >
-                        <div className="aspect-w-16 aspect-h-9 bg-gray-100 flex items-center justify-center">
-                          <svg
-                            className="w-16 h-16 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                          </svg>
-                        </div>
-                        <div className="p-4">
-                          <h4 className="text-sm font-medium text-gray-900 truncate group-hover:text-[#b21e23]">
-                            {file.name || `File ${index + 1}`}
-                          </h4>
-                          <p className="mt-1 text-xs text-gray-500">
-                            {file.type || "Document"}
-                          </p>
-                          <button className="mt-3 text-xs font-medium text-[#b21e23] hover:text-[#9a1a1e] flex items-center">
-                            View file
-                            <svg
-                              className="ml-1 w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
             </div>
 
             {/* Right Column - Sidebar */}
             <div className="lg:w-1/3">
-              {/* Case Actions */}
-              <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
-                <div className="px-6 py-4 bg-gray-50 border-b">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    Case Actions
-                  </h3>
-                </div>
-                <div className="p-6 space-y-4">
-                  <button
-                    onClick={handleExportPDF}
-                    className="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-md shadow flex items-center justify-center"
-                  >
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    Export Report
-                  </button>
-                </div>
-              </div>
-
               {/* Case Meta Information */}
               <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
                 <div className="px-6 py-4 bg-gray-50 border-b">
@@ -802,58 +660,300 @@ function FormDetails() {
           </div>
         </main>
       </div>
-      {/* add coments */}
-      {/* Add Comments Section */}
-      <div>
-        <div className="flex items-center justify-between py-2 px-4 border-b border-gray-200">
-          <input
-            type="text"
-            placeholder="Add a comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={handleAddComment}
-            disabled={loading || !commentText.trim()}
-            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {loading ? "Posting..." : "Post"}
-          </button>
-        </div>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-      </div>
 
-      {/* Display Comments Section */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold mb-4">Comments</h2>
-        {comments.length === 0 ? (
-          <p>No comments yet. Be the first to comment!</p>
-        ) : (
-          comments.map((comment) => (
-            <div key={comment._id} className="p-4 border rounded-lg shadow-sm">
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0">
-                  <img
-                    src={`https://ui-avatars.com/api/?name=${comment.author.username}&background=random&size=40`}
-                    alt={comment.author.username}
-                    className="w-10 h-10 rounded-full"
-                  />
-                </div>
-                <div>
-                  <p className="font-semibold">
-                    {comment.author?.username || "Anonymous"}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(comment.createdAt).toLocaleString()}
-                  </p>
+      {/* Add Comments Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white shadow-md rounded-xl overflow-hidden border border-gray-100">
+          <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Discussion ({comments.length})
+            </h2>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Sort by:</span>
+              <select className="text-sm border-0 bg-transparent font-medium text-gray-700 focus:ring-0 focus:outline-none cursor-pointer">
+                <option>Newest</option>
+                <option>Oldest</option>
+                <option>Most Relevant</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Add Comment Form */}
+          <div className="p-6 border-b border-gray-100 bg-gray-50">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <img
+                  className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow"
+                  src="https://ui-avatars.com/api/?background=random&size=100&font-size=0.4"
+                  alt="Your avatar"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                {error && (
+                  <div className="mb-3 rounded-md bg-red-50 p-3">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg
+                          className="h-5 w-5 text-red-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm text-red-700">{error}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+                  <textarea
+                    rows="4"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    className="block w-full py-4 px-5 border-0 resize-none focus:ring-0 text-gray-700"
+                    placeholder="Share your thoughts on this case..."
+                  ></textarea>
+                  <div className="px-5 py-3 bg-white flex justify-between items-center border-t border-gray-100">
+                    <div className="flex items-center space-x-4">
+                      <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </button>
+                      <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleAddComment}
+                      disabled={loading || !commentText.trim()}
+                      className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#b21e23] hover:bg-[#9a1a1e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b21e23] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {loading ? (
+                        <>
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Posting...
+                        </>
+                      ) : (
+                        "Post Comment"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-              <p className="mt-2 text-gray-700">{comment.text}</p>
             </div>
-          ))
-        )}
-      </div>
+          </div>
+
+          {/* Comments List */}
+          <div className="divide-y divide-gray-100">
+            {comments.length === 0 ? (
+              <div className="text-center py-14">
+                <svg
+                  className="mx-auto h-16 w-16 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                  />
+                </svg>
+                <h3 className="mt-4 text-lg font-medium text-gray-900">
+                  No comments yet
+                </h3>
+                <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">
+                  Be the first to share your thoughts on this case. Your
+                  insights could help shed light on this investigation.
+                </p>
+              </div>
+            ) : (
+              <>
+                {comments.map((comment, index) => (
+                  <div key={comment._id} className="py-6 px-6">
+                    <div className="flex space-x-4">
+                      <div className="flex-shrink-0">
+                        <img
+                          className="h-12 w-12 rounded-full object-cover border-2 border-white shadow"
+                          src={`https://ui-avatars.com/api/?name=${comment.author.username}&background=random&size=100&font-size=0.4`}
+                          alt={comment.author.username}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="text-base font-bold text-gray-900 hover:underline cursor-pointer">
+                            {comment.author?.username || "Anonymous"}
+                          </h4>
+                          <div className="text-xs text-gray-500 flex items-center">
+                            <time dateTime={comment.createdAt}>
+                              {new Date(comment.createdAt).toLocaleDateString(
+                                undefined,
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                }
+                              )}
+                            </time>
+                            <span className="mx-1.5">·</span>
+                            <time dateTime={comment.createdAt}>
+                              {new Date(comment.createdAt).toLocaleTimeString(
+                                undefined,
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
+                            </time>
+                            <div className="ml-2 relative">
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-sm text-gray-700 whitespace-pre-line mb-3">
+                          <p>{comment.text}</p>
+                        </div>
+                        <div className="flex items-center space-x-4 text-sm">
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                              />
+                            </svg>
+                            <span>Like</span>
+                          </button>
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                              />
+                            </svg>
+                            <span>Reply</span>
+                          </button>
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                              />
+                            </svg>
+                            <span>Share</span>
+                          </button>
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+                              />
+                            </svg>
+                            <span>Report</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

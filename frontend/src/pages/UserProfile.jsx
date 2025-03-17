@@ -1,230 +1,38 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Avatar,
-  Button,
-  Paper,
-  Tabs,
-  Tab,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Box,
-  Divider,
-  Badge,
-} from "@mui/material";
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Bloodtype as BloodIcon,
-  History as HistoryIcon,
-  BookmarkAdded as BookmarkIcon,
-  Comment as CommentIcon,
-  Fingerprint as FingerprintIcon,
-} from "@mui/icons-material";
-import { styled } from "@mui/system";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { motion } from "framer-motion";
 import { jwtDecode } from "jwt-decode";
-
-// تعديل الثيم بناءً على ألوان الموقع وخلفية بيضاء
-const theme = createTheme({
-  palette: {
-    mode: "light",
-    primary: { main: "#61090b" },
-    secondary: { main: "#8b0d11" },
-    background: {
-      default: "#ffffff", // خلفية بيضاء
-      paper: "#ffffff",
-    },
-    text: {
-      primary: "#000000", // نص أساسي بالأسود
-      secondary: "#61090b",
-    },
-    error: { main: "#ff2b2b" },
-  },
-  typography: {
-    fontFamily: "'Playfair Display', serif",
-    h3: {
-      letterSpacing: "0.05em",
-      fontWeight: 700,
-      color: "#61090b",
-    },
-    h4: {
-      letterSpacing: "0.03em",
-      color: "#61090b",
-    },
-    body1: {
-      fontSize: "1rem",
-      lineHeight: 1.6,
-    },
-  },
-  shape: {
-    borderRadius: 8,
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 0,
-          textTransform: "uppercase",
-          "&:hover": {
-            backgroundColor: "#8b0d11",
-          },
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          backgroundColor: "#ffffff",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          backgroundColor: "#ffffff",
-        },
-      },
-    },
-  },
-});
-
-// Styled Components
-const ProfileCard = styled(Card)(({ theme }) => ({
-  backgroundColor: "#ffffff",
-  border: `1px solid ${theme.palette.primary.main}`,
-  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-}));
-
-const BloodAvatar = styled(Avatar)(({ theme }) => ({
-  width: 120,
-  height: 120,
-  border: `3px solid ${theme.palette.primary.main}`,
-  backgroundColor: theme.palette.primary.main,
-  color: "#ffffff",
-  boxShadow: "0 0 15px rgba(171, 0, 0, 0.3)",
-}));
-
-const BloodButton = styled(Button)(({ theme }) => ({
-  borderLeft: `4px solid ${theme.palette.primary.dark}`,
-  textTransform: "uppercase",
-  letterSpacing: "0.05em",
-  fontWeight: "bold",
-  padding: "8px 16px",
-  position: "relative",
-  overflow: "hidden",
-  "&:before": {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    background: "linear-gradient(45deg, rgba(97, 9, 11, 0.2), transparent)",
-    opacity: 0,
-    transition: "opacity 0.3s ease",
-  },
-  "&:hover:before": {
-    opacity: 1,
-  },
-}));
-
-const CrimeTab = styled(Tab)(({ theme }) => ({
-  color: "#61090b",
-  textTransform: "uppercase",
-  letterSpacing: "0.1em",
-  fontWeight: "bold",
-  fontSize: "0.85rem",
-  "&.Mui-selected": {
-    color: "#000000",
-  },
-}));
-
-const ContentPanel = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#ffffff",
-  border: `1px solid ${theme.palette.primary.main}`,
-  boxShadow: "inset 0 0 10px rgba(0, 0, 0, 0.1)",
-  padding: theme.spacing(3),
-  marginTop: theme.spacing(2),
-}));
-
-const CrimeListItem = styled(ListItem)(({ theme }) => ({
-  borderBottom: "1px solid rgba(97, 9, 11, 0.3)",
-  position: "relative",
-  "&:hover": {
-    backgroundColor: "rgba(97, 9, 11, 0.05)",
-  },
-  "&:before": {
-    content: '""',
-    position: "absolute",
-    left: 0,
-    top: 0,
-    height: "100%",
-    width: "3px",
-    backgroundColor: theme.palette.primary.main,
-    transform: "scaleY(0)",
-    transition: "transform 0.2s ease",
-  },
-  "&:hover:before": {
-    transform: "scaleY(1)",
-  },
-}));
-
-const CrimeTitleText = styled(Typography)(({ theme }) => ({
-  fontFamily: "'Playfair Display', serif",
-  fontWeight: 600,
-  color: "#000000",
-}));
-
-const dateFormatter = (dateString) => {
-  const options = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  return new Date(dateString).toLocaleDateString("en-US", options);
-};
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
-  const [userComments, setUserComments] = useState([]); // حالة لتعليقات المستخدم
+  const [userComments, setUserComments] = useState([]);
+  const [savedArticles, setSavedArticles] = useState([]);
+  const [readingHistory, setReadingHistory] = useState([]);// New state
   const [tabValue, setTabValue] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
 
-  // جلب ملف المستخدم عند تحميل المكون
+  const tabs = [
+    { id: 0, label: "Saved Articles", icon: "📑" },
+    { id: 1, label: "Recent Activity", icon: "🕒" },
+    { id: 2, label: "Statements", icon: "💬" },
+  ];
+
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  // عند تحميل ملف المستخدم، نقوم بجلب تعليقات المستخدم
   useEffect(() => {
     if (user) {
       fetchUserComments();
+      fetchSavedArticles();
+      fetchReadingHistory(); // Fetch latest reading
+      setLoading(false);
     }
   }, [user]);
 
-  // دالة جلب ملف المستخدم
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -232,282 +40,477 @@ const UserProfile = () => {
         console.error("❌ No token found in localStorage");
         return;
       }
+
       const decodedToken = jwtDecode(token);
       if (!decodedToken.userId) {
         console.error("❌ No user ID found in token");
         return;
       }
-      console.log("✅ Extracted User ID from token:", decodedToken.userId);
-      const response = await axios.get("http://localhost:5000/api/users/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("✅ User profile fetched:", response.data);
+
+      const response = await axios.get(
+        "http://localhost:5000/api/users/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
       setUser(response.data.user);
     } catch (error) {
-      console.error("❌ Error fetching profile:", error.response?.data || error.message);
+      console.error(
+        "❌ Error fetching profile:",
+        error.response?.data || error.message
+      );
     }
   };
 
-  // دالة جلب تعليقات المستخدم (Statements) من السيرفر
-   const fetchUserComments = async () => {
-     try {
-       const token = localStorage.getItem("token");
-       if (!token) return console.error("❌ No token found");
+  const fetchUserComments = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return console.error("❌ No token found");
 
-       const response = await axios.get(
-         "http://localhost:5000/api/articles/user-comments",
-         {
-           headers: { Authorization: `Bearer ${token}` },
-         }
-       );
+      const response = await axios.get(
+        "http://localhost:5000/api/articles/user-comments",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setUserComments(response.data.comments);
+    } catch (error) {
+      console.error(
+        "❌ Error fetching comments:",
+        error.response?.data || error.message
+      );
+    }
+  };
 
-       setUserComments(response.data.comments);
-     } catch (error) {
-       console.error(
-         "❌ Error fetching comments:",
-         error.response?.data || error.message
-       );
-     }
-   };
-  // تعديل المستخدم
-  const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => setIsEditing(false);
+  const fetchSavedArticles = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return console.error("❌ No token found");
 
-const handleSave = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    // Assuming your user object has an _id field.
-    await axios.patch(
-      `http://localhost:5000/api/users/${user._id}`,
-      editedUser,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    setUser({ ...user, ...editedUser });
+      const response = await axios.get(
+        "http://localhost:5000/api/articles/saved-articles",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setSavedArticles(response.data.savedArticles);
+    } catch (error) {
+      console.error(
+        "❌ Error fetching saved articles:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const fetchReadingHistory = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return console.error("❌ No token found");
+
+      const response = await axios.get(
+        "http://localhost:5000/api/articles/latest-reading", // Use the correct endpoint
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setReadingHistory(response.data.readingHistory); // Update the state with readingHistory
+    } catch (error) {
+      console.error(
+        "❌ Error fetching reading history:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleRemoveSavedArticle = async (articleId) => {
+    console.log(articleId);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:5000/api/saved/article/remove-saved-article/${articleId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (error) {
+      console.error(
+        "❌ Error removing saved article:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleEdit = () => {
+    setEditedUser({
+      username: user.username,
+      email: user.email,
+    });
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
     setIsEditing(false);
-  } catch (error) {
-    console.error(
-      "❌ Error updating profile:",
-      error.response?.data || error.message
+    setSelectedFile(null);
+    setPreview(null);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("❌ No token found");
+        return;
+      }
+
+      const formData = new FormData();
+
+      if (selectedFile) {
+        formData.append("profilePicture", selectedFile);
+      }
+
+      if (editedUser.username) {
+        formData.append("username", editedUser.username);
+      }
+
+      const response = await axios.post(
+        "http://localhost:5000/api/profile/upload-picture",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setUser(response.data.user);
+      setIsEditing(false);
+      setSelectedFile(null);
+      setPreview(null);
+    } catch (error) {
+      console.error(
+        "❌ Error uploading/updating profile:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const dateFormatter = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  };
+
+  const handleDeleteComment = (commentId) => {
+    console.log("Delete comment", commentId);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-xl font-bold text-[#61090b] animate-pulse">
+          Loading Profile Data...
+        </div>
+      </div>
     );
   }
-};
-
 
   if (!user) {
     return (
-      <Box
-        sx={{
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ffffff",
-        }}
-      >
-        <motion.div
-          animate={{
-            opacity: [0.3, 1, 0.3],
-            scale: [0.98, 1.02, 0.98],
-          }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          <Typography variant="h5" sx={{ color: "#61090b" }}>
-            Loading Profile Data...
-          </Typography>
-        </motion.div>
-      </Box>
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-xl font-bold text-[#61090b]">
+          User not found or login required
+        </div>
+      </div>
     );
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ backgroundColor: theme.palette.background.default, minHeight: "100vh", pt: 3, pb: 6 }}>
-        <Container maxWidth="lg">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Box sx={{ mb: 5, textAlign: "center" }}>
-              <Typography
-                variant="h3"
-                color="primary"
-                sx={{ textTransform: "uppercase", textShadow: "2px 2px 4px rgba(0,0,0,0.2)" }}
-              >
-                <BloodIcon sx={{ mr: 1, verticalAlign: "middle" }} />
-                CRIMEGAZETTE
-              </Typography>
-              <Typography variant="h5" color="text.secondary" sx={{ mt: 1 }}>
-                CASE FILE: {user.username.toUpperCase()}
-              </Typography>
-            </Box>
+    <div className="max-w-7xl mx-auto p-4 md:p-6 bg-white min-h-screen">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-[#61090b] uppercase">
+          CrimeGazette
+        </h1>
+        <h2 className="text-xl text-gray-700 mt-1">
+          Case File: {user.username.toUpperCase()}
+        </h2>
+      </div>
 
-            <Grid container spacing={4}>
-              {/* الجانب الأيسر (بطاقة الملف الشخصي) */}
-              <Grid item xs={12} md={4}>
-                <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.5 }}>
-                  <ProfileCard>
-                    <CardHeader
-                      avatar={
-                        <Badge
-                          overlap="circular"
-                          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                          badgeContent={<FingerprintIcon sx={{ color: theme.palette.primary.main }} />}
-                        >
-                          <BloodAvatar src={user.profilePicture} alt={user.username}>
-                            {!user.profilePicture && user.username.charAt(0).toUpperCase()}
-                          </BloodAvatar>
-                        </Badge>
-                      }
-                      title={
-                        <Box sx={{ mt: 2 }}>
-                          <Typography variant="h4" sx={{ color: "#000000", fontWeight: "bold" }}>
-                            {user.username}
-                          </Typography>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{
-                              color: theme.palette.primary.main,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                              fontSize: "0.9rem",
-                            }}
-                          >
-                            {user.role || "Criminal Enthusiast"}
-                          </Typography>
-                        </Box>
-                      }
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="md:col-span-4">
+          <div className="bg-white rounded-lg shadow-lg border border-[#61090b] overflow-hidden">
+            <div className="p-6 flex flex-col items-center">
+              <div className="relative">
+                <div className="w-24 h-24 rounded-full bg-[#61090b] text-white flex items-center justify-center text-3xl font-bold border-4 border-[#61090b] shadow-xl">
+                  {user.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt={user.username}
+                      className="w-full h-full rounded-full object-cover"
                     />
-                    <CardContent>
-                      <Divider sx={{ mb: 3, borderColor: theme.palette.primary.main }} />
-                      <Box sx={{ mb: 3 }}>
-                        <Typography variant="body1" sx={{ color: "#000000", mb: 1 }}>
-                          <strong>CASE ID:</strong> #{user._id?.slice(-6) || "unknown"}
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: "#000000", mb: 1 }}>
-                          <strong>CONTACT:</strong> {user.email}
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: "#000000" }}>
-                          <strong>STATUS:</strong> Active
-                        </Typography>
-                      </Box>
-                      <Box sx={{ mt: 4 }}>
-                        <BloodButton startIcon={<EditIcon />} onClick={handleEdit} variant="contained" color="primary" fullWidth>
-                          Edit Case File
-                        </BloodButton>
-                      </Box>
-                    </CardContent>
-                  </ProfileCard>
-                </motion.div>
-              </Grid>
+                  ) : (
+                    user.username.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <span className="absolute bottom-0 right-0 text-[#61090b] text-xl">
+                  👤
+                </span>
+              </div>
 
-              {/* الجانب الأيمن (التبويبات) */}
-              <Grid item xs={12} md={8}>
-                <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.5 }}>
-                  <Paper
-                    sx={{
-                      backgroundColor: "#ffffff",
-                      border: `1px solid ${theme.palette.primary.main}`,
-                      mb: 2,
-                      overflow: "hidden",
-                      borderRadius: theme.shape.borderRadius,
-                    }}
-                  >
-                    <Tabs
-                      value={tabValue}
-                      onChange={(e, newValue) => setTabValue(newValue)}
-                      variant="fullWidth"
-                      TabIndicatorProps={{ style: { backgroundColor: theme.palette.primary.main, height: 3 } }}
-                      sx={{ "& .MuiTabs-flexContainer": { borderBottom: `1px solid ${theme.palette.primary.main}` } }}
-                    >
-                      <CrimeTab icon={<BookmarkIcon sx={{ mb: 0.5 }} />} label="Case Files" />
-                      <CrimeTab icon={<HistoryIcon sx={{ mb: 0.5 }} />} label="Recent Activity" />
-                      <CrimeTab icon={<CommentIcon sx={{ mb: 0.5 }} />} label="Statements" />
-                    </Tabs>
+              <h3 className="text-xl font-bold mt-4 text-black">
+                {user.username}
+              </h3>
+              <p className="text-[#61090b] uppercase text-sm tracking-wider">
+                {user.role || "USER"}
+              </p>
+            </div>
 
-                    <ContentPanel>
-                      {tabValue === 2 && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              mb: 2,
-                              borderBottom: `2px solid ${theme.palette.primary.main}`,
-                              pb: 1,
-                              color: theme.palette.text.primary,
-                              fontWeight: "bold",
-                            }}
+            <div className="px-6 pb-6">
+              <div className="border-t border-[#61090b] my-3"></div>
+              <div className="mb-4">
+                <p className="text-black mb-2">
+                  <strong>CASE ID:</strong> #{user._id?.slice(-6) || "unknown"}
+                </p>
+                <p className="text-black mb-2">
+                  <strong>CONTACT:</strong> {user.email}
+                </p>
+                <p className="text-black">
+                  <strong>STATUS:</strong> Active
+                </p>
+              </div>
+
+              <button
+                onClick={handleEdit}
+                className="w-full bg-[#61090b] text-white py-2 px-4 flex items-center justify-center uppercase font-bold tracking-wider hover:bg-[#8b0d11] transition-colors border-l-4 border-[#400608] mt-4"
+              >
+                <span className="mr-2">✏️</span> Edit Case File
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="md:col-span-8">
+          <div className="bg-white rounded-lg shadow-lg border border-[#61090b] overflow-hidden">
+            <div className="flex overflow-x-auto border-b border-[#61090b]">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setTabValue(tab.id)}
+                  className={`px-4 py-3 font-medium uppercase tracking-wider flex-1 transition-colors flex items-center justify-center ${
+                    tabValue === tab.id
+                      ? "border-b-4 border-[#61090b] text-black font-bold"
+                      : "text-gray-600 hover:text-black"
+                  }`}
+                >
+                  <span className="mr-2">{tab.icon}</span>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="p-6 bg-white">
+              {tabValue === 0 && (
+                <div>
+                  <h3 className="text-lg font-bold mb-4 pb-2 border-b-2 border-[#61090b] text-black">
+                    SAVED ARTICLES
+                  </h3>
+                  {savedArticles.length > 0 ? (
+                    <div className="space-y-4">
+                      {savedArticles.map((article) => (
+                        <div
+                          key={article._id}
+                          className="border-b border-gray-200 pb-3 pl-3 relative hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="border-l-2 border-[#61090b] pl-3">
+                            <h4 className="font-bold text-black">
+                              {article.title}
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Published on {dateFormatter(article.publishDate)}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() =>
+                              handleRemoveSavedArticle(article._id)
+                            }
+                            className="absolute top-3 right-3 bg-red-600 text-white py-1 px-3 rounded-md hover:bg-red-700 transition duration-300"
                           >
-                            STATEMENTS
-                          </Typography>
-                          {userComments.length > 0 ? (
-                            <List disablePadding>
-                              {userComments.map((comm) => (
-                                <CrimeListItem key={comm._id} disablePadding>
-                                  <ListItemText
-                                    primary={<CrimeTitleText>{comm.text}</CrimeTitleText>}
-                                    secondary={
-                                      <Typography variant="body2" sx={{ color: "rgba(0,0,0,0.7)" }}>
-                                        Posted on {dateFormatter(comm.createdAt)}
-                                      </Typography>
-                                    }
-                                    sx={{ py: 1.5 }}
-                                  />
-                                  <IconButton onClick={() => console.log("Remove comment", comm._id)} size="small" sx={{ color: theme.palette.error.main }}>
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </CrimeListItem>
-                              ))}
-                            </List>
-                          ) : (
-                            <Box sx={{ py: 3, textAlign: "center" }}>
-                              <Typography variant="body1" color="text.secondary">
-                                No statements recorded.
-                              </Typography>
-                            </Box>
-                          )}
-                        </motion.div>
-                      )}
-                      {/* يمكن إضافة محتوى للتبويبات الأخرى حسب الحاجة */}
-                    </ContentPanel>
-                  </Paper>
-                </motion.div>
-              </Grid>
-            </Grid>
-          </motion.div>
-        </Container>
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-gray-500">
+                      No saved articles.
+                    </div>
+                  )}
+                </div>
+              )}
 
-        {/* مربع تعديل الملف */}
-        <Dialog open={isEditing} onClose={handleCancel} maxWidth="sm" fullWidth>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogContent>
-            <TextField
-              name="username"
-              label="Username"
-              value={editedUser.username || user.username}
-              onChange={(e) => setEditedUser({ ...editedUser, username: e.target.value })}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              name="email"
-              label="Email"
-              value={editedUser.email || user.email}
-              onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
-              fullWidth
-              margin="normal"
-              disabled
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCancel} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleSave} color="primary" variant="contained">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    </ThemeProvider>
+              {tabValue === 1 && (
+                <div>
+                  <h3 className="text-lg font-bold mb-4 pb-2 border-b-2 border-[#61090b] text-black">
+                    RECENT ACTIVITY
+                  </h3>
+                  {readingHistory.length > 0 ? (
+                    <div className="space-y-4">
+                      {readingHistory.map((article) => (
+                        <div
+                          key={article._id}
+                          className="border-b border-gray-200 pb-3 pl-3 relative hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="border-l-2 border-[#61090b] pl-3">
+                            <h4 className="font-bold text-black">
+                              {article.title}
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Published on {dateFormatter(article.createdAt)}
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Views: {article.views} | Likes: {article.likes}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-gray-500">
+                      No recent activity to display.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {tabValue === 2 && (
+                <div>
+                  <h3 className="text-lg font-bold mb-4 pb-2 border-b-2 border-[#61090b] text-black">
+                    STATEMENTS
+                  </h3>
+                  {userComments.length > 0 ? (
+                    <div className="space-y-4">
+                      {userComments.map((comment) => (
+                        <div
+                          key={comment._id}
+                          className="border-b border-gray-200 pb-3 pl-3 relative hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="border-l-2 border-[#61090b] pl-3 pr-8">
+                            <p className="font-bold text-black">
+                              {comment.text}
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Posted on {dateFormatter(comment.createdAt)}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteComment(comment._id)}
+                            className="absolute right-2 top-2 text-red-600 hover:text-red-800"
+                            title="Delete statement"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-gray-500">
+                      No statements recorded.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {isEditing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">Edit Profile</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={editedUser.username || ""}
+                  onChange={(e) =>
+                    setEditedUser({ ...editedUser, username: e.target.value })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={editedUser.email || ""}
+                  disabled
+                  className="w-full p-2 border border-gray-300 rounded bg-gray-100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Profile Picture
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Profile Preview"
+                    className="mt-2 w-24 h-24 object-cover rounded-full"
+                  />
+                ) : (
+                  user.profilePicture && (
+                    <img
+                      src={user.profilePicture}
+                      alt={user.username}
+                      className="mt-2 w-24 h-24 object-cover rounded-full"
+                    />
+                  )
+                )}
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 text-gray-700 hover:text-black"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-[#61090b] text-white rounded hover:bg-[#8b0d11]"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

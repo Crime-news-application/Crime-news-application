@@ -11,8 +11,13 @@ const {
   getUserProfile,
   verifyOtp,
   loginUser,
-  googleLogin,getUserPaymentDetails
+  googleLogin,
+  getUserPaymentDetails,
+  updateUserRole,
+
 } = require("../controllers/userController");
+const upload = require("../middleware/upload"); // adjust the path as needed
+
 
 // Create a new user
 router.post("/", createUser);
@@ -28,6 +33,7 @@ router.post("/verify-otp", verifyOtp);
 
 // Get all users
 router.get("/", getAllUsers);
+router.patch("/:userId/role", updateUserRole);
 
 // ✅ GET USER PROFILE (Protected)
 router.get("/profile", authMiddleware, getUserProfile);
@@ -37,5 +43,8 @@ router.patch("/:id", editUser);
 
 // Delete a user (soft delete)
 router.delete("/:id", deleteUser);
+
+router.patch("/users/:id", upload.single("profilePicture"), editUser);
+
 
 module.exports = router;

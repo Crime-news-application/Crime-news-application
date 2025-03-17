@@ -108,7 +108,7 @@ const Login = () => {
         color: "#ffffff",
         confirmButtonColor: "#61090b",
       }).then(() => {
-        navigate("/");
+         navigate(response.data.redirectUrl || "/");
       });
     } catch (error) {
       Swal.fire({
