@@ -202,11 +202,19 @@ const Navbar = () => {
             </Link>
 
             <Link
-              to="/more"
+              to="/Blog"
               className="relative px-5 py-3 text-lg font-semibold group"
             >
               <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
-                MORE FROM »
+                Blogs
+              </span>
+            </Link>
+            <Link
+              to="/SubscriptionCardDisplay"
+              className="relative px-5 py-3 text-lg font-semibold group"
+            >
+              <span className="relative inline-block px-2 py-1 transition-all duration-300 bg-transparent rounded group-hover:bg-[#b21e23] group-hover:scale-110">
+                Get premium
               </span>
             </Link>
           </nav>

@@ -81,6 +81,28 @@ const UserProfile = () => {
       );
     }
   };
+  //remove saved from zaro
+const handleRemoveSavedArticle = async (articleId) => {
+  console.log(articleId);
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(
+      `http://localhost:5000/api/saved/article/remove-saved-article/${articleId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    // Remove the article from the UI by filtering out the deleted article
+    // setSavedArticles(
+    //   savedArticles.filter((article) => article._id !== articleId)
+    // );
+  } catch (error) {
+    console.error(
+      "❌ Error removing saved article:",
+      error.response?.data || error.message
+    );
+  }
+};
 
   // Fetch saved articles
   const fetchSavedArticles = async () => {
@@ -274,6 +296,15 @@ const UserProfile = () => {
                               Published on {dateFormatter(article.publishDate)}
                             </p>
                           </div>
+                          {/* زر الحذف */}
+                          <button
+                            onClick={() =>
+                              handleRemoveSavedArticle(article._id)
+                            }
+                            className="absolute top-3 right-3 bg-red-600 text-white py-1 px-3 rounded-md hover:bg-red-700 transition duration-300"
+                          >
+                            Remove
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -383,7 +414,8 @@ const UserProfile = () => {
                 Save
               </button>
             </div>
-          </div>m
+          </div>
+          m
         </div>
       )}
     </div>

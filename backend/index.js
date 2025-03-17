@@ -12,6 +12,8 @@ const paymentRoutes = require("./routers/paymentRoutes");
 const userRoutes = require("./routers/userRoutes");
 const messageroutes = require("./routers/messageroutes");
 const postRoutes = require('./routers/postRoutes');
+const savedArticle = require('./routers/savedArticleRoutes');
+
 const app = express();
 
 // Connect to the database
@@ -49,6 +51,7 @@ app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api/articles", articleRoutes);
 app.use('/api/posts', postRoutes);
+app.use("/api/saved/article", savedArticle);
 
 // 404 handler
 app.use((req, res) => {
