@@ -18,12 +18,24 @@ function FormDetails() {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+        if (!token) {
+          throw new Error("No token found");
+        }
+
         const response = await fetch(
-          `http://localhost:5000/api/articles/get-articles/${id}`
+          `http://localhost:5000/api/articles/get-articles/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Include the token in the header
+            },
+          }
         );
+
         if (!response.ok) {
           throw new Error("Failed to fetch article");
         }
+
         const data = await response.json();
         setFormData(data);
         setIsLoading(false);
@@ -67,29 +79,29 @@ function FormDetails() {
     }
   };
 
- const handleExportPDF = () => {
-   const element = document.querySelector("#caseDetails"); // Ensure this ID exists in your JSX
+  const handleExportPDF = () => {
+    const element = document.querySelector("#caseDetails"); // Ensure this ID exists in your JSX
 
-   if (!element) {
-     console.error("Element not found for PDF export.");
-     return;
-   }
+    if (!element) {
+      console.error("Element not found for PDF export.");
+      return;
+    }
 
-   // Use html2canvas to capture the content as an image
-   html2canvas(element).then((canvas) => {
-     const imgData = canvas.toDataURL("image/png"); // Convert the canvas to an image
-     const pdf = new jsPDF("p", "mm", "a4"); // Create a new PDF instance
+    // Use html2canvas to capture the content as an image
+    html2canvas(element).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png"); // Convert the canvas to an image
+      const pdf = new jsPDF("p", "mm", "a4"); // Create a new PDF instance
 
-     const imgWidth = 210; // A4 width in mm
-     const imgHeight = (canvas.height * imgWidth) / canvas.width; // Calculate height to maintain aspect ratio
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width; // Calculate height to maintain aspect ratio
 
-     // Add the image to the PDF
-     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      // Add the image to the PDF
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
-     // Save the PDF
-     pdf.save("case_details.pdf");
-   });
- };
+      // Save the PDF
+      pdf.save("case_details.pdf");
+    });
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -436,7 +448,6 @@ function FormDetails() {
                     >
                       Case Details
                     </a>
-                   
                   </nav>
                 </div>
 
@@ -617,8 +628,6 @@ function FormDetails() {
 
             {/* Right Column - Sidebar */}
             <div className="lg:w-1/3">
-             
-
               {/* Case Meta Information */}
               <div className="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
                 <div className="px-6 py-4 bg-gray-50 border-b">
@@ -711,21 +720,23 @@ function FormDetails() {
           </div>
         </main>
       </div>
-      {/* add coments */}
+
       {/* Add Comments Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-  <div className="bg-white shadow-md rounded-xl overflow-hidden border border-gray-100">
-    <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-      <h2 className="text-2xl font-bold text-gray-800">Discussion ({comments.length})</h2>
-      <div className="flex items-center space-x-2">
-        <span className="text-sm text-gray-500">Sort by:</span>
-        <select className="text-sm border-0 bg-transparent font-medium text-gray-700 focus:ring-0 focus:outline-none cursor-pointer">
-          <option>Newest</option>
-          <option>Oldest</option>
-          <option>Most Relevant</option>
-        </select>
-      </div>
-    </div>
+        <div className="bg-white shadow-md rounded-xl overflow-hidden border border-gray-100">
+          <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Discussion ({comments.length})
+            </h2>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Sort by:</span>
+              <select className="text-sm border-0 bg-transparent font-medium text-gray-700 focus:ring-0 focus:outline-none cursor-pointer">
+                <option>Newest</option>
+                <option>Oldest</option>
+                <option>Most Relevant</option>
+              </select>
+            </div>
+          </div>
 
     {/* Add Comment Form */}
     <div className="p-6 border-b border-gray-100 bg-gray-50">
@@ -742,7 +753,7 @@ function FormDetails() {
             <div className="mb-3 rounded-md bg-red-50 p-3">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" xmlns="http://localhost:5173/articledetail/:id" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
                 </div>
@@ -763,12 +774,12 @@ function FormDetails() {
             <div className="px-5 py-3 bg-white flex justify-between items-center border-t border-gray-100">
               <div className="flex items-center space-x-4">
                 <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </button>
                 <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                   </svg>
                 </button>
@@ -782,7 +793,7 @@ function FormDetails() {
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://localhost:5173/articledetail/:id"
+                      xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -816,7 +827,7 @@ function FormDetails() {
     <div className="divide-y divide-gray-100">
       {comments.length === 0 ? (
         <div className="text-center py-14">
-          <svg className="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
+          <svg className="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
           </svg>
           <h3 className="mt-4 text-lg font-medium text-gray-900">No comments yet</h3>
@@ -858,7 +869,7 @@ function FormDetails() {
                       </time>
                       <div className="ml-2 relative">
                         <button className="text-gray-400 hover:text-gray-600">
-                          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://localhost:5173/articledetail/:id">
+                          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                           </svg>
                         </button>
@@ -870,25 +881,25 @@ function FormDetails() {
                   </div>
                   <div className="flex items-center space-x-4 text-sm">
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                       </svg>
                       <span>Like</span>
                     </button>
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                       </svg>
                       <span>Reply</span>
                     </button>
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                       </svg>
                       <span>Share</span>
                     </button>
                     <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://localhost:5173/articledetail/:id">
+                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
                       </svg>
                       <span>Report</span>

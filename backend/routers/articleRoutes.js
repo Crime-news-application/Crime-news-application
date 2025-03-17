@@ -12,6 +12,7 @@ const {
   getArticleAuthorComments,
   getArticlesJenan,
   getSavedArticles,
+  getLatestReadingForUser
   // getTop5Articles,
 } = require("../controllers/articleController");
 
@@ -28,5 +29,7 @@ router.post("/addComents-articles/:id/comments", addCommentToArticle);
 router.get("/getComment-articles/:id/comments", getArticleComments);
 router.get("/user-comments", getArticleAuthorComments);
 router.get("/saved-articles", getSavedArticles);
+router.get("/latest-reading", getLatestReadingForUser);
+
 
 module.exports = router;

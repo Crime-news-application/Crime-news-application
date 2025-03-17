@@ -6,40 +6,33 @@ const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [userComments, setUserComments] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
+  const [readingHistory, setReadingHistory] = useState([]);// New state
   const [tabValue, setTabValue] = useState(0);
-
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({});
   const [loading, setLoading] = useState(true);
-
-  // NEW: State for file upload and preview
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  // Tabs for profile content
   const tabs = [
     { id: 0, label: "Saved Articles", icon: "📑" },
     { id: 1, label: "Recent Activity", icon: "🕒" },
     { id: 2, label: "Statements", icon: "💬" },
   ];
 
-  // -----------------------------
-  // Fetch user profile on mount
-  // -----------------------------
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  // After user loads, fetch user comments and saved articles
   useEffect(() => {
     if (user) {
       fetchUserComments();
       fetchSavedArticles();
+      fetchReadingHistory(); // Fetch latest reading
       setLoading(false);
     }
   }, [user]);
 
-  // 1. Fetch user profile
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -54,9 +47,6 @@ const UserProfile = () => {
         return;
       }
 
-      // نفترض أنك عندك راوت جاهز يرجع معلومات المستخدم
-      // مثلاً: GET /api/users/profile
-      // (أو يمكنك أي راوت آخر لديك)
       const response = await axios.get(
         "http://localhost:5000/api/users/profile",
         {
@@ -73,7 +63,6 @@ const UserProfile = () => {
     }
   };
 
-  // 2. Fetch user comments
   const fetchUserComments = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -93,30 +82,7 @@ const UserProfile = () => {
       );
     }
   };
-  //remove saved from zaro
-const handleRemoveSavedArticle = async (articleId) => {
-  console.log(articleId);
-  try {
-    const token = localStorage.getItem("token");
-    const response = await axios.delete(
-      `http://localhost:5000/api/saved/article/remove-saved-article/${articleId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    // Remove the article from the UI by filtering out the deleted article
-    // setSavedArticles(
-    //   savedArticles.filter((article) => article._id !== articleId)
-    // );
-  } catch (error) {
-    console.error(
-      "❌ Error removing saved article:",
-      error.response?.data || error.message
-    );
-  }
-};
 
-  // 3. Fetch saved articles
   const fetchSavedArticles = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -137,7 +103,44 @@ const handleRemoveSavedArticle = async (articleId) => {
     }
   };
 
-  // 4. Edit profile (open modal)
+  const fetchReadingHistory = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return console.error("❌ No token found");
+
+      const response = await axios.get(
+        "http://localhost:5000/api/articles/latest-reading", // Use the correct endpoint
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setReadingHistory(response.data.readingHistory); // Update the state with readingHistory
+    } catch (error) {
+      console.error(
+        "❌ Error fetching reading history:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleRemoveSavedArticle = async (articleId) => {
+    console.log(articleId);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:5000/api/saved/article/remove-saved-article/${articleId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (error) {
+      console.error(
+        "❌ Error removing saved article:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   const handleEdit = () => {
     setEditedUser({
       username: user.username,
@@ -146,14 +149,12 @@ const handleRemoveSavedArticle = async (articleId) => {
     setIsEditing(true);
   };
 
-  // Cancel editing
   const handleCancel = () => {
     setIsEditing(false);
     setSelectedFile(null);
     setPreview(null);
   };
 
-  // 5. Handle file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -162,7 +163,6 @@ const handleRemoveSavedArticle = async (articleId) => {
     }
   };
 
-  // 6. Save edited profile (using new route)
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -173,17 +173,14 @@ const handleRemoveSavedArticle = async (articleId) => {
 
       const formData = new FormData();
 
-      // رفع الصورة
       if (selectedFile) {
         formData.append("profilePicture", selectedFile);
       }
 
-      // إرسال اسم المستخدم (إن تم تعديله)
       if (editedUser.username) {
         formData.append("username", editedUser.username);
       }
 
-      // استدعاء الراوت الجديد لرفع الصورة (يستخدم authMiddleware لإرسال req.user)
       const response = await axios.post(
         "http://localhost:5000/api/profile/upload-picture",
         formData,
@@ -206,8 +203,6 @@ const handleRemoveSavedArticle = async (articleId) => {
     }
   };
 
-
-  // 7. Format date utility
   const dateFormatter = (dateString) => {
     const options = {
       year: "numeric",
@@ -219,13 +214,10 @@ const handleRemoveSavedArticle = async (articleId) => {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  // 8. Delete comment handler (demo)
   const handleDeleteComment = (commentId) => {
     console.log("Delete comment", commentId);
-    // Implement delete functionality as needed
   };
 
-  // 9. Loading & Not Found states
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
@@ -246,10 +238,8 @@ const handleRemoveSavedArticle = async (articleId) => {
     );
   }
 
-  // 10. Main Render
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6 bg-white min-h-screen">
-      {/* Header */}
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-[#61090b] uppercase">
           CrimeGazette
@@ -260,7 +250,6 @@ const handleRemoveSavedArticle = async (articleId) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Profile Card */}
         <div className="md:col-span-4">
           <div className="bg-white rounded-lg shadow-lg border border-[#61090b] overflow-hidden">
             <div className="p-6 flex flex-col items-center">
@@ -313,10 +302,8 @@ const handleRemoveSavedArticle = async (articleId) => {
           </div>
         </div>
 
-        {/* Tabs & Content */}
         <div className="md:col-span-8">
           <div className="bg-white rounded-lg shadow-lg border border-[#61090b] overflow-hidden">
-            {/* Tabs */}
             <div className="flex overflow-x-auto border-b border-[#61090b]">
               {tabs.map((tab) => (
                 <button
@@ -334,7 +321,6 @@ const handleRemoveSavedArticle = async (articleId) => {
               ))}
             </div>
 
-            {/* Content */}
             <div className="p-6 bg-white">
               {tabValue === 0 && (
                 <div>
@@ -356,7 +342,6 @@ const handleRemoveSavedArticle = async (articleId) => {
                               Published on {dateFormatter(article.publishDate)}
                             </p>
                           </div>
-                          {/* زر الحذف */}
                           <button
                             onClick={() =>
                               handleRemoveSavedArticle(article._id)
@@ -381,16 +366,39 @@ const handleRemoveSavedArticle = async (articleId) => {
                   <h3 className="text-lg font-bold mb-4 pb-2 border-b-2 border-[#61090b] text-black">
                     RECENT ACTIVITY
                   </h3>
-                  <div className="py-6 text-center text-gray-500">
-                    No recent activity to display.
-                  </div>
+                  {readingHistory.length > 0 ? (
+                    <div className="space-y-4">
+                      {readingHistory.map((article) => (
+                        <div
+                          key={article._id}
+                          className="border-b border-gray-200 pb-3 pl-3 relative hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="border-l-2 border-[#61090b] pl-3">
+                            <h4 className="font-bold text-black">
+                              {article.title}
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Published on {dateFormatter(article.createdAt)}
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Views: {article.views} | Likes: {article.likes}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-gray-500">
+                      No recent activity to display.
+                    </div>
+                  )}
                 </div>
               )}
 
               {tabValue === 2 && (
                 <div>
                   <h3 className="text-lg font-bold mb-4 pb-2 border-b-2 border-[#61090b] text-black">
-                    STATEMENTS
+                    Comments
                   </h3>
                   {userComments.length > 0 ? (
                     <div className="space-y-4">
@@ -429,7 +437,6 @@ const handleRemoveSavedArticle = async (articleId) => {
         </div>
       </div>
 
-      {/* Edit Profile Modal */}
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
@@ -459,7 +466,6 @@ const handleRemoveSavedArticle = async (articleId) => {
                   className="w-full p-2 border border-gray-300 rounded bg-gray-100"
                 />
               </div>
-              {/* NEW: Profile Picture Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Profile Picture
