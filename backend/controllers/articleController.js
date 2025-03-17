@@ -138,15 +138,15 @@ const rejectArticle = async (req, res) => {
   }
 };
 
-// const getTop5Articles = async (req, res) => {
-//   try {
-//     const articles = await Article.find().sort({ views: -1 }).limit(5);
-//     res.json(articles);
-//   } catch (error) {
-//     console.error('Error fetching top 5 articles:', error);
-//     res.status(500).json({ message: 'Error fetching top 5 articles', error });
-//   }
-// };
+const getTop5Articles = async (req, res) => {
+  try {
+    const articles = await Article.find().sort({ views: -1 }).limit(5);
+    res.json(articles);
+  } catch (error) {
+    console.error('Error fetching top 5 articles:', error);
+    res.status(500).json({ message: 'Error fetching top 5 articles', error });
+  }
+};
 
 function getUserIdFromToken(token) {
   try {
@@ -346,4 +346,5 @@ module.exports = {
   acceptArticle,
   rejectArticle,
   getArticlesJenan,
+  getTop5Articles,
 };

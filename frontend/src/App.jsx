@@ -26,6 +26,9 @@ import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
 import Users from "./Component/AdminDashbord/UsersDash";
 import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
+import Blog from "./pages/Blog"
+import BlogDetails from "./pages/BlogDetails"
+
 import Comment from "./pages/detail/Comment";
 import PostDashboard from "./pages/Subscription/Post";
 import { useLanguage } from "./context/LanguageContext";
@@ -87,6 +90,9 @@ function App() {
         <Route path="/aform" element={<AForm />} />
         <Route path="/details/:id" element={<Details />} />
         <Route path="/comments/:id" element={<Comment />} />
+        <Route path="/Blog" element={<Blog />} />
+        <Route path="/BlogDetails/:id" element={<BlogDetails />} />
+        {/* <Route path="/BlogDetails" element={<BlogDetails />} /> */}
 
         <Route
           path="/SubscriptionCardDisplay"
@@ -117,13 +123,13 @@ function App() {
       ].includes(location.pathname) &&
         !location.pathname.startsWith("/articledetail/") && <Footer />}
      
-     <button onClick={toggleLanguage} className="fixed bottom-5 right-5 p-3 rounded-full bg-blue-500 text-white">
+     {/* <button onClick={toggleLanguage} className="fixed bottom-5 right-5 p-3 rounded-full bg-blue-500 text-white">
         <img
           src={language === "en" ? englishIcon : arabicIcon}
           alt="Language Icon"
           className="w-8 h-8"
         />
-      </button>
+      </button> */}
      
      </div></>
   );

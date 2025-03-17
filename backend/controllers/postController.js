@@ -4,7 +4,7 @@ const User = require('../models/user');
 exports.createPost = async (req, res) => {
     try {
     
-      const { title, description, details, imageSrc, imageAlt, date, tags, userId } = req.body;
+      const { title, description, details, imageSrc, imageAlt, date, tags } = req.body;
   
      
       if (!title) {
@@ -20,7 +20,7 @@ exports.createPost = async (req, res) => {
         imageAlt,
         date,
         tags,
-        userId 
+       
       });
   
 

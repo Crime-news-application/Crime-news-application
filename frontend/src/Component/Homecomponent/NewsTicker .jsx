@@ -13,7 +13,7 @@ const NewsTicker = () => {
       
           console.log("Total articles fetched:", response.data.articles.length);
       
-          // ✅ تأكد من أن كل خبر لديه عنوان ووصف
+          
           response.data.articles.forEach((article, idx) => {
             console.log(`News ${idx + 1}:`, article.title);
           });
@@ -47,7 +47,7 @@ const NewsTicker = () => {
       };
 
     fetchNews();
-    const interval = setInterval(fetchNews, 60000); // تحديث كل دقيقة
+    const interval = setInterval(fetchNews, 60000); 
 
     return () => clearInterval(interval);
   }, []);
@@ -115,14 +115,3 @@ const NewsTicker = () => {
 
 export default NewsTicker;
 
-
-
-// import React from 'react'
-
-// function NewsTicker () {
-//   return (
-//     <div>NewsTicker </div>
-//   )
-// }
-
-// export default NewsTicker 
