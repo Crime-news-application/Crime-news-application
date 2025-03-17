@@ -11,8 +11,10 @@ const {
   getUserProfile,
   verifyOtp,
   loginUser,
-  googleLogin,getUserPaymentDetails
-  
+  googleLogin,
+  getUserPaymentDetails,
+  updateUserRole,
+
 } = require("../controllers/userController");
 const upload = require("../middleware/upload"); // adjust the path as needed
 
@@ -31,6 +33,7 @@ router.post("/verify-otp", verifyOtp);
 
 // Get all users
 router.get("/", getAllUsers);
+router.patch("/:userId/role", updateUserRole);
 
 // ✅ GET USER PROFILE (Protected)
 router.get("/profile", authMiddleware, getUserProfile);

@@ -12,6 +12,7 @@ const getArticlesJenan = async (req, res) => {
     let query = {};
     if (category) query.categories = category;
 
+// let articles = Article.find(query).populate("author");
     let articles = Article.find(query);
 
     // Sorting
@@ -382,4 +383,5 @@ module.exports = {
   getArticlesJenan,
   getSavedArticles,
 
+  // getTop5Articles,
 };

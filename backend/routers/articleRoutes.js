@@ -11,8 +11,8 @@ const {
   getArticleComments,
   getArticleAuthorComments,
   getArticlesJenan,
-  getSavedArticles
-  
+  getSavedArticles,
+  // getTop5Articles,
 } = require("../controllers/articleController");
 
 router.get("/getA", getArticles);

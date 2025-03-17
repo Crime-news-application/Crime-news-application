@@ -223,15 +223,13 @@ const deleteUser = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id).select("isdeleted");
 
-    if (!user || user.isdeleted) {
+    if (!user?.isdeleted === false) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Soft delete the user
-    user.isdeleted = true;
-    await user.save();
+    await User.findByIdAndUpdate(id, { isdeleted: true }, { new: true });
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
@@ -322,9 +320,36 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+const updateUserRole = async (req, res) => {
+  const { userId } = req.params; // معرف المستخدم الذي سيتم تعديل دوره
+  const { role } = req.body; // الدور الجديد
 
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid user ID" });
+  }
 
+  try {
+    const user = await User.findById(userId);
 
+    if (!user || user.isdeleted) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!["user", "journalist", "reader", "admin"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role provided" });
+    }
+
+    user.role = role;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "User role updated successfully", updatedUser: user });
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 /*
  try {
@@ -347,9 +372,6 @@ const getUserProfile = async (req, res) => {
   }
 
 */
-
-
-
 
 const getUserPaymentDetails = async (req, res) => {
   try {
@@ -381,11 +403,6 @@ const getUserPaymentDetails = async (req, res) => {
   }
 };
 
-
-
-
-
-
 // Export all functions
 module.exports = {
   createUser,
@@ -397,5 +414,6 @@ module.exports = {
   verifyOtp,
   loginUser,
   googleLogin,
-  getUserPaymentDetails
+  getUserPaymentDetails,
+  updateUserRole,
 };

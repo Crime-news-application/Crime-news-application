@@ -369,34 +369,38 @@ const ArticleManagement = () => {
               {/* Desktop view - table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#fff3f3]">
+                  <thead className="bg-[var(--screen-red)] text-white">
                     <tr>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[var(--screen-red)]">
+                      <th scope="col" className="px-6 py-3">
+                        #
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium  text-white">
                         Title
                       </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[var(--screen-red)]">
+                      <th className="px-4 py-3 text-left text-sm font-medium  text-white">
                         Author
                       </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[var(--screen-red)]">
+                      <th className="px-4 py-3 text-left text-sm font-medium  text-white">
                         Category
                       </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[var(--screen-red)]">
+                      <th className="px-4 py-3 text-left text-sm font-medium  text-white">
                         Date
                       </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[var(--screen-red)]">
+                      <th className="px-4 py-3 text-left text-sm font-medium  text-white">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[var(--screen-red)]">
+                      <th className="px-4 py-3 text-left text-sm font-medium  text-white">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {currentArticles.map((article) => (
+                    {currentArticles.map((article, index) => (
                       <tr
                         key={article._id}
                         className="hover:bg-[#f9feff] transition-colors duration-200"
                       >
+                        <td className="px-6 py-6">{index + 1}</td>
                         <td className="px-4 py-3">
                           <div
                             className="text-sm text-gray-700 font-medium cursor-pointer"
