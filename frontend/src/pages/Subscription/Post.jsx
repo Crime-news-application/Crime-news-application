@@ -260,15 +260,32 @@ const PostDashboard = () => {
               key={post._id} 
               className="bg-white flex flex-col justify-between p-5 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100"
             >
+               {post.imageSrc && (
+                <img
+                  src={post.imageSrc}
+                  alt={post.imageAlt}
+                  className="w-full h-48 object-cover rounded-md mb-3"
+                />
+              )}
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-lg font-semibold text-gray-800">{post.title}</h3>
               </div>
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">{post.description}</p>
+              {post.details && (
+                  <p className="text-gray-500 text-xs mt-1">{post.details}</p>
+                )}
               <div className="text-sm mb-2">
                 <span className="text-gray-700 font-medium">Date: </span>
                 <span className="text-gray-600">{post.date}</span>
               </div>
 
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {post.tags.map((tag, index) => (
+                    <span key={index} className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
+                      {tag}
+                    </span>
+                  ))} </div>   )}
               <div className="flex gap-2 mt-3 pt-2 border-t border-gray-100">
                 <button
                   onClick={() => handleEdit(post)}
