@@ -1,3 +1,16 @@
 {
-    "title":"Flower Gallery"
-}
+    "title":"Flower Gallery",
+    "stat_experience": "New Experience",
+    "stat_correspondents": "Global Correspondents",
+    "stat_investigations": "Investigations Covered",
+    "stat_news_coverage": "News Coverage 24/7",
+    "video_not_supported": "Your browser does not support the video tag.",
+    "crime_news_network": "CRIME NEWS NETWORK",
+    "behind_criminal_activities": "Behind Criminal Activities",
+    "subtitle": "Dedicated to providing accurate, timely, and comprehensive coverage of crime news from around the world.",
+    "watch_latest_report": "Watch Latest Report",
+    "download_report": "Download Report",
+    "about_crimegazette": "About CRIMEGAZETTE",
+    "about_paragraph1": "Crime News Network is dedicated to providing in-depth coverage of criminal activities, investigations, and justice system proceedings worldwide.",
+    "about_paragraph2": "Our team of experienced journalists and crime analysts work tirelessly to bring you accurate, timely, and comprehensive reporting on criminal cases that impact our society."
+  }
