@@ -398,7 +398,7 @@ const UserProfile = () => {
               {tabValue === 2 && (
                 <div>
                   <h3 className="text-lg font-bold mb-4 pb-2 border-b-2 border-[#61090b] text-black">
-                    STATEMENTS
+                    Comments
                   </h3>
                   {userComments.length > 0 ? (
                     <div className="space-y-4">
