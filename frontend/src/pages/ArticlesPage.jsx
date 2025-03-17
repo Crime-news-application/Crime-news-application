@@ -321,7 +321,7 @@ const CategoryPage = () => {
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState("");
   
 
   // Pagination states
