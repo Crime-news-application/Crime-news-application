@@ -3,21 +3,27 @@ import axios from 'axios';
 import { ArrowUpRight, Clock, Eye } from 'lucide-react';
 
 const TrendReports = () => {
-  const [newsArticles, setNewsArticles] = useState([]);
+  const [topArticles, setTopArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios
-      .get('http://localhost:5000/api/articles/top-5-articles')
-      .then((response) => {
-        setNewsArticles(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        setLoading(false);
-      });
+    const fetchTopArticles = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/articles/getA");
+        const articles = response.data;
+
+        // ترتيب المقالات حسب عدد المشاهدات بشكل تنازلي
+        const sortedArticles = articles.sort((a, b) => b.views - a.views);
+
+        // أخذ أعلى 5 مقالات
+        setTopArticles(sortedArticles.slice(0, 5));
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+      }
+    };
+
+    fetchTopArticles();
   }, []);
 
   if (loading) {
@@ -29,7 +35,7 @@ const TrendReports = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white text-gray-900">
+     <div className="max-w-6xl mx-auto p-6 bg-white text-gray-900">
       {/* Title Section */}
       <div className="flex justify-between items-center mb-6 mt-10 pt-4">
         <h2 className="text-2xl font-bold border-b-2 border-[var(--primary-color)]">Latest Reports</h2>
@@ -43,25 +49,25 @@ const TrendReports = () => {
         <div className="bg-white rounded-md shadow-sm mb-6 flex flex-col">
           <div className="relative">
             <img
-              src={newsArticles[0].imageUrl}
-              alt={newsArticles[0].title}
+              src={newsArticles[0]?.imageUrl}
+              alt={newsArticles[0]?.title}
               className="w-full h-64 object-cover"
             />
             <span className="absolute top-2 left-2 bg-[var(--primary-color)] text-white text-xs px-2 py-1 rounded">
-              {newsArticles[0].tag}
+              {newsArticles[0]?.tag}
             </span>
           </div>
           <div className="p-4">
-            <h3 className="font-bold text-lg">{newsArticles[0].title}</h3>
-            <p className="text-gray-600 text-sm mt-1">{newsArticles[0].description}</p>
+            <h3 className="font-bold text-lg">{newsArticles[0]?.title}</h3>
+            <p className="text-gray-600 text-sm mt-1">{newsArticles[0]?.description}</p>
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center text-gray-500 text-xs">
                 <Clock className="h-4 w-4 mr-1" />
-                <span>{newsArticles[0].time}</span>
+                <span>{newsArticles[0]?.time}</span>
               </div>
               <div className="flex items-center text-gray-500 text-xs">
                 <Eye className="h-4 w-4 mr-1" />
-                <span>{newsArticles[0].views} views</span>
+                <span>{newsArticles[0]?.views} views</span>
               </div>
             </div>
             <button className="mt-4 bg-[var(--primary-color)] text-white px-4 py-2 text-sm w-full">

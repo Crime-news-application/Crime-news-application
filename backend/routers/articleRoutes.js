@@ -12,8 +12,8 @@ const {
   getArticleAuthorComments,
   getArticlesJenan,
   getSavedArticles,
-  getLatestReadingForUser
-  // getTop5Articles,
+  getLatestReadingForUser,
+  
 } = require("../controllers/articleController");
 
 router.get("/getA", getArticles);
@@ -21,7 +21,6 @@ router.get("/get", getArticlesJenan);
 router.get("/get/:id", getArticlesByIdjenan);
 router.put("/accept", acceptArticle);
 router.put("/reject", rejectArticle);
-
 
 router.post("/add-articles", createArticle);
 router.get("/get-articles/:id", getArticleById);
