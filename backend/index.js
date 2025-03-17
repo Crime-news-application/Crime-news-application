@@ -12,6 +12,7 @@ const paymentRoutes = require("./routers/paymentRoutes");
 const userRoutes = require("./routers/userRoutes");
 const messageroutes = require("./routers/messageroutes");
 const postRoutes = require('./routers/postRoutes');
+const profileRoutes = require("./routers/profileRoutes");
 const savedArticle = require('./routers/savedArticleRoutes');
 
 const app = express();
@@ -51,6 +52,9 @@ app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api/articles", articleRoutes);
 app.use('/api/posts', postRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/api/profile", profileRoutes);
+
 app.use("/api/saved/article", savedArticle);
 
 // 404 handler

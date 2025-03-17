@@ -382,5 +382,6 @@ module.exports = {
   rejectArticle,
   getArticlesJenan,
   getSavedArticles,
-  getTop5Articles,
+
+  // getTop5Articles,
 };
