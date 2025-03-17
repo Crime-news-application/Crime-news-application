@@ -186,8 +186,9 @@ async function createArticle(req, res) {
       status: req.body.status || "Pending",
       location: req.body.location,
     });
-
-    const savedArticle = await newArticle.save();
+//الكود هاذ فيه ايرور وبلال حله
+    // const savedArticle = await newArticle.save();
+    const savedArticle = newArticle.save();
     res.status(201).json(savedArticle);
   } catch (error) {
     res.status(400).json({ message: error.message });
