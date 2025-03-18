@@ -3,6 +3,7 @@
 Welcome to Crime News Platform! This project is a comprehensive news website dedicated to covering crime-related stories with accuracy and depth. Our platform provides the latest crime news, investigative reports, and community safety updates.
 
 ## 👨‍💻 About the Team
+
 - **Bilal Zaro**: Scrum Master
 - **Ahmad Al-Najjar**: Product Owner
 - **Ahmad Al-tarawneh**: QA Specialist
@@ -12,6 +13,7 @@ Welcome to Crime News Platform! This project is a comprehensive news website ded
 - **mohammed al-ajlouny**: Developer
 
 ## 📄 Pages
+
 - Home Page 🏠
 - Latest News 📰
 - Categories 📂 (Homicide, Cybercrime, Fraud, etc.)
@@ -22,6 +24,7 @@ Welcome to Crime News Platform! This project is a comprehensive news website ded
 - Contact 📞
 
 ## ✨ Features
+
 - **📱 Responsive Design**: Optimized for various devices and screen sizes.
 - **🎨 Modern UI**: Built with a clean, visually appealing design using Bootstrap and Tailwind CSS.
 - **🔥 MERN Stack**: Using MongoDB, Express.js, React, and Node.js for a full-stack experience.
@@ -31,6 +34,7 @@ Welcome to Crime News Platform! This project is a comprehensive news website ded
 - **🛡️ Role-Based Access**: Different roles for journalists, readers, and administrators.
 
 ## 🛠️ Technologies Used
+
 - **Frontend**: React, Vite, Tailwind CSS
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB (Mongoose ODM)
@@ -38,9 +42,11 @@ Welcome to Crime News Platform! This project is a comprehensive news website ded
 - **State Management**: Redux Toolkit
 
 ## 🎨 Figma Wireframe and Mockup
+
 Explore the wireframes and mockups for the project design on Figma:
-👉 [Access Figma Wireframe & Mockup](#)
+👉 [Access Figma Wireframe & Mockup](https://www.figma.com/design/vQFvaO8NtFgtNE5vaqkm7j/Crime-News-App?m=auto&t=ny1EhN62IFDR7CYz-6)
 
 ## 📋 Trello Board
+
 Track project progress and tasks on Trello:
-👉 [Trello Board](#)
+👉 [Trello Board](https://trello.com/b/3ZJq9wFw/crime-news-application)

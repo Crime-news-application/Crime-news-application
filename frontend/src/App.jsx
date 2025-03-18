@@ -26,18 +26,20 @@ import ArticleDetail from "./Component/AdminDashbord/ArticleDetail";
 import Users from "./Component/AdminDashbord/UsersDash";
 import AForm from "./pages/detail/AForm";
 import Details from "./pages/detail/FormDetails";
-import Blog from "./pages/Blog"
-import BlogDetails from "./pages/BlogDetails"
-import ContactDash from "./Component/AdminDashbord/ContactDash.jsx";
+import Blog from "./pages/Blog";
+import BlogDetails from "./pages/BlogDetails";
+
 import Comment from "./pages/detail/Comment";
 import PostDashboard from "./pages/Subscription/Post";
+import { useLanguage } from "./Context/LanguageContext";
+import ContactDash from "./Component/AdminDashbord/ContactDash.jsx";
 // import { useLanguage } from "./context/LanguageContext";
 import arabicIcon from "./assets/translation.png";
 import englishIcon from "./assets/translation (1).png";
 import { useTranslation } from "react-i18next";
 function App() {
   const { t } = useTranslation();
-  // const { language, toggleLanguage } = useLanguage(); 
+  const { language, toggleLanguage } = useLanguage();
   const location = useLocation();
 
   return (
@@ -131,9 +133,7 @@ function App() {
           className="w-8 h-8"
         />
       </button> */}
-     
-     {/* </div> */}
-     </>
+    </>
   );
 }
 

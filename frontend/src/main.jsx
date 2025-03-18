@@ -2,15 +2,15 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom"; // Make sure you import this
 import "./index.css";
-import "./i18n.js"
+import "./i18n.js";
 import App from "./App.jsx";
 import { UserProvider } from "./Context/UserContext.jsx";
-import { LanguageProvider } from "./context/LanguageContext.jsx";
+import { LanguageProvider } from "./Context/LanguageContext.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <UserProvider>
-      <LanguageProvider> 
+        <LanguageProvider>
           <App />
         </LanguageProvider>
       </UserProvider>
