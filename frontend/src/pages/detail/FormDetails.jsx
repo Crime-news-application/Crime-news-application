@@ -430,29 +430,123 @@ function FormDetails() {
           </div>
         </header>
 
+        {/* Insert the Case Media Section Here */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Case Media
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Featured Image */}
+                {formData.featuredImage && (
+                  <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="relative aspect-w-16 aspect-h-9">
+                      <img
+                        src={`http://localhost:5000/${formData.featuredImage}`}
+                        alt="Case Evidence"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-3 bg-gray-50">
+                      <p className="text-sm text-gray-700 font-medium">
+                        Case Evidence Photo
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formData.location?.city},{" "}
+                        {formatDate(formData.publishDate)}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Video Content */}
+                {formData.mediaSource && formData.mediaSource.length > 0 && (
+                  <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="relative aspect-w-16 aspect-h-9">
+                      <iframe
+                        src={getEmbedUrl(formData.mediaSource[0])}
+                        title="Case Media"
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                    <div className="p-3 bg-gray-50">
+                      <p className="text-sm text-gray-700 font-medium">
+                        Related Video Evidence
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        <span className="inline-flex items-center">
+                          <svg
+                            className="w-3 h-3 mr-1 text-gray-500"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                            <path
+                              fillRule="evenodd"
+                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                              clipRule="evenodd"
+                            ></path>
+                          </svg>
+                          Officer footage
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Additional Media Controls */}
+              {(formData.featuredImage ||
+                (formData.mediaSource && formData.mediaSource.length > 0)) && (
+                <div className="mt-4 flex justify-end space-x-3">
+                  <button className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    View All Media
+                  </button>
+                  <button className="inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    Download Media
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Main Content Area */}
-        {formData.featuredImage && (
-          <div className="mb-6">
-            <img
-              src={`http://localhost:5000/${formData.featuredImage}`}
-              alt="Featured"
-              className="w-full h-auto rounded-md"
-            />
-          </div>
-        )}
-        {formData.mediaSource && formData.mediaSource.length > 0 && (
-          <div className="mb-6">
-            <iframe
-              width="560"
-              height="315"
-              src={getEmbedUrl(formData.mediaSource[0])}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        )}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left Column - Main Content */}
@@ -596,6 +690,65 @@ function FormDetails() {
               </div>
 
               {/* Case Timeline */}
+
+              {/* File Gallery */}
+              {files.length > 0 && (
+                <section className="mb-12">
+                  <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2">
+                    Case Files
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {files.map((file, index) => (
+                      <div
+                        key={index}
+                        className="group bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
+                      >
+                        <div className="aspect-w-16 aspect-h-9 bg-gray-100 flex items-center justify-center">
+                          <svg
+                            className="w-16 h-16 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://localhost:5173/articledetail/:id"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="p-4">
+                          <h4 className="text-sm font-medium text-gray-900 truncate group-hover:text-[#b21e23]">
+                            {file.name || `File ${index + 1}`}
+                          </h4>
+                          <p className="mt-1 text-xs text-gray-500">
+                            {file.type || "Document"}
+                          </p>
+                          <button className="mt-3 text-xs font-medium text-[#b21e23] hover:text-[#9a1a1e] flex items-center">
+                            View file
+                            <svg
+                              className="ml-1 w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://localhost:5173/articledetail/:id"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
             {/* Right Column - Sidebar */}
@@ -727,7 +880,7 @@ function FormDetails() {
                       <div className="flex-shrink-0">
                         <svg
                           className="h-5 w-5 text-red-400"
-                          xmlns="http://http://localhost:5173/articledetail/:id"
+                          xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -760,7 +913,7 @@ function FormDetails() {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
-                          xmlns="http://http://localhost:5173/articledetail/:id"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
                             strokeLinecap="round"
@@ -776,7 +929,7 @@ function FormDetails() {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
-                          xmlns="http://http://localhost:5173/articledetail/:id"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
                             strokeLinecap="round"
@@ -796,7 +949,7 @@ function FormDetails() {
                         <>
                           <svg
                             className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                            xmlns="http://http://localhost:5173/articledetail/:id"
+                            xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
                           >
@@ -835,7 +988,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://http://localhost:5173/articledetail/:id"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     strokeLinecap="round"
@@ -896,7 +1049,7 @@ function FormDetails() {
                                   className="h-4 w-4"
                                   fill="currentColor"
                                   viewBox="0 0 20 20"
-                                  xmlns="http://http://localhost:5173/articledetail/:id"
+                                  xmlns="http://www.w3.org/2000/svg"
                                 >
                                   <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                                 </svg>
@@ -914,7 +1067,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://http://localhost:5173/articledetail/:id"
+                              xmlns="http://www.w3.org/2000/svg"
                             >
                               <path
                                 strokeLinecap="round"
@@ -931,7 +1084,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://http://localhost:5173/articledetail/:id"
+                              xmlns="http://www.w3.org/2000/svg"
                             >
                               <path
                                 strokeLinecap="round"
@@ -948,7 +1101,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://http://localhost:5173/articledetail/:id"
+                              xmlns="http://www.w3.org/2000/svg"
                             >
                               <path
                                 strokeLinecap="round"
@@ -965,7 +1118,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://http://localhost:5173/articledetail/:id"
+                              xmlns="http://www.w3.org/2000/svg"
                             >
                               <path
                                 strokeLinecap="round"
@@ -979,6 +1132,34 @@ function FormDetails() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Nested reply example (you can conditionally show this) */}
+                    {index === 0 && (
+                      <div className="ml-16 mt-6 pl-4 border-l-2 border-gray-200">
+                        <div className="flex space-x-3">
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-10 w-10 rounded-full object-cover border-2 border-white shadow"
+                              src="https://ui-avatars.com/api/?name=John+Smith&background=random&size=100&font-size=0.4"
+                              alt="John Smith"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="text-sm font-semibold text-gray-900 hover:underline cursor-pointer">
+                                John Smith
+                              </h4>
+                              <div className="text-xs text-gray-500">
+                                <time>4 hours ago</time>
+                              </div>
+                            </div>
+                            <div className="text-sm text-gray-700 whitespace-pre-line mb-3">
+                              <p>Great work on this case! Keep it up!</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </>

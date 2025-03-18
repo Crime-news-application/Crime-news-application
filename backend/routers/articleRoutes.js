@@ -13,7 +13,7 @@ const {
   getArticlesJenan,
   getSavedArticles,
   getLatestReadingForUser,
-  // getTop5Articles,
+  // getTop5Articles
 } = require("../controllers/articleController");
 const upload = require("../config/multer");
 

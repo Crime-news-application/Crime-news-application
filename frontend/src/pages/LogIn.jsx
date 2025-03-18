@@ -200,7 +200,6 @@ const Login = () => {
                 href="/forgot-password"
                 className="text-[#61090b] hover:text-red-700"
               >
-                Reset password
               </a>
             </div>
           </div>
