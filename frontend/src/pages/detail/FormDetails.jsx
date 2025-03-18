@@ -37,6 +37,7 @@ function FormDetails() {
         }
 
         const data = await response.json();
+        console.log(data);
         setFormData(data);
         setIsLoading(false);
       } catch (error) {
@@ -201,6 +202,15 @@ function FormDetails() {
     fetchComments();
   }, [id]);
 
+  // Function to convert YouTube URL to embed URL
+  const getEmbedUrl = (url) => {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    const videoId = match && match[2].length === 11 ? match[2] : null;
+    return `https://www.youtube.com/embed/${videoId}`;
+  };
+
   if (loading) {
     return <p>Loading comments...</p>;
   }
@@ -280,7 +290,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://localhost:5173/articledetail/:id"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -300,7 +310,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://localhost:5173/articledetail/:id"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -320,7 +330,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://localhost:5173/articledetail/:id"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -340,7 +350,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://localhost:5173/articledetail/:id"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -361,7 +371,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://localhost:5173/articledetail/:id"
+                  xmlns="http://http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -378,7 +388,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://localhost:5173/articledetail/:id"
+                  xmlns="http://http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -403,7 +413,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://localhost:5173/articledetail/:id"
+                  xmlns="http://http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -419,6 +429,122 @@ function FormDetails() {
             </div>
           </div>
         </header>
+
+        {/* Insert the Case Media Section Here */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Case Media
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Featured Image */}
+                {formData.featuredImage && (
+                  <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="relative aspect-w-16 aspect-h-9">
+                      <img
+                        src={`http://localhost:5000/${formData.featuredImage}`}
+                        alt="Case Evidence"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-3 bg-gray-50">
+                      <p className="text-sm text-gray-700 font-medium">
+                        Case Evidence Photo
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formData.location?.city},{" "}
+                        {formatDate(formData.publishDate)}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Video Content */}
+                {formData.mediaSource && formData.mediaSource.length > 0 && (
+                  <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="relative aspect-w-16 aspect-h-9">
+                      <iframe
+                        src={getEmbedUrl(formData.mediaSource[0])}
+                        title="Case Media"
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                    <div className="p-3 bg-gray-50">
+                      <p className="text-sm text-gray-700 font-medium">
+                        Related Video Evidence
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        <span className="inline-flex items-center">
+                          <svg
+                            className="w-3 h-3 mr-1 text-gray-500"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                            <path
+                              fillRule="evenodd"
+                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                              clipRule="evenodd"
+                            ></path>
+                          </svg>
+                          Officer footage
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Additional Media Controls */}
+              {(formData.featuredImage ||
+                (formData.mediaSource && formData.mediaSource.length > 0)) && (
+                <div className="mt-4 flex justify-end space-x-3">
+                  <button className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    View All Media
+                  </button>
+                  <button className="inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    Download Media
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
 
         {/* Main Content Area */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -564,7 +690,6 @@ function FormDetails() {
               </div>
 
               {/* Case Timeline */}
-           
 
               {/* File Gallery */}
               {files.length > 0 && (
@@ -738,211 +863,310 @@ function FormDetails() {
             </div>
           </div>
 
-    {/* Add Comment Form */}
-    <div className="p-6 border-b border-gray-100 bg-gray-50">
-      <div className="flex items-start space-x-4">
-        <div className="flex-shrink-0">
-          <img 
-            className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow"
-            src="https://ui-avatars.com/api/?background=random&size=100&font-size=0.4"
-            alt="Your avatar"
-          />
-        </div>
-        <div className="min-w-0 flex-1">
-          {error && (
-            <div className="mb-3 rounded-md bg-red-50 p-3">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
+          {/* Add Comment Form */}
+          <div className="p-6 border-b border-gray-100 bg-gray-50">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <img
+                  className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow"
+                  src="https://ui-avatars.com/api/?background=random&size=100&font-size=0.4"
+                  alt="Your avatar"
+                />
               </div>
-            </div>
-          )}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
-            <textarea
-              rows="4"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              className="block w-full py-4 px-5 border-0 resize-none focus:ring-0 text-gray-700"
-              placeholder="Share your thoughts on this case..."
-            ></textarea>
-            <div className="px-5 py-3 bg-white flex justify-between items-center border-t border-gray-100">
-              <div className="flex items-center space-x-4">
-                <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
-                <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                  </svg>
-                </button>
-              </div>
-              <button
-                onClick={handleAddComment}
-                disabled={loading || !commentText.trim()}
-                className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#b21e23] hover:bg-[#9a1a1e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b21e23] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Posting...
-                  </>
-                ) : (
-                  "Post Comment"
+              <div className="min-w-0 flex-1">
+                {error && (
+                  <div className="mb-3 rounded-md bg-red-50 p-3">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg
+                          className="h-5 w-5 text-red-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm text-red-700">{error}</p>
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </button>
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+                  <textarea
+                    rows="4"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    className="block w-full py-4 px-5 border-0 resize-none focus:ring-0 text-gray-700"
+                    placeholder="Share your thoughts on this case..."
+                  ></textarea>
+                  <div className="px-5 py-3 bg-white flex justify-between items-center border-t border-gray-100">
+                    <div className="flex items-center space-x-4">
+                      <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </button>
+                      <button className="p-1 rounded-full text-gray-500 hover:text-gray-700">
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleAddComment}
+                      disabled={loading || !commentText.trim()}
+                      className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#b21e23] hover:bg-[#9a1a1e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b21e23] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {loading ? (
+                        <>
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Posting...
+                        </>
+                      ) : (
+                        "Post Comment"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    {/* Comments List */}
-    <div className="divide-y divide-gray-100">
-      {comments.length === 0 ? (
-        <div className="text-center py-14">
-          <svg className="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-          </svg>
-          <h3 className="mt-4 text-lg font-medium text-gray-900">No comments yet</h3>
-          <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-            Be the first to share your thoughts on this case. Your insights could help shed light on this investigation.
-          </p>
-        </div>
-      ) : (
-        <>
-          {comments.map((comment, index) => (
-            <div key={comment._id} className="py-6 px-6">
-              <div className="flex space-x-4">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-12 w-12 rounded-full object-cover border-2 border-white shadow"
-                    src={`https://ui-avatars.com/api/?name=${comment.author.username}&background=random&size=100&font-size=0.4`}
-                    alt={comment.author.username}
+          {/* Comments List */}
+          <div className="divide-y divide-gray-100">
+            {comments.length === 0 ? (
+              <div className="text-center py-14">
+                <svg
+                  className="mx-auto h-16 w-16 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
                   />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-base font-bold text-gray-900 hover:underline cursor-pointer">
-                      {comment.author?.username || "Anonymous"}
-                    </h4>
-                    <div className="text-xs text-gray-500 flex items-center">
-                      <time dateTime={comment.createdAt}>
-                        {new Date(comment.createdAt).toLocaleDateString(undefined, {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </time>
-                      <span className="mx-1.5">·</span>
-                      <time dateTime={comment.createdAt}>
-                        {new Date(comment.createdAt).toLocaleTimeString(undefined, {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </time>
-                      <div className="ml-2 relative">
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-sm text-gray-700 whitespace-pre-line mb-3">
-                    <p>{comment.text}</p>
-                  </div>
-                  <div className="flex items-center space-x-4 text-sm">
-                    <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                      </svg>
-                      <span>Like</span>
-                    </button>
-                    <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                      </svg>
-                      <span>Reply</span>
-                    </button>
-                    <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                      </svg>
-                      <span>Share</span>
-                    </button>
-                    <button className="flex items-center text-gray-500 hover:text-gray-700">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
-                      </svg>
-                      <span>Report</span>
-                    </button>
-                  </div>
-                </div>
+                </svg>
+                <h3 className="mt-4 text-lg font-medium text-gray-900">
+                  No comments yet
+                </h3>
+                <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">
+                  Be the first to share your thoughts on this case. Your
+                  insights could help shed light on this investigation.
+                </p>
               </div>
-              
-              {/* Nested reply example (you can conditionally show this) */}
-              {index === 0 && (
-                <div className="ml-16 mt-6 pl-4 border-l-2 border-gray-200">
-                  <div className="flex space-x-3">
-                    <div className="flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full object-cover border-2 border-white shadow"
-                        src="https://ui-avatars.com/api/?name=John+Smith&background=random&size=100&font-size=0.4"
-                        alt="John Smith"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="text-sm font-semibold text-gray-900 hover:underline cursor-pointer">
-                          John Smith
-                        </h4>
-                        <div className="text-xs text-gray-500">
-                          <time>4 hours ago</time>
+            ) : (
+              <>
+                {comments.map((comment, index) => (
+                  <div key={comment._id} className="py-6 px-6">
+                    <div className="flex space-x-4">
+                      <div className="flex-shrink-0">
+                        <img
+                          className="h-12 w-12 rounded-full object-cover border-2 border-white shadow"
+                          src={`https://ui-avatars.com/api/?name=${comment.author.username}&background=random&size=100&font-size=0.4`}
+                          alt={comment.author.username}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="text-base font-bold text-gray-900 hover:underline cursor-pointer">
+                            {comment.author?.username || "Anonymous"}
+                          </h4>
+                          <div className="text-xs text-gray-500 flex items-center">
+                            <time dateTime={comment.createdAt}>
+                              {new Date(comment.createdAt).toLocaleDateString(
+                                undefined,
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                }
+                              )}
+                            </time>
+                            <span className="mx-1.5">·</span>
+                            <time dateTime={comment.createdAt}>
+                              {new Date(comment.createdAt).toLocaleTimeString(
+                                undefined,
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
+                            </time>
+                            <div className="ml-2 relative">
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-sm text-gray-700 whitespace-pre-line mb-3">
+                          <p>{comment.text}</p>
+                        </div>
+                        <div className="flex items-center space-x-4 text-sm">
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                              />
+                            </svg>
+                            <span>Like</span>
+                          </button>
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                              />
+                            </svg>
+                            <span>Reply</span>
+                          </button>
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                              />
+                            </svg>
+                            <span>Share</span>
+                          </button>
+                          <button className="flex items-center text-gray-500 hover:text-gray-700">
+                            <svg
+                              className="h-4 w-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+                              />
+                            </svg>
+                            <span>Report</span>
+                          </button>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-700 whitespace-pre-line mb-3">
-                        <p>Great work on this case! Keep it up!</p>
-                      </div>
-```
                     </div>
+
+                    {/* Nested reply example (you can conditionally show this) */}
+                    {index === 0 && (
+                      <div className="ml-16 mt-6 pl-4 border-l-2 border-gray-200">
+                        <div className="flex space-x-3">
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-10 w-10 rounded-full object-cover border-2 border-white shadow"
+                              src="https://ui-avatars.com/api/?name=John+Smith&background=random&size=100&font-size=0.4"
+                              alt="John Smith"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="text-sm font-semibold text-gray-900 hover:underline cursor-pointer">
+                                John Smith
+                              </h4>
+                              <div className="text-xs text-gray-500">
+                                <time>4 hours ago</time>
+                              </div>
+                            </div>
+                            <div className="text-sm text-gray-700 whitespace-pre-line mb-3">
+                              <p>Great work on this case! Keep it up!</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </>
-      )}
-    </div>
-  </div>
-</section>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      </section>
     </>
   );
 }
