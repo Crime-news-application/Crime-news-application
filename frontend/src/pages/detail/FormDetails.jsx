@@ -37,6 +37,7 @@ function FormDetails() {
         }
 
         const data = await response.json();
+        console.log(data);
         setFormData(data);
         setIsLoading(false);
       } catch (error) {
@@ -201,6 +202,15 @@ function FormDetails() {
     fetchComments();
   }, [id]);
 
+  // Function to convert YouTube URL to embed URL
+  const getEmbedUrl = (url) => {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    const videoId = match && match[2].length === 11 ? match[2] : null;
+    return `https://www.youtube.com/embed/${videoId}`;
+  };
+
   if (loading) {
     return <p>Loading comments...</p>;
   }
@@ -280,7 +290,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -300,7 +310,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -320,7 +330,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -340,7 +350,7 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="http://http://localhost:5173/articledetail/:id"
                   >
                     <path
                       strokeLinecap="round"
@@ -361,7 +371,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -378,7 +388,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -403,7 +413,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -421,6 +431,28 @@ function FormDetails() {
         </header>
 
         {/* Main Content Area */}
+        {formData.featuredImage && (
+          <div className="mb-6">
+            <img
+              src={`http://localhost:5000/${formData.featuredImage}`}
+              alt="Featured"
+              className="w-full h-auto rounded-md"
+            />
+          </div>
+        )}
+        {formData.mediaSource && formData.mediaSource.length > 0 && (
+          <div className="mb-6">
+            <iframe
+              width="560"
+              height="315"
+              src={getEmbedUrl(formData.mediaSource[0])}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left Column - Main Content */}
@@ -695,7 +727,7 @@ function FormDetails() {
                       <div className="flex-shrink-0">
                         <svg
                           className="h-5 w-5 text-red-400"
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="http://http://localhost:5173/articledetail/:id"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -728,7 +760,7 @@ function FormDetails() {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="http://http://localhost:5173/articledetail/:id"
                         >
                           <path
                             strokeLinecap="round"
@@ -744,7 +776,7 @@ function FormDetails() {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="http://http://localhost:5173/articledetail/:id"
                         >
                           <path
                             strokeLinecap="round"
@@ -764,7 +796,7 @@ function FormDetails() {
                         <>
                           <svg
                             className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns="http://http://localhost:5173/articledetail/:id"
                             fill="none"
                             viewBox="0 0 24 24"
                           >
@@ -803,7 +835,7 @@ function FormDetails() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://http://localhost:5173/articledetail/:id"
                 >
                   <path
                     strokeLinecap="round"
@@ -864,7 +896,7 @@ function FormDetails() {
                                   className="h-4 w-4"
                                   fill="currentColor"
                                   viewBox="0 0 20 20"
-                                  xmlns="http://www.w3.org/2000/svg"
+                                  xmlns="http://http://localhost:5173/articledetail/:id"
                                 >
                                   <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                                 </svg>
@@ -882,7 +914,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://http://localhost:5173/articledetail/:id"
                             >
                               <path
                                 strokeLinecap="round"
@@ -899,7 +931,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://http://localhost:5173/articledetail/:id"
                             >
                               <path
                                 strokeLinecap="round"
@@ -916,7 +948,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://http://localhost:5173/articledetail/:id"
                             >
                               <path
                                 strokeLinecap="round"
@@ -933,7 +965,7 @@ function FormDetails() {
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://http://localhost:5173/articledetail/:id"
                             >
                               <path
                                 strokeLinecap="round"

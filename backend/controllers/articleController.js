@@ -4,6 +4,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const Comment = require("../models/comment");
 const User = require("../models/user");
+const upload = require("../config/multer");
 
 // Get all articles with filters
 const getArticlesJenan = async (req, res) => {
@@ -12,7 +13,7 @@ const getArticlesJenan = async (req, res) => {
     let query = {};
     if (category) query.categories = category;
 
-// let articles = Article.find(query).populate("author");
+    // let articles = Article.find(query).populate("author");
     let articles = Article.find(query);
 
     // Sorting
@@ -145,8 +146,8 @@ const getTop5Articles = async (req, res) => {
     const articles = await Article.find().sort({ views: -1 }).limit(5);
     res.json(articles);
   } catch (error) {
-    console.error('Error fetching top 5 articles:', error);
-    res.status(500).json({ message: 'Error fetching top 5 articles', error });
+    console.error("Error fetching top 5 articles:", error);
+    res.status(500).json({ message: "Error fetching top 5 articles", error });
   }
 };
 
@@ -159,29 +160,39 @@ function getUserIdFromToken(token) {
   }
 }
 
-async function createArticle(req, res) {
-  // Extract token from the Authorization header
+const createArticle = async (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Authentication required" });
   }
 
-  const token = authHeader.split(" ")[1]; // Get the token after "Bearer "
-
+  const token = authHeader.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "Authentication required" });
   }
 
   try {
-    const authorId = getUserIdFromToken(token); // Decode the token to get the user ID
+    const authorId = getUserIdFromToken(token);
 
     const newArticle = new Article({
       title: req.body.title,
-      content: req.body.content,
+      content: {
+        description: req.body.description,
+        victimInfo: req.body.victimInfo,
+        suspectInfo: req.body.suspectInfo,
+        weaponsUsed: req.body.weaponsUsed,
+        suicideDetails: req.body.suicideDetails,
+        evidenceNotes: req.body.evidenceNotes,
+        witnessReports: req.body.witnessReports,
+        officerInCharge: req.body.officerInCharge,
+        caseStatus: req.body.caseStatus,
+        publicRisk: req.body.publicRisk,
+        relatedCases: req.body.relatedCases,
+      },
       author: authorId,
       categories: req.body.categories,
       tags: req.body.tags,
-      featuredImage: req.body.featuredImage,
+      featuredImage: req.file ? req.file.path : null, // Save the file path
       mediaSource: req.body.mediaSource,
       status: req.body.status || "Pending",
       location: req.body.location,
@@ -192,7 +203,9 @@ async function createArticle(req, res) {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-}
+};
+
+module.exports = { createArticle };
 
 const getArticleById = async (req, res) => {
   try {
@@ -436,7 +449,6 @@ const getLatestReadingForUser = async (req, res) => {
   }
 };
 
-
 module.exports = {
   getArticles,
   createArticle,
@@ -449,7 +461,7 @@ module.exports = {
   rejectArticle,
   getArticlesJenan,
   getSavedArticles,
-  getLatestReadingForUser
+  getLatestReadingForUser,
 
   // getTop5Articles,
 };

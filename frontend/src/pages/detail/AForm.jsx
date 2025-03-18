@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios for making HTTP requests
+import axios from "axios";
 
 function AForm() {
   const [categories, setCategories] = useState("murder");
@@ -21,11 +21,11 @@ function AForm() {
     relatedCases: "",
     mediaSource: "",
   });
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null); // Single file for featuredImage
   const [isUploading, setIsUploading] = useState(false);
   const [formStep, setFormStep] = useState(1);
-  const [error, setError] = useState(null); // State for error handling
-  const [isSubmitting, setIsSubmitting] = useState(false); // State for submission loading
+  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -40,75 +40,76 @@ function AForm() {
   const handleFileChange = (e) => {
     setIsUploading(true);
     setTimeout(() => {
-      setFiles(Array.from(e.target.files));
+      setFile(e.target.files[0]); // Store the selected file
       setIsUploading(false);
     }, 1500);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
+  e.preventDefault();
+  setIsSubmitting(true);
+  setError(null);
 
-    try {
-      // Retrieve the token from local storage
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        throw new Error("No token found. Please log in.");
-      }
-
-      // Map frontend keys to backend keys
-      const payload = {
-        title: formData.title,
-        content: {
-          description: formData.description,
-          victimInfo: formData.victimInfo,
-          suspectInfo: formData.suspectInfo,
-          weaponsUsed: formData.weaponsUsed,
-          suicideDetails: formData.suicideDetails,
-          evidenceNotes: formData.evidenceNotes,
-          witnessReports: formData.witnessReports,
-          officerInCharge: formData.officerInCharge,
-          caseStatus: formData.caseStatus,
-          publicRisk: formData.publicRisk,
-          relatedCases: formData.relatedCases,
-        },
-        categories: categories, // Use categories instead of categories
-        tags: [categories], // Add categories as a tag
-        mediaSource: [formData.mediaSource], // Convert mediaSource to an array
-        location: {
-          city: formData.location.split(",")[0]?.trim(), // Extract city from location
-          country: formData.location.split(",")[1]?.trim(), // Extract country from location
-        },
-      };
-
-      // Send the POST request to the API with the token in the header
-      const response = await axios.post(
-        "http://localhost:5000/api/articles/add-articles",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-          },
-          withCredentials: true, // Optional: Only needed if you're using cookies
-        }
-      );
-
-      // Handle success
-      if (response.status === 201) {
-        alert("Article submitted successfully!");
-        navigate("/details"); // Navigate to the details page
-      }
-    } catch (err) {
-      // Handle errors
-      setError(
-        err.response?.data?.message || "An error occurred. Please try again."
-      );
-    } finally {
-      setIsSubmitting(false);
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found. Please log in.");
     }
-  };
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("victimInfo", formData.victimInfo);
+    formDataToSend.append("suspectInfo", formData.suspectInfo);
+    formDataToSend.append("weaponsUsed", formData.weaponsUsed);
+    formDataToSend.append("suicideDetails", formData.suicideDetails);
+    formDataToSend.append("evidenceNotes", formData.evidenceNotes);
+    formDataToSend.append("witnessReports", formData.witnessReports);
+    formDataToSend.append("officerInCharge", formData.officerInCharge);
+    formDataToSend.append("caseStatus", formData.caseStatus);
+    formDataToSend.append("publicRisk", formData.publicRisk);
+    formDataToSend.append("relatedCases", formData.relatedCases);
+    formDataToSend.append("categories", categories);
+    formDataToSend.append("tags", JSON.stringify([categories]));
+    formDataToSend.append("mediaSource", formData.mediaSource);
+    formDataToSend.append(
+      "location",
+      JSON.stringify({
+        city: formData.location.split(",")[0]?.trim(),
+        country: formData.location.split(",")[1]?.trim(),
+      })
+    );
+    if (file) {
+      formDataToSend.append("featuredImage", file);
+    }
+
+    // Log FormData for debugging
+    console.log([...formDataToSend.entries()]);
+
+    const response = await axios.post(
+      "http://localhost:5000/api/articles/add-articles",
+      formDataToSend,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      alert("Article submitted successfully!");
+    }
+  } catch (err) {
+    console.error("Error submitting form:", err.response?.data || err.message);
+    setError(
+      err.response?.data?.message || "An error occurred. Please try again."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const nextStep = () => {
     setFormStep(formStep + 1);
@@ -583,7 +584,7 @@ function AForm() {
                     htmlFor="files"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Upload Files
+                    Upload Featured Image
                   </label>
                   <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                     <div className="space-y-1 text-center">
@@ -606,12 +607,11 @@ function AForm() {
                           htmlFor="files"
                           className="relative cursor-pointer bg-white rounded-md font-medium text-[#b21e23] hover:text-[#9c1b1f] focus-within:outline-none"
                         >
-                          <span>Upload images or documents</span>
+                          <span>Upload an image</span>
                           <input
                             id="files"
                             name="files"
                             type="file"
-                            multiple
                             className="sr-only"
                             onChange={handleFileChange}
                           />
@@ -619,7 +619,7 @@ function AForm() {
                         <p className="pl-1">or drag and drop</p>
                       </div>
                       <p className="text-xs text-gray-500">
-                        PNG, JPG, PDF up to 10MB each
+                        PNG, JPG, GIF up to 10MB
                       </p>
                     </div>
                   </div>
@@ -629,14 +629,14 @@ function AForm() {
                         <div className="bg-[#b21e23] h-2.5 rounded-full w-2/3 animate-pulse"></div>
                       </div>
                       <p className="text-xs text-gray-500 mt-1">
-                        Uploading files...
+                        Uploading file...
                       </p>
                     </div>
                   )}
-                  {files.length > 0 && !isUploading && (
+                  {file && !isUploading && (
                     <div className="mt-2">
                       <p className="text-sm text-gray-700">
-                        {files.length} file(s) selected
+                        1 file selected: {file.name}
                       </p>
                     </div>
                   )}
