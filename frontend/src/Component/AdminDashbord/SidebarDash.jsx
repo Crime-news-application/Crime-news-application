@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  HomeIcon,
+  RectangleGroupIcon,
   UserCircleIcon,
   ChatBubbleLeftIcon,
   ArrowRightOnRectangleIcon,
@@ -26,12 +26,12 @@ const SidebarDoners = () => {
     {
       name: "Subscription Card Form",
       path: "/subformDash",
-      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
+      icon: <DocumentTextIcon className="w-5 h-5" />,
     },
     {
-      name: "Articls Cards",
+      name: "Articls management",
       path: "/articlescardsDash",
-      icon: <DocumentTextIcon className="h-6 w-6 text-white" />,
+      icon: <RectangleGroupIcon className="h-6 w-6 text-white" />,
     },
     {
       name: "Users",
@@ -42,6 +42,11 @@ const SidebarDoners = () => {
       name: "Posts",
       path: "/postform",
       icon: <PencilIcon className="w-5 h-5" />,
+    },
+    {
+      name: "Conatact",
+      path: "/conatactdash",
+      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
     },
   ];
 
@@ -100,7 +105,7 @@ const SidebarDoners = () => {
 
         {/* زر تسجيل الخروج */}
         <NavLink
-          to="/sign-in"
+          to="/"
           className="mt-auto flex justify-center items-center gap-2 p-3 rounded-md bg-[var(--primary-color)] hover:bg-red-700 transition"
         >
           <ArrowRightOnRectangleIcon className="w-5 h-5" /> <span>Logout</span>
