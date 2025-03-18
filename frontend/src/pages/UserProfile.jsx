@@ -6,7 +6,7 @@ const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [userComments, setUserComments] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
-  const [readingHistory, setReadingHistory] = useState([]);// New state
+  const [readingHistory, setReadingHistory] = useState([]); // New state
   const [tabValue, setTabValue] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({});
@@ -28,7 +28,7 @@ const UserProfile = () => {
     if (user) {
       fetchUserComments();
       fetchSavedArticles();
-      fetchReadingHistory(); // Fetch latest reading
+      fetchReadingHistory(); // Fetch latest reading history
       setLoading(false);
     }
   }, [user]);
@@ -127,46 +127,49 @@ const UserProfile = () => {
     console.log(articleId);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(
+      await axios.delete(
         `http://localhost:5000/api/saved/article/remove-saved-article/${articleId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      // إذا كانت العملية ناجحة، حدث حالة savedArticles
+      // Update state to remove the deleted article
       setSavedArticles((prevArticles) =>
         prevArticles.filter((article) => article._id !== articleId)
       );
 
       console.log("✅ Article deleted successfully");
-    } 
-    
-    catch (error) {
+    } catch (error) {
       console.error(
         "❌ Error removing saved article:",
         error.response?.data || error.message
       );
     }
   };
-  //bilal remove comment code (god forgive me)
-  const handleRemovecomment = async (commentId) => {
-    console.log(commentId);
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.delete(
-        `http://localhost:5000/api/comment/remove-comment/${commentId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-    } catch (error) {
-      console.error(
-        "❌ Error removing comment:",
-        error.response?.data || error.message
-      );
-    }
-  };
+const handleRemovecomment = async (articleId, commentId) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.delete(
+      `http://localhost:5000/api/articles/delete-article/${articleId}/${commentId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    // Update state to remove the deleted comment
+    setUserComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== commentId)
+    );
+    console.log("✅ Comment deleted successfully");
+  } catch (error) {
+    console.error(
+      "❌ Error removing comment:",
+      error.response?.data || error.message
+    );
+  }
+};
+
+
 
   const handleEdit = () => {
     setEditedUser({
@@ -239,10 +242,6 @@ const UserProfile = () => {
       minute: "2-digit",
     };
     return new Date(dateString).toLocaleDateString("en-US", options);
-  };
-
-  const handleDeleteComment = (commentId) => {
-    console.log("Delete comment", commentId);
   };
 
   if (loading) {
@@ -373,9 +372,10 @@ const UserProfile = () => {
                             onClick={() =>
                               handleRemoveSavedArticle(article._id)
                             }
-                            className="absolute top-3 right-3 bg-red-600 text-white py-1 px-3 rounded-md hover:bg-red-700 transition duration-300"
+                            className="absolute top-3 right-3 text-red-600 hover:text-red-800"
+                            title="Remove saved article"
                           >
-                            Remove
+                            🗑️
                           </button>
                         </div>
                       ))}
@@ -443,7 +443,12 @@ const UserProfile = () => {
                             </p>
                           </div>
                           <button
-                            onClick={() => handleRemovecomment(comment._id)}
+                            onClick={() =>
+                              handleRemovecomment(
+                                comment.articleId,
+                                comment._id
+                              )
+                            }
                             className="absolute right-2 top-2 text-red-600 hover:text-red-800"
                             title="Delete statement"
                           >
