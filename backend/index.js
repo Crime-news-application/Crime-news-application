@@ -13,6 +13,7 @@ const messageroutes = require("./routers/messageroutes");
 const postRoutes = require('./routers/postRoutes');
 const profileRoutes = require("./routers/profileRoutes");
 const savedArticle = require('./routers/savedArticleRoutes');
+const commentRoutes = require('./routers/commentRoutes');
 
 const app = express();
 
@@ -53,8 +54,8 @@ app.use("/api/articles", articleRoutes);
 app.use('/api/posts', postRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/profile", profileRoutes);
-
 app.use("/api/saved/article", savedArticle);
+app.use("/api/comment", commentRoutes);
 
 // 404 handler
 app.use((req, res) => {

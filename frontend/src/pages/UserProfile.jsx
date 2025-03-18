@@ -17,7 +17,7 @@ const UserProfile = () => {
   const tabs = [
     { id: 0, label: "Saved Articles", icon: "📑" },
     { id: 1, label: "Recent Activity", icon: "🕒" },
-    { id: 2, label: "Statements", icon: "💬" },
+    { id: 2, label: "Comments", icon: "💬" },
   ];
 
   useEffect(() => {
@@ -133,9 +133,36 @@ const UserProfile = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-    } catch (error) {
+
+      // إذا كانت العملية ناجحة، حدث حالة savedArticles
+      setSavedArticles((prevArticles) =>
+        prevArticles.filter((article) => article._id !== articleId)
+      );
+
+      console.log("✅ Article deleted successfully");
+    } 
+    
+    catch (error) {
       console.error(
         "❌ Error removing saved article:",
+        error.response?.data || error.message
+      );
+    }
+  };
+  //bilal remove comment code (god forgive me)
+  const handleRemovecomment = async (commentId) => {
+    console.log(commentId);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:5000/api/comment/remove-comment/${commentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (error) {
+      console.error(
+        "❌ Error removing comment:",
         error.response?.data || error.message
       );
     }
@@ -416,7 +443,7 @@ const UserProfile = () => {
                             </p>
                           </div>
                           <button
-                            onClick={() => handleDeleteComment(comment._id)}
+                            onClick={() => handleRemovecomment(comment._id)}
                             className="absolute right-2 top-2 text-red-600 hover:text-red-800"
                             title="Delete statement"
                           >

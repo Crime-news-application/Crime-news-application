@@ -190,6 +190,8 @@ async function createArticle(req, res) {
     // const savedArticle = await newArticle.save();
     const savedArticle = newArticle.save();
     res.status(201).json(savedArticle);
+
+    
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
