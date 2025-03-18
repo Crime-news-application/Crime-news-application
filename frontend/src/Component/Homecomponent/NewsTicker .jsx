@@ -47,7 +47,7 @@ const NewsTicker = () => {
       };
 
     fetchNews();
-    const interval = setInterval(fetchNews, 60000); 
+    const interval = setInterval(fetchNews, 3600000); 
 
     return () => clearInterval(interval);
   }, []);

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Play } from "lucide-react";
+import { Newspaper  } from "lucide-react";
 import hero from "../assets/Recording 2025-03-12 205117.mp4"; // تأكد أن اسم الملف صحيح
 import CategorySection from "../Component/Homecomponent/CategorySection";
 import heroVideo from "../assets/Recording 2025-03-14 140130.mp4"; // تأكد أن اسم الملف صحيح
@@ -12,6 +12,7 @@ import CybercrimeSection from "../Component/Homecomponent/CybercrimeSection"
 import { CrimePodcastSection } from "../Component/Homecomponent/CrimePodcastSection"
 import NewsTicker from "../Component/Homecomponent/NewsTicker ";
 import TrendReports from "../Component/Homecomponent/TrendReports";
+import VideoModal from "../Component/Homecomponent/VideoModal"
 // import crimeSceneImage from "../assets/crime-scene.png"; // تأكد من المسار الصحيح للصورة
 // import crimeSceneImage from "../assets/finger.jpg"; // تأكد من المسار الصحيح للصورة
 
@@ -132,11 +133,11 @@ useEffect(() => {
           {/* Buttons */}
           <div className="flex flex-wrap justify-center gap-4">
           <Link
-  to="/articles"
+  to="/ArticlesPage"
   className="flex items-center bg-[var(--primary-color)] text-white px-6 py-3 rounded hover:bg-[var(--button-hover)] transition-colors"
 >
-  <Play className="w-5 h-5 mr-2" />
-  Watch Latest Report
+  <Newspaper  className="w-5 h-5 mr-2" />
+  Latest Report
 </Link>
 
             <button
