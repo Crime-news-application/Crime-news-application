@@ -302,6 +302,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { jwtDecode } from "jwt-decode";
 import {
   FaCalendarAlt,
   FaEye,
@@ -320,6 +321,8 @@ const CategoryPage = () => {
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+    const [user, setUser] = useState("");
+  
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -349,6 +352,50 @@ const CategoryPage = () => {
 
     fetchArticles();
   }, [selectedCategory, sortOption]);
+
+  //كود محمود 
+   useEffect(() => {
+     const fetchUserProfile = async () => {
+       try {
+         // 🔥 1️⃣ Retrieve the token from localStorage
+         const token = localStorage.getItem("token");
+
+         if (!token) {
+           console.error("❌ No token found in localStorage");
+           return;
+         }
+
+         // 🔥 2️⃣ Decode the token to extract user ID
+         const decodedToken = jwtDecode(token); // Extracts { userId: "67d44acc1bdee5c049d5519e", iat: ..., exp: ... }
+
+         if (!decodedToken.userId) {
+           console.error("❌ No user ID found in token");
+           return;
+         }
+
+         console.log("✅ Extracted User ID from token:", decodedToken.userId);
+
+         // 🔥 3️⃣ Fetch user profile using token (No need to send user ID in request)
+         const response = await axios.get(
+           "http://localhost:5000/api/users/profile",
+           {
+             headers: {
+               Authorization: `Bearer ${token}`, // Send token in headers
+             },
+           }
+         );
+
+         console.log("✅ User profile fetched:", response.data);
+         setUser(response.data.user);
+       } catch (error) {
+         console.error(
+           "❌ Error fetching profile:",
+           error.response?.data || error.message
+         );
+       }
+     };
+     fetchUserProfile();
+   }, []);
 
   // Apply search filter
   useEffect(() => {
@@ -431,12 +478,14 @@ const CategoryPage = () => {
             />
             <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
-          <Link
-            to="/aform"
-            className="ml-4 bg-red-800 text-white py-3 px-6 rounded-md hover:bg-red-900 transition duration-300"
-          >
-            Create Article
-          </Link>
+          {user.role === "journalist" && (
+            <Link
+              to="/aform"
+              className="ml-4 bg-red-800 text-white py-3 px-6 rounded-md hover:bg-red-900 transition duration-300"
+            >
+              Create Article
+            </Link>
+          )}
         </div>
 
         {/* Categories Filter */}

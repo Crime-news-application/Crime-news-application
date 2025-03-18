@@ -298,7 +298,7 @@ const Overview = () => {
                   Views Count
                 </th>
                 <th scope="col" className="px-6 py-3 font-medium">
-                  Author
+                  username
                 </th>
                 <th scope="col" className="px-6 py-3 font-medium">
                   Publication Date
@@ -337,7 +337,7 @@ const Overview = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4">{article.views}</td>
-                  <td className="px-6 py-4">{article.author}</td>
+                  <td className="px-6 py-4">{article.author} </td>
                   <td className="px-6 py-4">
                     {new Date(article.publishDate).toLocaleDateString()}
                   </td>

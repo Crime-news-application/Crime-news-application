@@ -272,7 +272,7 @@ import TrendReports from "../Component/Homecomponent/TrendReports";
 import heroVideo from "../assets/Recording 2025-03-14 140130.mp4";
 
 const Home = () => {
-  const { t } = useTranslation();
+  const { t ,i18n} = useTranslation();
 
   // الحصول على عدد المقالات من الخادم
   const [articlesCount, setArticlesCount] = useState(0);
