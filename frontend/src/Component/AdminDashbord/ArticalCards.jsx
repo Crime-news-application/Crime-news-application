@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaSearch, FaFilter, FaCheck, FaTimes, FaBars } from "react-icons/fa";
 import axios from "axios";
-import ArticlePopup from "./Articlepopup";
+import ArticlePopup from "./ArticlePopup";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 

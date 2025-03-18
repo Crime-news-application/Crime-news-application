@@ -35,7 +35,7 @@ const ArticlePopup = ({ isOpen, onClose, article }) => {
         onMouseLeave={() => setIsPressing(false)}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#51a31d] to-[#3d8a0e] p-5 flex justify-between items-center">
+        <div className="bg-gradient-to-r from-[var(--primary-color)] to-[#3b0405] p-5 flex justify-between items-center">
           <h2 className="text-xl font-bold text-white">
             {article.title || "Article Details"}
           </h2>
@@ -70,7 +70,7 @@ const ArticlePopup = ({ isOpen, onClose, article }) => {
                 key={tabId}
                 className={`px-5 py-4 font-medium text-sm flex-1 transition-all duration-300 ${
                   isActive
-                    ? "text-[#51a31d] border-b-2 border-[#51a31d] bg-white"
+                    ? "text-[var(--primary-color)] border-b-2 border-[var(--primary-color)] bg-white"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
                 onClick={() => setActiveTab(tabId)}
@@ -101,10 +101,10 @@ const ArticlePopup = ({ isOpen, onClose, article }) => {
               ].map((item, index) => (
                 <div
                   key={index}
-                  className="p-4 ltr bg-white rounded-lg shadow-sm border border-gray-100 hover:border-[#51a31d] transition-colors"
+                  className="p-4 ltr bg-white rounded-lg shadow-sm border border-gray-100 hover:border-[var(--primary-color)] transition-colors"
                 >
                   <div className="flex ltr gap-2 items-center">
-                    <span className="text-[#51a31d] font-bold">
+                    <span className="text-[var(--primary-color)] font-bold">
                       {item.label}:
                     </span>
                     <span className="ltr  text-gray-700">{item.value}</span>
@@ -117,7 +117,7 @@ const ArticlePopup = ({ isOpen, onClose, article }) => {
           {activeTab === "content" && (
             <div className="space-y-6 text-left">
               <div className="p-5 bg-white rounded-lg shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold text-[#51a31d] mb-4 border-l-4 border-[#51a31d] pl-3">
+                <h3 className="text-lg font-semibold text-[var(--primary-color)] mb-4 border-l-4 border-[var(--primary-color)] pl-3">
                   Content
                 </h3>
                 <div

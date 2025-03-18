@@ -84,7 +84,7 @@ export function CrimePodcastSection() {
         <div className="flex flex-col items-start gap-4">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-              <span className="text-red-600">CRIME</span>CAST
+              <span className="text-[#61090b]">CRIME</span>CAST
             </h2>
             <p className="max-w-[700px] text-gray-700 md:text-xl">
               Dive into the world of true crime, cold cases, and forensic investigations.
@@ -96,7 +96,7 @@ export function CrimePodcastSection() {
               <button
                 key={tab}
                 className={`px-4 py-2 rounded ${
-                  activeTab === tab ? "bg-red-600 text-white" : "bg-gray-200"
+                  activeTab === tab ? "bg-[#61090b] text-white" : "bg-gray-200"
                 }`}
                 onClick={() => setActiveTab(tab)}
               >
@@ -136,7 +136,7 @@ function PodcastCard({ podcast, playingPodcast, setPlayingPodcast }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             <button
-              className="absolute bottom-4 right-4 h-12 w-12 rounded-full border-2 border-white bg-black/50 text-white hover:bg-red-600"
+              className="absolute bottom-4 right-4 h-12 w-12 rounded-full border-2 border-white bg-black/50 text-white hover:bg-[#61090b]"
               onClick={() => setPlayingPodcast(podcast.id)}
             >
               <Play className="h-6 w-6" />

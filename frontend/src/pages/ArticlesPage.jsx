@@ -576,7 +576,7 @@ const CategoryPage = () => {
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-t from-[#757070] to-transparent z-10"></div>
                     <img
-                      src={article.featuredImage}
+                      src={`http://localhost:5000/${article.featuredImage}`}
                       alt={article.title}
                       className="w-full h-48 object-cover brightness-75"
                     />

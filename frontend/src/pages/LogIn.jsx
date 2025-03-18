@@ -108,7 +108,7 @@ const Login = () => {
         color: "#ffffff",
         confirmButtonColor: "#61090b",
       }).then(() => {
-        navigate("/");
+         navigate(response.data.redirectUrl || "/");
       });
     } catch (error) {
       Swal.fire({
@@ -200,7 +200,6 @@ const Login = () => {
                 href="/forgot-password"
                 className="text-[#61090b] hover:text-red-700"
               >
-                Reset password
               </a>
             </div>
           </div>

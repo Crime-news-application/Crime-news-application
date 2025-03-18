@@ -6,13 +6,15 @@ const connectDB = require("./config/db");
 require("dotenv").config();
 //the routes :
 const articleRoutes = require("./routers/articleRoutes");
-
 const subscriptionRoutes = require("./routers/subscriptionRoutes");
 const paymentRoutes = require("./routers/paymentRoutes");
 const userRoutes = require("./routers/userRoutes");
 const messageroutes = require("./routers/messageroutes");
 const postRoutes = require('./routers/postRoutes');
+const profileRoutes = require("./routers/profileRoutes");
 const savedArticle = require('./routers/savedArticleRoutes');
+const commentRoutes = require('./routers/commentRoutes');
+const addbookmarkRoutes = require('./routers/addbookmarkRoutes');
 
 const app = express();
 
@@ -51,8 +53,12 @@ app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api/articles", articleRoutes);
 app.use('/api/posts', postRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/api/profile", profileRoutes);
 app.use("/api/saved/article", savedArticle);
-
+app.use("/api/comment", commentRoutes);
+//bookmarkadd بلال 
+app.use("/api/articles", addbookmarkRoutes);
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });

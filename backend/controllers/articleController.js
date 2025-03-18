@@ -4,6 +4,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const Comment = require("../models/comment");
 const User = require("../models/user");
+const upload = require("../config/multer");
 
 // Get all articles with filters
 const getArticlesJenan = async (req, res) => {
@@ -12,7 +13,7 @@ const getArticlesJenan = async (req, res) => {
     let query = {};
     if (category) query.categories = category;
 
-// let articles = Article.find(query).populate("author");
+    // let articles = Article.find(query).populate("author");
     let articles = Article.find(query);
 
     // Sorting
@@ -145,8 +146,8 @@ const getTop5Articles = async (req, res) => {
     const articles = await Article.find().sort({ views: -1 }).limit(5);
     res.json(articles);
   } catch (error) {
-    console.error('Error fetching top 5 articles:', error);
-    res.status(500).json({ message: 'Error fetching top 5 articles', error });
+    console.error("Error fetching top 5 articles:", error);
+    res.status(500).json({ message: "Error fetching top 5 articles", error });
   }
 };
 
@@ -159,29 +160,39 @@ function getUserIdFromToken(token) {
   }
 }
 
-async function createArticle(req, res) {
-  // Extract token from the Authorization header
+const createArticle = async (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Authentication required" });
   }
 
-  const token = authHeader.split(" ")[1]; // Get the token after "Bearer "
-
+  const token = authHeader.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "Authentication required" });
   }
 
   try {
-    const authorId = getUserIdFromToken(token); // Decode the token to get the user ID
-
+    const authorId = getUserIdFromToken(token);
+    console.log(authorId);
     const newArticle = new Article({
       title: req.body.title,
-      content: req.body.content,
+      content: {
+        description: req.body.description,
+        victimInfo: req.body.victimInfo,
+        suspectInfo: req.body.suspectInfo,
+        weaponsUsed: req.body.weaponsUsed,
+        suicideDetails: req.body.suicideDetails,
+        evidenceNotes: req.body.evidenceNotes,
+        witnessReports: req.body.witnessReports,
+        officerInCharge: req.body.officerInCharge,
+        caseStatus: req.body.caseStatus,
+        publicRisk: req.body.publicRisk,
+        relatedCases: req.body.relatedCases,
+      },
       author: authorId,
       categories: req.body.categories,
       tags: req.body.tags,
-      featuredImage: req.body.featuredImage,
+      featuredImage: req.file ? req.file.path : null, // Save the file path
       mediaSource: req.body.mediaSource,
       status: req.body.status || "Pending",
       location: req.body.location,
@@ -189,28 +200,58 @@ async function createArticle(req, res) {
 
     const savedArticle = await newArticle.save();
     res.status(201).json(savedArticle);
+    //bilal backward
+
+    await User.findByIdAndUpdate(authorId, {
+      $push: { articles: newArticle._id },
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-}
+};
+
+module.exports = { createArticle };
 
 const getArticleById = async (req, res) => {
   try {
     const articleId = req.params.id; // Extract the article ID from the request parameters
 
-    const article = await Article.findById(articleId); // Find the article by ID
-    //كود بلال عشان تزيد المشاهدات
-    await Article.findByIdAndUpdate(
-      articleId,
-      { $inc: { views: 1 } }, // زيادة عدد المشاهدات بمقدار 1
-      { new: true } // إرجاع الوثيقة المحدثة
-    ); //هي نهاية كود المشاهدات
+    // Extract the token from the Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+    const token = authHeader.split(" ")[1]; // Get the token after "Bearer "
+
+    // Decode the token to get the user ID
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    // Find the article by ID
+    const article = await Article.findById(articleId);
+
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
 
-    res.json(article); // Return the article
+    // Increase the article's views by 0.5
+    await Article.findByIdAndUpdate(
+      articleId,
+      { $inc: { views: 0.5 } }, // Increase views by 0.5
+      { new: true } // Return the updated document
+    );
+
+    // Add the article to the user's reading history
+    await User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { readingHistory: articleId } }, // Use $addToSet to avoid duplicates
+      { new: true }
+    );
+
+    // Return the article
+    res.json(article);
   } catch (error) {
+    console.error("❌ Error fetching article:", error);
     res.status(500).json({ message: "Error fetching article", error });
   }
 };
@@ -369,6 +410,49 @@ const getSavedArticles = async (req, res) => {
   }
 };
 
+const getLatestReadingForUser = async (req, res) => {
+  try {
+    // Extract userId from the JWT token
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    console.log("✅ Extracted User ID:", userId);
+
+    // Validate the user ID format
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    // Find the user and populate the readingHistory field
+    const user = await User.findById(userId)
+      .populate({
+        path: "readingHistory",
+        select: "title content createdAt views likes categories featuredImage", // Include the fields you need
+        options: { strictPopulate: false }, // Add this line to bypass the error
+      })
+      .exec();
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the reading history articles for the user
+    res.status(200).json({
+      message: "Reading history retrieved successfully",
+      readingHistory: user.readingHistory,
+    });
+  } catch (error) {
+    console.error("❌ Error retrieving reading history:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
 
 module.exports = {
   getArticles,
@@ -382,5 +466,7 @@ module.exports = {
   rejectArticle,
   getArticlesJenan,
   getSavedArticles,
-  getTop5Articles,
+  getLatestReadingForUser,
+
+  // getTop5Articles,
 };
