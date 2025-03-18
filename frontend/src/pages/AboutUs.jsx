@@ -58,7 +58,48 @@ export default function AboutPage() {
   };
 
 
+// statistice
+const [articlesCount, setArticlesCount] = useState(0);
+const [visitCount, setVisitCount] = useState(0);
+const [loading, setLoading] = useState(true);
 
+// جلب عدد المقالات من الباكند
+const fetchArticlesCount = async () => {
+  try {
+    const response = await axios.get("http://localhost:5000/api/articles/get");
+    console.log("Fetched articles:", response.data);
+    setArticlesCount(response.data.length);
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchArticlesCount();
+}, []);
+
+// تحديث عدد الزيارات
+useEffect(() => {
+  const storedVisitCount = localStorage.getItem("visitCount");
+  if (storedVisitCount) {
+    const newVisitCount = parseInt(storedVisitCount, 10) + 1;
+    setVisitCount(newVisitCount);
+    localStorage.setItem("visitCount", newVisitCount);
+  } else {
+    setVisitCount(1);
+    localStorage.setItem("visitCount", 1);
+  }
+}, []);
+
+// البيانات التي سيتم عرضها
+const stats = [
+  { number: articlesCount, label: "Cases Covered" },
+  { number: visitCount, label: "Global Correspondents" },
+  { number: "New", label: "Years Reporting" },
+  { number: "24/7", label: "News Coverage" },
+];
 
 
 
@@ -247,35 +288,36 @@ export default function AboutPage() {
 
 {/* Statistics Section with Bottom Background */}
 <div className="my-16 fade-in-section relative rounded-xl overflow-hidden">
-  {/* Background Image Positioned at Bottom */}
-  <div className="absolute inset-x-0 bottom-0 h-[250px] md:h-[300px] bg-cover bg-bottom" 
-       style={{ backgroundImage: 'url(https://i.pinimg.com/736x/46/bd/51/46bd510650795680870cd4efd9250605.jpg)' }}>
-  </div>
+      {/* صورة الخلفية */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-[250px] md:h-[300px] bg-cover bg-bottom"
+        style={{
+          backgroundImage:
+            "url(https://i.pinimg.com/736x/46/bd/51/46bd510650795680870cd4efd9250605.jpg)",
+        }}
+      ></div>
 
-  {/* Overlay Content */}
-  <div className="relative z-10 p-8 md:p-12 flex flex-col items-center">
-    <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">
-      By The Numbers
-    </h2>
+      {/* المحتوى */}
+      <div className="relative z-10 p-8 md:p-12 flex flex-col items-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">
+          By The Numbers
+        </h2>
 
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-      {[
-        { number: "250+", label: "Cases Covered" },
-        { number: "18", label: "Global Correspondents" },
-        { number: "12", label: "Years Reporting" },
-        { number: "24/7", label: "News Coverage" },
-      ].map(({ number, label }, index) => (
-        <div key={index} className="relative bg-transparent backdrop-blur-md p-4 md:p-6 rounded-lg border border-white/40 text-center">
-          <div className="relative z-10">
-            <div className="text-4xl font-bold text-white mb-2">{number}</div>
-            <div className="text-sm text-white">{label}</div>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          {stats.map(({ number, label }, index) => (
+            <div
+              key={index}
+              className="relative bg-transparent backdrop-blur-md p-4 md:p-6 rounded-lg border border-white/40 text-center"
+            >
+              <div className="relative z-10">
+                <div className="text-4xl font-bold text-white mb-2">{number}</div>
+                <div className="text-sm text-white">{label}</div>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
-  </div>
-</div>
-
 
         {/* Team Section */}
         <div className="my-16 fade-in-section">
