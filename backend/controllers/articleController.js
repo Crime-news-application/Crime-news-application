@@ -173,7 +173,7 @@ const createArticle = async (req, res) => {
 
   try {
     const authorId = getUserIdFromToken(token);
-
+    console.log(authorId);
     const newArticle = new Article({
       title: req.body.title,
       content: {
@@ -200,6 +200,11 @@ const createArticle = async (req, res) => {
 
     const savedArticle = await newArticle.save();
     res.status(201).json(savedArticle);
+    //bilal backward
+
+    await User.findByIdAndUpdate(authorId, {
+      $push: { articles: newArticle._id },
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

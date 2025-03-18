@@ -146,6 +146,63 @@ function FormDetails() {
     return typeMap[type] || "bg-gray-500 text-white";
   };
 
+
+
+//bilal addmark
+const handleAddToBookmark = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("You must be logged in to bookmark this article.");
+    }
+
+    const response = await axios.post(
+      `http://localhost:5000/api/articles/bookmark-article/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      alert("Article bookmarked successfully!");
+    }
+  } catch (error) {
+    console.error("Error bookmarking article:", error);
+    alert(error.response?.data?.message || "Failed to bookmark article.");
+  }
+};
+
+
+
+
+// const handleAddToBookmark = async () => {
+//   try {
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       throw new Error("You must be logged in to bookmark this article.");
+//     }
+
+//     const response = await axios.post(
+//       `http://localhost:5000/api/articles/bookmark-article/${id}`,
+//       {},
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     if (response.status === 200) {
+//       alert("Article bookmarked successfully!");
+//     }
+//   } catch (error) {
+//     console.error("Error bookmarking article:", error);
+//     alert(error.response?.data?.message || "Failed to bookmark article.");
+//   }
+// };
   const handleAddComment = async () => {
     try {
       setLoading(true);
@@ -342,7 +399,7 @@ function FormDetails() {
                   Gmail
                 </button>
                 <button
-                  onClick={handleExportPDF}
+                  onClick={handleAddToBookmark}
                   className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-md shadow flex items-center"
                 >
                   <svg
@@ -350,16 +407,16 @@ function FormDetails() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://http://localhost:5173/articledetail/:id"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
                     />
                   </svg>
-                  Export PDF
+                  Add to Bookmark
                 </button>
               </div>
             </div>

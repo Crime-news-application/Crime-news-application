@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function AForm() {
-  const [categories, setCategories] = useState("murder");
+  const [categories, setCategories] = useState("Murder");
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -92,7 +92,7 @@ function AForm() {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          // "Content-Type": "multipart/form-data",
         },
       }
     );
@@ -214,7 +214,7 @@ function AForm() {
                       onChange={handleChange}
                       className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-[#b21e23] focus:border-[#b21e23]"
                     >
-                      <option value="murder">Murder</option>
+                      <option value="Murder">Murder</option>
                       <option value="Theft">Theft</option>
                       <option value="Fraud">Fraud</option>
                       <option value="Cybercrime">Cybercrime</option>
