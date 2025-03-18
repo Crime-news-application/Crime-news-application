@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { ArrowUpRight, Clock, Eye } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { ArrowUpRight, Clock, Eye } from "lucide-react";
 
 const TrendReports = () => {
   const [articles, setArticles] = useState([]);
@@ -9,9 +9,7 @@ const TrendReports = () => {
     const fetchArticles = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/articles/getA?sortBy=most-viewed");
-        console.log("Fetched articles:", response.data); // ✅ تحقق من البيانات
         setArticles(response.data.slice(0, 5)); // ✅ أخذ أول 5 مقالات فقط
-
       } catch (error) {
         console.error("Error fetching articles:", error);
       }
@@ -20,91 +18,85 @@ const TrendReports = () => {
     fetchArticles();
   }, []);
 
-  console.log("Articles state:", articles); // ✅ تحقق مما إذا كانت الحالة تتغير
-
   if (!articles.length) {
     return <p className="text-gray-500">Loading articles...</p>;
   }
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white text-gray-900">
-    <h2 className="text-2xl font-bold border-b-2  border-[var(--primary-color)] inline-block  mb-6 mt-10 pt-4">
-      Latest Reports
-    </h2>
+      <h2 className="text-2xl font-bold border-b-2 border-[var(--primary-color)] inline-block mb-6 mt-10 pt-4">
+        Latest Reports
+      </h2>
 
-    {/* Featured Article - المقال الرئيسي الكبير */}
-    {articles[0] && (
-      <div className="bg-white rounded-md shadow-sm mb-6 flex flex-col md:flex-row">
-        <div className="relative w-full md:w-1/2">
-          <img
-            src={articles[0].imageUrl}
-            alt={articles[0].title}
-            className="w-full h-64 object-cover rounded-t-md md:rounded-l-md md:rounded-t-none"
-          />
-          <span className="absolute top-2 left-2 bg-[var(--primary-color)] text-white text-l px-2 py-1 rounded w-20 h-8">
-            police
-            {articles[0].tag}
-          </span>
-        </div>
-        <div className="p-6 w-full md:w-1/2 flex flex-col justify-between">
-          <h3 className="font-bold text-lg">{articles[0].title}</h3>
-          <p className="text-gray-600 text-sm mt-2">{articles[0].description}</p>
-          <div className="flex justify-between items-center mt-4">
-            <div className="flex items-center text-gray-500 text-xs">
-              <Clock className="h-4 w-4 mr-1" />
-              <span>{articles[0].time}</span>
-            </div>
-            <div className="flex items-center text-gray-500 text-xs">
-              <Eye className="h-4 w-4 mr-1" />
-              <span>{articles[0].views} views</span>
-            </div>
-          </div>
-          <button className="mt-4 bg-[var(--primary-color)] text-white px-4 py-2 text-sm w-40  h-10">
-            Read Full Report
-          </button>
-        </div>
-      </div>
-    )}
-
-    {/* Other Articles - المقالات الأخرى (صفين وكل صف يحتوي على مقالين) */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {articles.slice(1, 5).map((article) => (
-        <div key={article._id} className="bg-white rounded-md shadow-sm flex flex-col md:flex-row">
-          <div className="w-full md:w-1/3">
+      {/* المقال الرئيسي الكبير */}
+      {articles[0] && (
+        <div className="bg-white rounded-md shadow-sm mb-6 flex flex-col md:flex-row">
+          <div className="relative w-full md:w-1/2 h-64">
             <img
-              src={article.imageUrl}
-              alt={article.title}
-              className="w-full h-40 object-cover rounded-t-md md:rounded-l-md md:rounded-t-none"
+        src={`http://localhost:5000/${articles[0].featuredImage}`} // جلب الصورة من البيانات
+        alt={articles[0].title || "News thumbnail"} // تجنب خطأ alt فارغ
+              className="w-full h-full object-cover rounded-t-md md:rounded-l-md md:rounded-t-none"
             />
-          </div>
-          <div className="p-4 w-full md:w-2/3 flex flex-col justify-between">
-            <span className="bg-[var(--primary-color)] text-white text-xs text-center px-2 py-1 rounded h-5 w-15">
-              Police
-              {article.tag}
+            <span className="absolute top-2 left-2 bg-[var(--primary-color)] text-white text-l px-2 py-1 rounded w-20 h-8">
+              Police {articles[0].tag}
             </span>
-            <h3 className="font-bold text-md">{article.title}</h3>
-            <p className="text-gray-600 text-xs mt-1">{article.description}</p>
+          </div>
+          <div className="p-6 w-full md:w-1/2 flex flex-col justify-between">
+            <h3 className="font-bold text-lg">{articles[0].title}</h3>
+            <p className="text-gray-600 text-sm mt-2">{articles[0].description}</p>
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center text-gray-500 text-xs">
                 <Clock className="h-4 w-4 mr-1" />
-                <span>{article.time}</span>
+                <span>{articles[0].time}</span>
               </div>
               <div className="flex items-center text-gray-500 text-xs">
                 <Eye className="h-4 w-4 mr-1" />
-                <span>{article.views} views</span>
+                <span>{articles[0].views} views</span>
+              </div>
+            </div>
+            <button className="mt-4 bg-[var(--primary-color)] text-white px-4 py-2 text-sm w-40 h-10">
+              Read Full Report
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* المقالات الأخرى */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {articles.slice(1, 5).map((article) => (
+          <div key={article._id} className="bg-white rounded-md shadow-sm flex flex-col md:flex-row">
+            <div className="relative w-full md:w-1/3 h-64">
+              <img
+                src={article.imageUrl}
+                alt={article.title}
+                className="w-full h-full object-cover rounded-t-md md:rounded-l-md md:rounded-t-none"
+              />
+            </div>
+            <div className="p-4 w-full md:w-2/3 flex flex-col justify-between">
+              <span className="bg-[var(--primary-color)] text-white text-xs text-center px-2 py-1 rounded h-5 w-15">
+                Police {article.tag}
+              </span>
+              <h3 className="font-bold text-md">{article.title}</h3>
+              <p className="text-gray-600 text-xs mt-1">{article.description}</p>
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex items-center text-gray-500 text-xs">
+                  <Clock className="h-4 w-4 mr-1" />
+                  <span>{article.time}</span>
+                </div>
+                <div className="flex items-center text-gray-500 text-xs">
+                  <Eye className="h-4 w-4 mr-1" />
+                  <span>{article.views} views</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
   );
 };
 
 export default TrendReports;
-
-
 
 
 
