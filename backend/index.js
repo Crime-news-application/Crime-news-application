@@ -15,7 +15,7 @@ const profileRoutes = require("./routers/profileRoutes");
 const savedArticle = require('./routers/savedArticleRoutes');
 const commentRoutes = require('./routers/commentRoutes');
 const addbookmarkRoutes = require('./routers/addbookmarkRoutes');
-
+const bookmarkRoutes = require("./routers/bookmarkpost");
 const app = express();
 
 // Connect to the database
@@ -60,6 +60,8 @@ app.use("/api/comment", commentRoutes);
 //bookmarkadd بلال 
 app.use("/api/articles", addbookmarkRoutes);
 // 404 handler
+
+app.use("/api/bookmarks", bookmarkRoutes);
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
 });
