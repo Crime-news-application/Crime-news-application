@@ -49,7 +49,7 @@ app.use("/api/articles", articleRoutes);
 //
 app.use("/api/users", userRoutes);
 app.use("/app", messageroutes);
-app.use("/api/visits", visitRoutes);
+app.use("/api/visit", visitRoutes);
 
 app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);

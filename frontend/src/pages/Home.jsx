@@ -61,17 +61,20 @@ useEffect(() => {
   const fetchVisits = async () => {
     try {
       // ✅ تأكد أن الرقم لا يتم إعادة ضبطه
-      const response = await axios.get("http://localhost:5000/api/visits");
+      const response = await axios.get("http://localhost:5000/api/visit/visitor");
       setVisitCount(response.data.visitCount);
+      console.log("kk")
     } catch (error) {
       console.error("Error fetching visit count:", error);
     }
   };
+  console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
 
   // ✅ قم بزيادة العدد مرة واحدة فقط
   const incrementVisit = async () => {
     try {
-      await axios.post("http://localhost:5000/api/visits");
+      await axios.post("http://localhost:5000/api/visit/visitor");
+     
       fetchVisits(); // جلب العدد بعد الزيادة
     } catch (error) {
       console.error("Error incrementing visit count:", error);
@@ -79,6 +82,8 @@ useEffect(() => {
   };
 
   incrementVisit();
+  fetchVisits();
+  
 }, []); 
 
 // statsData with the updated articlesCount
