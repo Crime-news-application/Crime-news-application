@@ -306,9 +306,6 @@ const Overview = () => {
                 <th scope="col" className="px-6 py-3 font-medium">
                   Likes Count
                 </th>
-                <th scope="col" className="px-6 py-3 font-medium">
-                  Location
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -342,9 +339,6 @@ const Overview = () => {
                     {new Date(article.publishDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">{article.likes}</td>
-                  <td className="px-6 py-4">
-                    {article.location.city}, {article.location.country}
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -394,10 +388,6 @@ const Overview = () => {
                   <div>
                     <span className="font-semibold">Likes:</span>{" "}
                     {article.likes}
-                  </div>
-                  <div className="col-span-2">
-                    <span className="font-semibold">Location:</span>{" "}
-                    {article.location.city}, {article.location.country}
                   </div>
                 </div>
               </div>
