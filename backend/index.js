@@ -15,7 +15,8 @@ const profileRoutes = require("./routers/profileRoutes");
 const savedArticle = require('./routers/savedArticleRoutes');
 const commentRoutes = require('./routers/commentRoutes');
 const addbookmarkRoutes = require('./routers/addbookmarkRoutes');
-const bookmarkRoutes = require("./routers/bookmarkpost");
+const visitRoutes = require("./routers/visitRoutes"); // ✅ استيراد المسارات
+
 const app = express();
 
 // Connect to the database
@@ -48,6 +49,7 @@ app.use("/api/articles", articleRoutes);
 //
 app.use("/api/users", userRoutes);
 app.use("/app", messageroutes);
+app.use("/api/visit", visitRoutes);
 
 app.use("/api", subscriptionRoutes);
 app.use("/api", paymentRoutes);
@@ -60,8 +62,6 @@ app.use("/api/comment", commentRoutes);
 //bookmarkadd بلال 
 app.use("/api/articles", addbookmarkRoutes);
 // 404 handler
-
-app.use("/api/bookmarks", bookmarkRoutes);
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
 });
